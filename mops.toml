@@ -1,5 +1,9 @@
 # Motoko dependencies (https://mops.one/)
 
+[package]
+name = "DigiPurse"
+version = "0.1.0"
+
 [dependencies]
 base = "0.14.9"
 map = "9.0.1"
