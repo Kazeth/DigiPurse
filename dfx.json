@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "DigiPurse_backend": {
+      "main": "src/DigiPurse_backend/main.mo",
+      "type": "motoko"
+    },
+    "DigiPurse_frontend": {
+      "dependencies": [
+        "DigiPurse_backend"
+      ],
+      "source": [
+        "src/DigiPurse_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "DigiPurse_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
