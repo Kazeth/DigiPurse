@@ -6,7 +6,7 @@
   "name": "DigiPurse",
   "scripts": {
     "build": "npm run build --workspaces --if-present",
-    "frontend": "vite --port 3000",
+    "frontend": "vite src/DigiPurse_frontend --port 3000",
     "prebuild": "npm run prebuild --workspaces --if-present",
     "pretest": "npm run prebuild --workspaces --if-present",
     "start": "npm start --workspaces --if-present",
@@ -15,5 +15,8 @@
   "type": "module",
   "workspaces": [
     "src/DigiPurse_frontend"
-  ]
+  ],
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
 }
