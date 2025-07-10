@@ -1,9 +1,8 @@
 {
   "canisters": {
-    "backend": {
-      "main": "backend/app.mo",
-      "type": "motoko",
-      "args": "--enhanced-orthogonal-persistence"
+    "Document_backend": {
+      "main": "backend/Document/Document.mo",
+      "type": "motoko"
     },
     "frontend": {
       "dependencies": ["backend"],
