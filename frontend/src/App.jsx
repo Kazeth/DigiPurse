@@ -7,6 +7,7 @@ import LandingPage from './pages/LandingPage';
 // User Pages
 import HomePage from './pages/HomePage';
 import DigiDocumentPage from './pages/DigiDocumentPage';
+import { UserRoute } from './routes/UserRoute';
 
 
 function App() {
@@ -14,13 +15,13 @@ function App() {
     <Router>
       <Routes>
         {/* Public routes */}
-        <Route path="/">
+        <Route path='/'>
           <Route index element={LandingPage}/>
         </Route>
 
         {/* User routes */}
-        <Route element="">
-
+        <Route element={<UserRoute/>}>
+          <Route path='home'element={HomePage}/>
         </Route>
       </Routes>
     </Router>

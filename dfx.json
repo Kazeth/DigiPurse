@@ -13,11 +13,8 @@
     },
     "frontend": {
       "dependencies": ["backend"],
-      "frontend": {
-        "entrypoint": "frontend/index.html"
-      },
-      "source": ["frontend/dist"],
-      "type": "assets"
+      "type": "assets",
+      "source": ["frontend/dist/"]
     },
     "internet_identity": {
       "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",

@@ -3,7 +3,6 @@ import { createActor } from 'declarations/backend';
 
 import { canisterId } from 'declarations/backend/index.js';
 import React, { useState, useEffect } from 'react';
-import '../index.css';
 
 const network = process.env.DFX_NETWORK;
 const identityProvider =
