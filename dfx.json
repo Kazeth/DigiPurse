@@ -11,6 +11,10 @@
       "main": "backend/Document/Document.mo",
       "type": "motoko"
     },
+    "Ticket_backend": {
+      "main": "backend/Ticket/Ticket.mo",
+      "type": "motoko"
+    },
     "frontend": {
       "dependencies": ["backend"],
       "type": "assets",
