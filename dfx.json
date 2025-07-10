@@ -1,5 +1,12 @@
 {
   "canisters": {
+    "backend": {
+      "type": "motoko",
+      "main": "backend/app.mo",
+      "declarations": {
+        "node_compatibility": true
+      }
+    },
     "Document_backend": {
       "main": "backend/Document/Document.mo",
       "type": "motoko"

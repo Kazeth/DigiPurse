@@ -10,7 +10,8 @@
     "frontend"
   ],
   "dependencies": {
-    "@dfinity/agent": "^2.4.1"
+    "@dfinity/agent": "^2.4.1",
+    "react-router-dom": "^7.6.3"
   },
   "devDependencies": {
     "@types/node": "^24.0.12"

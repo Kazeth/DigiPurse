@@ -11,7 +11,7 @@ const identityProvider =
         ? 'https://identity.ic0.app' // Mainnet
         : 'http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:4943'; // Local
 
-function DigiDocumentPage() {
+export default function DigiDocumentPage() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [authClient, setAuthClient] = useState();
     const [actor, setActor] = useState();
@@ -241,4 +241,3 @@ function DigiDocumentPage() {
     );
 }
 
-export default DigiDocumentPage;
