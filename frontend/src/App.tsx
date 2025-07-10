@@ -1,8 +1,9 @@
 import { AuthClient } from '@dfinity/auth-client';
-import { createActor } from 'declarations/backend';
-import { canisterId } from 'declarations/backend/index.js';
+import { createActor } from '../../src/declarations/backend';
+import { canisterId } from '../../src/declarations/backend/index.js';
 import React, { useState, useEffect } from 'react';
 import '../index.css';
+import { Actor } from '@dfinity/agent';
 
 const network = process.env.DFX_NETWORK;
 const identityProvider =
@@ -12,15 +13,15 @@ const identityProvider =
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [authClient, setAuthClient] = useState();
-  const [actor, setActor] = useState();
-  const [files, setFiles] = useState([]);
-  const [errorMessage, setErrorMessage] = useState();
+  const [authClient, setAuthClient] = useState<AuthClient | null>();
+  const [actor, setActor] = useState<Actor | null>();
+  const [files, setFiles] = useState<>([]);
+  const [errorMessage, setErrorMessage] = useState<String | null>();
   const [fileTransferProgress, setFileTransferProgress] = useState();
 
   useEffect(() => {
     updateActor();
-    setErrorMessage();
+    setErrorMessage('');
   }, []);
 
   useEffect(() => {
@@ -45,20 +46,20 @@ function App() {
   }
 
   async function login() {
-    await authClient.login({
+    await authClient?.login({
       identityProvider,
       onSuccess: updateActor
     });
   }
 
   async function logout() {
-    await authClient.logout();
+    await authClient?.logout();
     updateActor();
   }
 
   async function loadFiles() {
     try {
-      const fileList = await actor.getFiles();
+      const fileList = await actor?.getFiles();
       setFiles(fileList);
     } catch (error) {
       console.error('Failed to load files:', error);
@@ -68,14 +69,14 @@ function App() {
 
   async function handleFileUpload(event) {
     const file = event.target.files[0];
-    setErrorMessage();
+    setErrorMessage('');
 
     if (!file) {
       setErrorMessage('Please select a file to upload.');
       return;
     }
 
-    if (await actor.checkFileExists(file.name)) {
+    if (await actor?.checkFileExists(file.name)) {
       setErrorMessage(`File "${file.name}" already exists. Please choose a different file name.`);
       return;
     }
