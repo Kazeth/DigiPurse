@@ -16,12 +16,12 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path='/'>
-          <Route index element={LandingPage}/>
+          <Route index element={<LandingPage />} />
         </Route>
 
         {/* User routes */}
-        <Route element={<UserRoute/>}>
-          <Route path='home'element={HomePage}/>
+        <Route element={<UserRoute />}>
+          <Route path='home' element={<HomePage />} />
         </Route>
       </Routes>
     </Router>
