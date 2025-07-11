@@ -4,18 +4,20 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // Public Pages
 import LandingPage from './pages/LandingPage';
 
+// Layouts
+import Layout from './layout/MainLayout';
+
 // User Pages
 import HomePage from './pages/HomePage';
 import DigiDocumentPage from './pages/DigiDocumentPage';
 import { UserRoute } from './routes/UserRoute';
-
 
 function App() {
   return (
     <Router>
       <Routes>
         {/* Public routes */}
-        <Route path='/'>
+        <Route path='/' element={<Layout />}>
           <Route index element={<LandingPage />} />
         </Route>
 
