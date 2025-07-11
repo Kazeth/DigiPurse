@@ -56,8 +56,8 @@ export default function LandingPage() {
       identityProvider,
       onSuccess: () => {
         setIsAuthenticated(true);
-        // Redirect to a dashboard or another page after successful login
-        navigate('/dashboard'); 
+        // Redirect to the post-login page after successful login
+        navigate('/postlogin'); 
       },
     });
   };

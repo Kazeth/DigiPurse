@@ -7,6 +7,11 @@ export default defineConfig({
   base: './',
   plugins: [react(), environment('all', { prefix: 'CANISTER_' }), environment('all', { prefix: 'DFX_' })],
   envDir: '../',
+  build: {
+    rollupOptions: {
+      external: ['tailwind-merge'],
+    },
+  },
   define: {
     'process.env': process.env
   },

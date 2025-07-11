@@ -9,6 +9,7 @@ import Layout from './layout/MainLayout';
 
 // User Pages
 import HomePage from './pages/HomePage';
+import PostLoginPage from './pages/PostLoginPage'
 import DigiDocumentPage from './pages/DigiDocumentPage';
 import { UserRoute } from './routes/UserRoute';
 
@@ -16,14 +17,16 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Public routes */}
         <Route path='/' element={<Layout />}>
+          {/* Public route */}
           <Route index element={<LandingPage />} />
-        </Route>
 
-        {/* User routes */}
-        <Route element={<UserRoute />}>
-          <Route path='home' element={<HomePage />} />
+          {/* User routes are now nested inside the Layout */}
+          <Route element={<UserRoute />}>
+            <Route path='postlogin' element={<PostLoginPage />} />
+            <Route path='home' element={<HomePage />} />
+          </Route>
+
         </Route>
       </Routes>
     </Router>

@@ -57,7 +57,7 @@ export default function MainHeader() {
         setIsAuthenticated(true);
         const identity = authClient.getIdentity();
         setPrincipalId(identity.getPrincipal().toText());
-        navigate('/dashboard'); 
+        navigate('/postlogin'); 
       },
     });
   };
@@ -80,7 +80,7 @@ export default function MainHeader() {
     <>
       {isAuthenticated ? (
         <div className="flex items-center gap-4">
-          <Link to="/dashboard">
+          <Link to="/postlogin">
             <Avatar>
               <AvatarImage src={`https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?principal=${principalId}`} alt="User Avatar" />
               <AvatarFallback>{principalId?.substring(0, 2).toUpperCase()}</AvatarFallback>
