@@ -83,9 +83,16 @@ export default function LandingPage() {
                 DigiPurse is a Web3 application designed to streamline digital life by integrating ticketing, identity, and payments into one secure platform, giving you full control.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                <Button size="lg" onClick={isAuthenticated ? handleLogin : goToHome}>
-                  {isAuthenticated ? 'Go to Dashboard' : 'Start Now'}
-                </Button>
+                {isAuthenticated ?
+                  <Button size="lg" onClick={goToHome}>
+                    Go to Dashboard
+                  </Button>
+                  :
+                  <Button size="lg" onClick={handleLogin}>
+                    Start Now
+                  </Button>
+                }
+
                 <Button size="lg" variant="secondary">
                   Learn More
                 </Button>
