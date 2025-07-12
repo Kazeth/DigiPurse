@@ -1,6 +1,7 @@
 {
   "name": "example",
   "scripts": {
+    "frontend": "cd frontend && npm run dev",
     "build": "npm run build --workspaces --if-present",
     "prebuild": "npm run prebuild --workspaces --if-present",
     "dev": "npm run dev --workspaces --if-present"
@@ -17,7 +18,8 @@
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.525.0",
     "react-router-dom": "^7.6.3",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "vite": "^7.0.4"
   },
   "devDependencies": {
     "@types/node": "^24.0.12"

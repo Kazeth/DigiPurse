@@ -57,10 +57,14 @@ export default function LandingPage() {
       onSuccess: () => {
         setIsAuthenticated(true);
         // Redirect to the post-login page after successful login
-        navigate('/postlogin'); 
+        navigate('/postlogin');
       },
     });
   };
+
+  const goToHome = async () => {
+    navigate('/home');
+  }
 
   return (
     <div className="overflow-x-hidden">
@@ -79,7 +83,7 @@ export default function LandingPage() {
                 DigiPurse is a Web3 application designed to streamline digital life by integrating ticketing, identity, and payments into one secure platform, giving you full control.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                <Button size="lg" onClick={handleLogin}>
+                <Button size="lg" onClick={isAuthenticated ? handleLogin : goToHome}>
                   {isAuthenticated ? 'Go to Dashboard' : 'Start Now'}
                 </Button>
                 <Button size="lg" variant="secondary">
@@ -89,9 +93,9 @@ export default function LandingPage() {
             </div>
             {/* Image Content */}
             <div className="flex items-center justify-center">
-              <img 
-                src={logo} 
-                alt="DigiPurse Digital Purse" 
+              <img
+                src={logo}
+                alt="DigiPurse Digital Purse"
                 className="w-64 h-64 md:w-80 md:h-80 animate-pulse-slow"
               />
             </div>
