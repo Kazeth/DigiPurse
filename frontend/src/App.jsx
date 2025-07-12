@@ -11,6 +11,8 @@ import Layout from './layout/MainLayout';
 import HomePage from './pages/HomePage';
 import PostLoginPage from './pages/PostLoginPage'
 import DigiDocumentPage from './pages/DigiDocumentPage';
+import DigiPaymentPage from './pages/DigiPaymentPage';
+import DigiTicketPage from './pages/DigiTicketPage';
 import { UserRoute } from './routes/UserRoute';
 
 function App() {
@@ -25,6 +27,9 @@ function App() {
           <Route element={<UserRoute />}>
             <Route path='postlogin' element={<PostLoginPage />} />
             <Route path='home' element={<HomePage />} />
+            <Route path='digidocument' element={<DigiDocumentPage />} />
+            <Route path='digipayment' element={<DigiPaymentPage />} />
+            <Route path='digiticket' element={<DigiTicketPage />} />
           </Route>
 
         </Route>

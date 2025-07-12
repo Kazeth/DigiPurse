@@ -1,6 +1,17 @@
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 export default function HomePage() {
+    const navigate = useNavigate();
+    const gotoDocuments = async () => {
+        navigate('/digidocument');
+    }
+    const gotoTickets = async () => {
+        navigate('/digiticket');
+    }
+    const gotoPayments = async () => {
+        navigate('/digipayment');
+    }
     return (
         <div className='overflow-x-hidden flex flex-col items-start'>
             <div>
@@ -11,13 +22,13 @@ export default function HomePage() {
                     What do you want to manage today??
                 </div>
                 <div>
-                    <Button>
+                    <Button onClick={gotoDocuments}>
                         Documents
                     </Button>                    
-                    <Button>
+                    <Button onClick={gotoTickets}>
                         Tickets
                     </Button>                    
-                    <Button>
+                    <Button onClick={gotoPayments}>
                         Payments
                     </Button>
                 </div>
