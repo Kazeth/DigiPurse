@@ -11,14 +11,18 @@
       "main": "backend/Document/Document.mo",
       "type": "motoko"
     },
-    "Ticket_backend": {
-      "main": "backend/Ticket/Ticket.mo",
+    "Payment_backend": {
+      "main": "backend/Payment/Payment.mo",
       "type": "motoko"
     },
     "frontend": {
-      "dependencies": ["backend"],
+      "dependencies": [
+        "backend"
+      ],
       "type": "assets",
-      "source": ["frontend/dist/"]
+      "source": [
+        "frontend/dist/"
+      ]
     },
     "internet_identity": {
       "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
