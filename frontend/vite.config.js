@@ -5,7 +5,11 @@ import environment from 'vite-plugin-environment';
 
 export default defineConfig({
   base: './',
-  plugins: [react(), environment('all', { prefix: 'CANISTER_' }), environment('all', { prefix: 'DFX_' })],
+  plugins: [
+    react(), 
+    environment('all', { prefix: 'CANISTER_' }), 
+    environment('all', { prefix: 'DFX_' })
+  ],
   envDir: '../',
   build: {
     rollupOptions: {
@@ -28,7 +32,6 @@ export default defineConfig({
         find: 'declarations',
         replacement: fileURLToPath(new URL('../src/declarations', import.meta.url))
       },
-      // Added alias for '@' to point to the 'src' directory
       {
         find: '@',
         replacement: fileURLToPath(new URL('./src', import.meta.url))
@@ -43,6 +46,11 @@ export default defineConfig({
       '/api': {
         target: 'http://127.0.0.1:4943',
         changeOrigin: true
+      },
+      '/aichat': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/aichat/, ''),
       }
     },
     host: '127.0.0.1'

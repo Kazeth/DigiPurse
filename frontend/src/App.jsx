@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Public Pages
 import LandingPage from './pages/LandingPage';
+import AboutUsPage from './pages/AboutUsPage';
+import SupportPage from './pages/SupportPage';
 
 // Layouts
 import Layout from './layout/MainLayout';
@@ -20,10 +22,12 @@ function App() {
     <Router>
       <Routes>
         <Route path='/' element={<Layout />}>
-          {/* Public route */}
+          {/* --- Public Routes --- */}
           <Route index element={<LandingPage />} />
+          <Route path='about' element={<AboutUsPage />} />
+          <Route path='support' element={<SupportPage />} />
 
-          {/* User routes are now nested inside the Layout */}
+          {/* --- Protected User Routes --- */}
           <Route element={<UserRoute />}>
             <Route path='postlogin' element={<PostLoginPage />} />
             <Route path='home' element={<HomePage />} />
