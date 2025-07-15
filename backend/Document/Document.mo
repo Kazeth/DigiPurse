@@ -11,14 +11,11 @@ import Option "mo:base/Option";
 
 actor {
 
-  // Define a data type for a file's chunks.
   type FileChunk = {
     chunk : Blob;
     index : Nat;
   };
 
-  // testing 
-  // Define a data type for a file's data.
   type File = {
     name : Text;
     chunks : [FileChunk];
@@ -26,13 +23,10 @@ actor {
     fileType : Text;
   };
 
-  // Define a data type for storing files associated with a user principal.
   type UserFiles = HashMap.Map<Text, File>;
 
-  // HashMap to store the user data
   private var files = HashMap.new<Principal, UserFiles>();
 
-  // Return files associated with a user's principal.
   private func getUserFiles(user : Principal) : UserFiles {
     switch (HashMap.get(files, phash, user)) {
       case null {
@@ -44,12 +38,10 @@ actor {
     };
   };
 
-  // Check if a file name already exists for the user.
   public shared (msg) func checkFileExists(name : Text) : async Bool {
     Option.isSome(HashMap.get(getUserFiles(msg.caller), thash, name));
   };
 
-  // Upload a file in chunks.
   public shared (msg) func uploadFileChunk(name : Text, chunk : Blob, index : Nat, fileType : Text) : async () {
     let userFiles = getUserFiles(msg.caller);
     let fileChunk = { chunk = chunk; index = index };
@@ -75,7 +67,6 @@ actor {
     };
   };
 
-  // Return list of files for a user.
   public shared (msg) func getFiles() : async [{ name : Text; size : Nat; fileType : Text }] {
     Iter.toArray(
       Iter.map(
@@ -91,7 +82,6 @@ actor {
     );
   };
 
-  // Return total chunks for a file
   public shared (msg) func getTotalChunks(name : Text) : async Nat {
     switch (HashMap.get(getUserFiles(msg.caller), thash, name)) {
       case null 0;
@@ -99,7 +89,6 @@ actor {
     };
   };
 
-  // Return specific chunk for a file.
   public shared (msg) func getFileChunk(name : Text, index : Nat) : async ?Blob {
     switch (HashMap.get(getUserFiles(msg.caller), thash, name)) {
       case null null;
@@ -112,7 +101,6 @@ actor {
     };
   };
 
-  // Get file's type.
   public shared (msg) func getFileType(name : Text) : async ?Text {
     switch (HashMap.get(getUserFiles(msg.caller), thash, name)) {
       case null null;
@@ -120,7 +108,6 @@ actor {
     };
   };
 
-  // Delete a file.
   public shared (msg) func deleteFile(name : Text) : async Bool {
     Option.isSome(HashMap.remove(getUserFiles(msg.caller), thash, name));
   };

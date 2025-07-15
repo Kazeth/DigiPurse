@@ -11,8 +11,12 @@
       "main": "backend/Document/Document.mo",
       "type": "motoko"
     },
-    "Payment_backend": {
-      "main": "backend/Payment/Payment.mo",
+    "Registry_backend": {
+      "main": "backend/Registry.mo",
+      "type": "motoko"
+    },
+    "User_backend": {
+      "main": "backend/User.mo",
       "type": "motoko"
     },
     "frontend": {
