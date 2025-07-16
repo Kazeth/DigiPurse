@@ -9,7 +9,10 @@
     },
     "Document_backend": {
       "main": "backend/Document/Document.mo",
-      "type": "motoko"
+      "type": "motoko",
+      "declarations": {
+        "output": "frontend/src/declarations"
+      }
     },
     "Registry_backend": {
       "main": "backend/Registry.mo",

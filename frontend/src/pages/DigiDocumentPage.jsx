@@ -4,6 +4,9 @@ import { canisterId } from 'declarations/backend/index.js';
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
+import { Document_backend } from 'declarations/Document_backend';
+
+
 const network = process.env.DFX_NETWORK;
 const identityProvider =
     network === 'ic'

@@ -19,10 +19,10 @@ actor class User(ownerPrincipal : Principal, initialProfile : Types.UserProfile)
   var myTickets = HashMap.HashMap<Types.TicketId, Types.Ticket>(16, Nat.equal, StableHash.hash);
   var myTransactions = HashMap.HashMap<Nat, Types.Transaction>(16, Nat.equal, StableHash.hash);
 
-  query func getProfile() : async Types.UserProfile { profile };
-  query func isOrganizer() : async Bool { profile.isOrganizer };
+  public query func getProfile() : async Types.UserProfile { profile };
+  public query func isOrganizer() : async Bool { profile.isOrganizer };
 
-  query func getMyTickets() : async [(Types.TicketId, Types.Ticket)] {
+  public query func getMyTickets() : async [(Types.TicketId, Types.Ticket)] {
     var res : [(Types.TicketId, Types.Ticket)] = [];
     for ((id, ticket) in myTickets.entries()) {
       res := Array.append(res, [(id, ticket)]);
@@ -30,17 +30,17 @@ actor class User(ownerPrincipal : Principal, initialProfile : Types.UserProfile)
     return res;
   };
 
-  query func getTransactionHistory() : async [Types.Transaction] {
+  public query func getTransactionHistory() : async [Types.Transaction] {
     var res : [Types.Transaction] = [];
     for (tx in myTransactions.vals()) { res := Array.append(res, [tx]) };
     return res;
   };
 
-  func addTicket(id : Types.TicketId, eventId : Types.EventId, price : Nat, kind : Types.TicketKind) : async () {
+  public func addTicket(id : Types.TicketId, eventId : Types.EventId, price : Nat, kind : Types.TicketKind) : async () {
     myTickets.put(id, { eventID = eventId; price = price; kind = kind; isValid = true });
   };
 
-  func updateTicketPrice(id : Types.TicketId, newPrice : Nat) : async () {
+  public func updateTicketPrice(id : Types.TicketId, newPrice : Nat) : async () {
     let ticket = switch (myTickets.get(id)) {
       case null { throw Error.reject("Ticket not found") };
       case (?t) { t };
@@ -48,7 +48,7 @@ actor class User(ownerPrincipal : Principal, initialProfile : Types.UserProfile)
     myTickets.put(id, { ticket with price = newPrice });
   };
 
-  func removeTicketForTransfer(id : Types.TicketId) : async Types.Ticket {
+  public func removeTicketForTransfer(id : Types.TicketId) : async Types.Ticket {
     let ticket = switch (myTickets.get(id)) {
       case null { throw Error.reject("Ticket not in seller's account") };
       case (?t) { t };
@@ -57,14 +57,14 @@ actor class User(ownerPrincipal : Principal, initialProfile : Types.UserProfile)
     return ticket;
   };
 
-  func receiveTicket(id : Types.TicketId, ticket : Types.Ticket) : async () {
+  public func receiveTicket(id : Types.TicketId, ticket : Types.Ticket) : async () {
     if (myTickets.get(id) != null) {
       throw Error.reject("Ticket already exists in buyer's account");
     };
     myTickets.put(id, ticket);
   };
 
-  func addTransaction(tx : Types.Transaction) : async () {
+  public func addTransaction(tx : Types.Transaction) : async () {
     myTransactions.put(tx.txId, tx);
   };
 };

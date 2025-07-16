@@ -47,7 +47,7 @@ actor class Registry() = this {
   };
 
   public func createTicket(eventId : Text, owner : Principal, price : Nat, kind : Types.TicketKind) : async Types.TicketId {
-    let event : ?Types.Event = Array.find<Types.Event>(events, func(e) { return e.id == eventId; });
+    let event : ?Types.Event = Array.find<Types.Event>(events, func(e) { return e.id == eventId });
 
     let supply = switch (event) {
       case (null) { throw Error.reject("Event not found") };
@@ -103,8 +103,8 @@ actor class Registry() = this {
   };
 
   public query func getAllTickets() : async [Ticket.Ticket] {
-    Array.map<(Types.TicketId, Ticket.Ticket), Ticket.Ticket>(
-      tickets.toArray(),
+    Array.map(
+      Buffer.toArray(tickets),
       func((id : Types.TicketId, t : Ticket.Ticket)) : Ticket.Ticket {
         t;
       },

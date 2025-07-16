@@ -1,0 +1,14 @@
+service : {
+  checkFileExists: (name: text) -> (bool);
+  deleteFile: (name: text) -> (bool);
+  getFileChunk: (name: text, index: nat) -> (opt blob);
+  getFileType: (name: text) -> (opt text);
+  getFiles: () -> (vec record {
+                         fileType: text;
+                         name: text;
+                         size: nat;
+                       });
+  getTotalChunks: (name: text) -> (nat);
+  uploadFileChunk: (name: text, chunk: blob, index: nat, fileType: text) ->
+   ();
+}
