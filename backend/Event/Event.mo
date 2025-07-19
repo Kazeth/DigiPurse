@@ -18,7 +18,7 @@ module {
     let positiveTimestamp : Nat = Int.abs(timestamp);
     let id : Text = Nat.toText(positiveTimestamp);
     {
-      id = id;
+      eventID = id;
       organizer = organizer;
       eventName = name;
       eventDescription = desc;

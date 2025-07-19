@@ -12,11 +12,11 @@ import Types "./types";
 import Event "/Event/Event";
 import Ticket "/Event/Ticket";
 
-actor class Registry() = this {
+actor Registry {
 
   var users : [(Principal, Types.UserProfile)] = [];
   var events : [Types.Event] = [];
-  var tickets = Buffer.Buffer<(Types.TicketId, Ticket.Ticket)>(0);
+  var tickets = Buffer.Buffer<(Text, Types.Ticket)>(0);
   var transactions : [Types.Transaction] = [];
 
   public func registerUser(principal : Principal, profile : Types.UserProfile) : async () {
@@ -46,72 +46,76 @@ actor class Registry() = this {
     events;
   };
 
-  public func createTicket(eventId : Text, owner : Principal, price : Nat, kind : Types.TicketKind) : async Types.TicketId {
-    let event : ?Types.Event = Array.find<Types.Event>(events, func(e) { return e.id == eventId });
-
-    let supply = switch (event) {
-      case (null) { throw Error.reject("Event not found") };
-      case (?e) { e.ticketSupply };
-    };
-
-    var currentCount : Nat = 0;
-    for ((_ticketId, ticket) in tickets.vals()) {
-      if (ticket.eventID == eventId) {
-        currentCount += 1;
-      };
-    };
-
-    if (currentCount >= supply) {
-      throw Error.reject("Ticket supply for this event has been reached");
-    };
-
-    let id : Nat = tickets.size();
-    let ticket = Ticket.createTicket(eventId, owner, price, kind);
-    tickets.add((id, ticket));
-    return id;
+  public query func getAllUsers() : async [(Principal, Types.UserProfile)] {
+    return users;
   };
 
-  public func transferTicket(ticketId : Nat, newOwner : Principal) : async Bool {
-    if (ticketId >= tickets.size()) return false;
+  // public func createTicket(eventId : Text, owner : Principal, price : Nat, kind : Types.TicketKind) : async Text {
+  //   let event : ?Types.Event = Array.find<Types.Event>(events, func(e) { return e.eventID == eventId });
 
-    let (_, t) = tickets.get(ticketId);
-    let updated = Ticket.transferTicket(t, newOwner);
-    tickets.put(ticketId, (ticketId, updated));
+  //   let supply = switch (event) {
+  //     case (null) { throw Error.reject("Event not found") };
+  //     case (?e) { e.ticketSupply };
+  //   };
 
-    let tx : Types.Transaction = {
-      txId = transactions.size();
-      ticketId = ticketId;
-      buyer = newOwner;
-      seller = t.owner;
-      method = "transfer";
-      paymentSource = "wallet";
-      price = t.price;
-      timestamp = Time.now();
-    };
-    transactions := Array.append(transactions, [tx]);
+  //   var currentCount : Nat = 0;
+  //   for ((_ticketId, ticket) in tickets.vals()) {
+  //     if (ticket.eventID == eventId) {
+  //       currentCount += 1;
+  //     };
+  //   };
 
-    return true;
-  };
+  //   if (currentCount >= supply) {
+  //     throw Error.reject("Ticket supply for this event has been reached");
+  //   };
 
-  public query func getUserTickets(owner : Principal) : async [Ticket.Ticket] {
-    Array.mapFilter<(Types.TicketId, Ticket.Ticket), Ticket.Ticket>(
-      tickets.toArray(),
-      func((id : Types.TicketId, t : Ticket.Ticket)) {
-        if (t.owner == owner) ?t else null;
-      },
-    );
-  };
+  //   let id : Nat = tickets.size();
+  //   let ticket = Ticket.createTicket(eventId, owner, price, kind);
+  //   tickets.add((id, ticket));
+  //   return id;
+  // };
 
-  public query func getAllTickets() : async [Ticket.Ticket] {
-    Array.map(
-      Buffer.toArray(tickets),
-      func((id : Types.TicketId, t : Ticket.Ticket)) : Ticket.Ticket {
-        t;
-      },
-    );
-  };
+  // public func transferTicket(ticketId : Text, newOwner : Principal) : async Bool {
+  //   if (ticketId >= tickets.size()) return false;
 
-  public query func getAllTransactions() : async [Types.Transaction] {
-    transactions;
-  };
+  //   let (_, t) = tickets.get(ticketId);
+  //   let updated = Ticket.transferTicket(t, newOwner);
+  //   tickets.put(ticketId, (ticketId, updated));
+
+  //   let tx : Types.Transaction = {
+  //     transactionID = transactions.size();
+  //     ticketID = ticketId;
+  //     buyer = newOwner;
+  //     seller = t.owner;
+  //     method = "transfer";
+  //     paymentSource = "wallet";
+  //     price = t.price;
+  //     timestamp = Time.now();
+  //   };
+  //   transactions := Array.append(transactions, [tx]);
+
+  //   return true;
+  // };
+
+  // public query func getUserTickets(owner : Principal) : async [Ticket.Ticket] {
+  //   Array.mapFilter<(Types.TicketId, Ticket.Ticket), Ticket.Ticket>(
+  //     tickets.toArray(),
+  //     func((id : Types.TicketId, t : Ticket.Ticket)) {
+  //       if (t.owner == owner) ?t else null;
+  //     },
+  //   );
+  // };
+
+  // public query func getAllTickets() : async [Ticket.Ticket] {
+  //   Array.map(
+  //     Buffer.toArray(tickets),
+  //     func((id : Types.TicketId, t : Ticket.Ticket)) : Ticket.Ticket {
+  //       t;
+  //     },
+  //   );
+  // };
+
+  // public query func getAllTransactions() : async [Types.Transaction] {
+  //   transactions;
+  // };
 };

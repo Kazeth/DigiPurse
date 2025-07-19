@@ -4,15 +4,14 @@ import Blob "mo:base/Blob";
 
 module {
   public type UserProfile = {
+    userID : Principal;
     username : Text;
     joinDate : Time.Time;
     userAddress : Text;
     isOrganizer : Bool;
   };
-
-  public type EventId = Text;
   public type Event = {
-    id: EventId;
+    eventID: Text;
     organizer: Principal;
     eventName: Text;
     eventDescription: Text;
@@ -21,21 +20,23 @@ module {
     ticketSupply: Nat; // <-- FIELD BARU
   };
 
-  public type TicketId = Nat;
   public type TicketKind = {
     #Seated: { seatInfo: Text };
     #Seatless;
   };
+
   public type Ticket = {
-    eventID: EventId;
+    ticketID : Text;
+    eventID: Text;
+    owner: Principal;
     price: Nat;
     kind: TicketKind;
     isValid: Bool;
   };
 
   public type Transaction = {
-    txId: Nat;
-    ticketId: TicketId;
+    transactionID: Text;
+    ticketID: Text;
     buyer: Principal;
     seller: Principal;
     method: Text;

@@ -16,11 +16,17 @@
     },
     "Registry_backend": {
       "main": "backend/Registry.mo",
-      "type": "motoko"
+      "type": "motoko",
+      "declarations": {
+        "node_compatibility": false
+      } 
     },
     "User_backend": {
       "main": "backend/User.mo",
-      "type": "motoko"
+      "type": "motoko",
+      "dependencies": [
+        "Registry_backend"
+      ]
     },
     "frontend": {
       "dependencies": [

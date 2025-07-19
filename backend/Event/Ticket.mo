@@ -1,24 +1,11 @@
 import Principal "mo:base/Principal";
-
+import Types "../types";
 module {
-  public type TicketId = Nat;
 
-  public type TicketKind = {
-    #Seated: { seatInfo: Text };
-    #Seatless;
-  };
-
-  public type Ticket = {
-    eventID: Text;
-    owner: Principal;
-    price: Nat;
-    kind: TicketKind;
-    isValid: Bool;
-  };
-
-  public func createTicket(eventId: Text, owner: Principal, price: Nat, kind: TicketKind): Ticket {
+  public func createTicket(eventId: Text, ticketId: Text, owner: Principal, price: Nat, kind: Types.TicketKind): Types.Ticket {
     {
       eventID = eventId;
+      ticketID = ticketId;
       owner = owner;
       price = price;
       kind = kind;
@@ -26,17 +13,18 @@ module {
     }
   };
 
-  public func updateTicketPrice(ticket: Ticket, price: Nat): Ticket {
+  public func updateTicketPrice(ticket: Types.Ticket, price: Nat): Types.Ticket {
     { ticket with price = price }
   };
 
-  public func transferTicket(ticket: Ticket, newOwner: Principal): Ticket {
+  public func transferTicket(ticket: Types.Ticket, newOwner: Principal): Types.Ticket {
     { ticket with owner = newOwner }
   };
 
-  public func emptyTicket(): Ticket {
+  public func emptyTicket(): Types.Ticket {
     {
       eventID = "";
+      ticketID = "";
       owner = Principal.fromText("aaaaa-aa");
       price = 0;
       kind = #Seatless;
