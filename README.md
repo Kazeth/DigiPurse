@@ -1,27 +1,4 @@
-# FileVault
+# DigiPurse
+<img width="144" height="144" alt="logo" src="https://github.com/user-attachments/assets/a08638dc-df98-4785-bba9-407b33ea1e39" />
 
-FileVault is a file storage application that allows you to upload files from your local computer and store them onchain. FileVault uses Internet Identity (II) for user login and authentication. Once files are uploaded, they can be downloaded at a later time, or they can be deleted.
-
-## Deploying from ICP Ninja
-
-When viewing this project in ICP Ninja, you can deploy it directly to the mainnet for free by clicking "Deploy" in the upper right corner. Open this project in ICP Ninja:
-
-[![](https://icp.ninja/assets/open.svg)](https://icp.ninja/i?g=https://github.com/dfinity/examples/motoko/filevault)
-
-## Build and deploy from the command-line
-
-### 1. [Download and install the IC SDK.](https://internetcomputer.org/docs/building-apps/getting-started/install)
-
-### 2. Download your project from ICP Ninja using the 'Download files' button on the upper left corner, or [clone the GitHub examples repository.](https://github.com/dfinity/examples/)
-
-### 3. Navigate into the project's directory.
-
-### 4. Deploy the project to your local environment:
-
-```
-dfx start --background --clean && dfx deploy
-```
-
-## Security considerations and best practices
-
-If you base your application on this example, it is recommended that you familiarize yourself with and adhere to the [security best practices](https://internetcomputer.org/docs/building-apps/security/overview) for developing on ICP. This example may not implement all the best practices.
+DigiPurse is an all in one decentralized application that brings your digital identity, event tickets, and payments together in a single, secure Web3 purse, giving you complete ownership and control over your digital life.
