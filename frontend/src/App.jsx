@@ -10,11 +10,14 @@ import SupportPage from './pages/SupportPage';
 import Layout from './layout/MainLayout';
 
 // User Pages
-import HomePage from './pages/HomePage';
+import HomePage from './pages/HomePage.tsx';
 import PostLoginPage from './pages/PostLoginPage'
 import DigiDocumentPage from './pages/DigiDocumentPage';
 import DigiPaymentPage from './pages/DigiPaymentPage';
-import DigiTicketPage from './pages/DigiTicketPage';
+import DigiTicketPage from './pages/TicketDashboard';
+import TicketMarketplace from './pages/TicketMarketplace.tsx'
+import TicketEventsPage from './pages/TicketEventsPage.tsx'
+import TicketEventDetailsPage from './pages/TicketEventDetailsPage.tsx'
 import { UserRoute } from './routes/UserRoute';
 
 function App() {
@@ -34,6 +37,9 @@ function App() {
             <Route path='digidocument' element={<DigiDocumentPage />} />
             <Route path='digipayment' element={<DigiPaymentPage />} />
             <Route path='digiticket' element={<DigiTicketPage />} />
+            <Route path='marketplace' element={<TicketMarketplace />} />
+            <Route path='events' element={<TicketEventsPage />} />
+            <Route path='events/:eventID' element={<TicketEventDetailsPage />} /> 
           </Route>
 
         </Route>
