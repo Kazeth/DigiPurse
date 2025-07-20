@@ -1,6 +1,8 @@
 import '../index.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+// Hooks
+import ScrollToTop from './components/hooks/UseScrollToTop';
 // Public Pages
 import LandingPage from './pages/LandingPage';
 import AboutUsPage from './pages/AboutUsPage';
@@ -10,20 +12,22 @@ import SupportPage from './pages/SupportPage';
 import Layout from './layout/MainLayout';
 
 // User Pages
-import HomePage from './pages/HomePage.tsx';
+import HomePage from './pages/HomePage';
 import PostLoginPage from './pages/PostLoginPage'
 import DigiDocumentPage from './pages/DigiDocumentPage';
 import DigiPaymentPage from './pages/DigiPaymentPage';
 import DigiTicketPage from './pages/TicketDashboard';
-import TicketMarketplace from './pages/TicketMarketplace.tsx'
-import TicketEventsPage from './pages/TicketEventsPage.tsx'
-import TicketEventDetailsPage from './pages/TicketEventDetailsPage.tsx'
+import TicketMarketplace from './pages/TicketMarketplace'
+import TicketEventsPage from './pages/TicketEventsPage'
+import TicketEventDetailsPage from './pages/TicketEventDetailsPage'
 import { UserRoute } from './routes/UserRoute';
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
+
         <Route path='/' element={<Layout />}>
           {/* --- Public Routes --- */}
           <Route index element={<LandingPage />} />
@@ -39,7 +43,7 @@ function App() {
             <Route path='digiticket' element={<DigiTicketPage />} />
             <Route path='marketplace' element={<TicketMarketplace />} />
             <Route path='events' element={<TicketEventsPage />} />
-            <Route path='events/:eventID' element={<TicketEventDetailsPage />} /> 
+            <Route path='events/:eventID' element={<TicketEventDetailsPage />} />
           </Route>
 
         </Route>

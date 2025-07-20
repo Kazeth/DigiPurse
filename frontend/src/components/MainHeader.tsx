@@ -23,7 +23,7 @@ export default function MainHeader() {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  
+
   // Authentication State
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authClient, setAuthClient] = useState<AuthClient | null>(null);
@@ -57,7 +57,7 @@ export default function MainHeader() {
         setIsAuthenticated(true);
         const identity = authClient.getIdentity();
         setPrincipalId(identity.getPrincipal().toText());
-        navigate('/postlogin'); 
+        navigate('/postlogin');
       },
     });
   };
@@ -67,6 +67,7 @@ export default function MainHeader() {
     await authClient.logout();
     setIsAuthenticated(false);
     setPrincipalId(null);
+    setAuthClient(null);
     navigate('/');
   };
 
@@ -101,11 +102,10 @@ export default function MainHeader() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
-          scrolled
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${scrolled
             ? 'bg-[#2B0B3F]/95 backdrop-blur-lg shadow-purple-900/20 shadow-lg'
             : 'bg-[#2B0B3F]/80 backdrop-blur-sm'
-        }`}
+          }`}
       >
         <nav className="container mx-auto flex items-center justify-between p-4 text-white">
           <Link to="/" className="flex items-center space-x-3 group">

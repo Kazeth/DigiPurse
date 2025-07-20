@@ -15,14 +15,22 @@
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-separator": "^1.1.7",
+    "@ramonak/react-progress-bar": "^5.4.0",
+    "bootstrap": "^5.3.7",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.525.0",
     "qrcode.js": "^0.0.1",
+    "react": "^19.1.0",
+    "react-bootstrap": "^2.10.10",
+    "react-dom": "^19.1.0",
+    "react-progress-bar": "^0.1.0",
     "react-router-dom": "^7.6.3",
     "tailwind-merge": "^3.3.1",
     "vite": "^7.0.4"
   },
   "devDependencies": {
-    "@types/node": "^24.0.12"
+    "@types/node": "^24.0.12",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6"
   }
 }

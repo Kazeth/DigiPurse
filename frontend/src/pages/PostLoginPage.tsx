@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label'; 
+import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { UserPlus, Camera } from 'lucide-react';
 
@@ -13,6 +13,40 @@ export default function PostLoginPage() {
   const [dob, setDob] = useState('');
   const [address, setAddress] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  async function updateActor() {
+    const authClient = await AuthClient.create();
+
+    const isAuthenticated = await authClient.isAuthenticated();
+
+    if (!isAuthenticated) {
+      await authClient.login({
+        identityProvider,
+        onSuccess: async () => {
+          const identity = authClient.getIdentity();
+          const actor = createActor(canisterId, {
+            agentOptions: { identity }
+          });
+          setActor(actor);
+          setIsAuthenticated(true);
+        },
+        onError: (err) => {
+          console.error("Login failed:", err);
+          setErrorMessage("Login failed");
+        }
+      });
+      return;
+    }
+
+    const identity = authClient.getIdentity();
+    const actor = createActor(canisterId, {
+      agentOptions: { identity }
+    });
+
+    setActor(actor);
+    setAuthClient(authClient);
+    setIsAuthenticated(true);
+  }
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -63,8 +97,8 @@ export default function PostLoginPage() {
                   <UserPlus className="h-10 w-10" />
                 </AvatarFallback>
               </Avatar>
-              <label 
-                htmlFor="profile-picture" 
+              <label
+                htmlFor="profile-picture"
                 className="absolute bottom-0 right-0 flex items-center justify-center h-8 w-8 bg-white rounded-full cursor-pointer hover:bg-gray-200 transition-colors"
               >
                 <Camera className="h-5 w-5 text-[#4C1D95]" />
@@ -72,14 +106,14 @@ export default function PostLoginPage() {
               </label>
             </div>
           </div>
-          
+
           {/* Form Fields */}
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="username" className="text-purple-300">Username</Label>
-              <Input 
-                id="username" 
-                placeholder="e.g., vitalik.eth" 
+              <Input
+                id="username"
+                placeholder="e.g., vitalik.eth"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="bg-black/20 border-purple-400/30 text-white placeholder:text-purple-400/50 focus:border-purple-400"
@@ -87,8 +121,8 @@ export default function PostLoginPage() {
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="dob" className="text-purple-300">Date of Birth</Label>
-              <Input 
-                id="dob" 
+              <Input
+                id="dob"
                 type="date"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
@@ -97,9 +131,9 @@ export default function PostLoginPage() {
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="address" className="text-purple-300">Address</Label>
-              <Input 
-                id="address" 
-                placeholder="123 Blockchain Ave" 
+              <Input
+                id="address"
+                placeholder="123 Blockchain Ave"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 className="bg-black/20 border-purple-400/30 text-white placeholder:text-purple-400/50 focus:border-purple-400"
@@ -108,8 +142,8 @@ export default function PostLoginPage() {
           </div>
         </CardContent>
         <CardFooter>
-          <Button 
-            className="w-full bg-white text-[#4C1D95] hover:bg-gray-200" 
+          <Button
+            className="w-full bg-white text-[#4C1D95] hover:bg-gray-200"
             onClick={handleContinue}
             disabled={!areRequiredFieldsFilled()}
           >
