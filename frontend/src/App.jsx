@@ -24,34 +24,42 @@ import { UserRoute } from './routes/UserRoute';
 
 import { AuthProvider } from './AuthContext';
 
+// Document Upload/Download Progress
+import TransferProgress from './components/TransferProgress';
+import { TransferProvider } from './lib/TransferProgressContext';
+
+
 function App() {
   return (
     <AuthProvider>
-      <Router>
-      <ScrollToTop />
-        <Routes>
+      <TransferProvider>
+        <Router>
+          <ScrollToTop />
+          <Routes>
 
-          <Route path='/' element={<Layout />}>
-            {/* --- Public Routes --- */}
-            <Route index element={<LandingPage />} />
-            <Route path='about' element={<AboutUsPage />} />
-            <Route path='support' element={<SupportPage />} />
+            <Route path='/' element={<Layout />}>
+              {/* --- Public Routes --- */}
+              <Route index element={<LandingPage />} />
+              <Route path='about' element={<AboutUsPage />} />
+              <Route path='support' element={<SupportPage />} />
 
-            {/* --- Protected User Routes --- */}
-            <Route element={<UserRoute />}>
-              <Route path='postlogin' element={<PostLoginPage />} />
-              <Route path='home' element={<HomePage />} />
-              <Route path='digidocument' element={<DigiDocumentPage />} />
-              <Route path='digipayment' element={<DigiPaymentPage />} />
-              <Route path='digiticket' element={<DigiTicketPage />} />
-              <Route path='marketplace' element={<TicketMarketplace />} />
-              <Route path='events' element={<TicketEventsPage />} />
-              <Route path='events/:eventID' element={<TicketEventDetailsPage />} />
+              {/* --- Protected User Routes --- */}
+              <Route element={<UserRoute />}>
+                <Route path='postlogin' element={<PostLoginPage />} />
+                <Route path='home' element={<HomePage />} />
+                <Route path='digidocument' element={<DigiDocumentPage />} />
+                <Route path='digipayment' element={<DigiPaymentPage />} />
+                <Route path='digiticket' element={<DigiTicketPage />} />
+                <Route path='marketplace' element={<TicketMarketplace />} />
+                <Route path='events' element={<TicketEventsPage />} />
+                <Route path='events/:eventID' element={<TicketEventDetailsPage />} />
+              </Route>
+
             </Route>
-
-          </Route>
-        </Routes>
-      </Router>
+          </Routes>
+          <TransferProgress />
+        </Router>
+      </TransferProvider>
     </AuthProvider>
   );
 }

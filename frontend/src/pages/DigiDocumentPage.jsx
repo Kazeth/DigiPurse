@@ -5,6 +5,8 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import PreviewModal from '@/components/modal/PreviewModal';
 import FileDeleteModal from '@/components/modal/FileDeleteModal';
+import { Loader2 } from 'lucide-react';
+import { useTransfer } from '@/lib/TransferProgressContext';
 
 const network = process.env.DFX_NETWORK;
 const identityProvider =
@@ -26,6 +28,8 @@ export default function DigiDocumentPage() {
     const [previewLoading, setPreviewLoading] = useState(false);
     const [fileName, setFileName] = useState(null)
     const [fileSize, setFileSize] = useState(null)
+
+    const { transfers, updateProgress, removeProgress } = useTransfer();
 
     useEffect(() => {
         updateActor();
@@ -81,27 +85,6 @@ export default function DigiDocumentPage() {
         setIsAuthenticated(true);
     }
 
-
-    async function updateProgress(fileName, progress, mode) {
-        setFilesTransferProgress((prevList) => {
-            const existingIndex = prevList.findIndex(item => item.fileName === fileName);
-            const updatedItem = { fileName, progress, mode };
-
-            if (existingIndex >= 0) {
-                const newList = [...prevList];
-                newList[existingIndex] = updatedItem;
-                return newList;
-            } else {
-                return [...prevList, updatedItem];
-            }
-        });
-    }
-
-    async function removeProgress(fileName) {
-        setFilesTransferProgress((prevList) =>
-            prevList.filter(item => item.fileName !== fileName)
-        );
-    }
 
     async function loadFiles() {
         try {
@@ -199,19 +182,6 @@ export default function DigiDocumentPage() {
         setFileName(name);
         setFileSize(size);
         setShowDeleteModal(true);
-        // if (window.confirm(`Are you sure you want to delete "${name}"?`)) {
-        //     try {
-        //         const success = await actor.deleteFile(name);
-        //         if (success) {
-        //             await loadFiles();
-        //         } else {
-        //             setErrorMessage('Failed to delete file');
-        //         }
-        //     } catch (error) {
-        //         console.error('Delete failed:', error);
-        //         setErrorMessage(`Failed to delete ${name}: ${error.message}`);
-        //     }
-        // }
     }
 
     async function handleFilePreview(name) {
@@ -263,12 +233,18 @@ export default function DigiDocumentPage() {
 
         const previewableExtensions = ['mp3', 'mp4', 'pdf', 'jpg', 'jpeg', 'png',];
         const ext = name.split('.').pop().toLowerCase();
-        console.log('1. Previewing:', { previewUrl, previewType });
+
         if (!previewableExtensions.includes(ext)) return null;
 
         return (
             <Button onClick={() => handleFilePreview(name)} className="btn" disabled={previewLoading}>
-                {previewLoading ? 'Loading...' : 'Preview'}
+                {previewLoading ? (
+                    <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                    </>
+                ) : (
+                    'Preview'
+                )}
             </Button>
         );
     }
@@ -296,28 +272,6 @@ export default function DigiDocumentPage() {
                     <div className="mt-4 rounded-md border border-red-400 bg-red-100 p-3 text-red-700">{errorMessage}</div>
                 )}
 
-                {filesTransferProgress.length > 0 && (
-                    <div>
-                        {filesTransferProgress.map((item) => (
-                            <div key={item.fileName} className="mb-4">
-                                <p className="mb-2 text-sm text-white">
-                                    {`${item.mode} ${item.fileName}`}
-                                </p>
-                                <div className="w-full flex max-w-md bg-gray-300 rounded-full h-3 overflow-hidden">
-                                    <div
-                                        className="bg-indigo-600 h-full rounded-full transition-all duration-500 ease-in-out"
-                                        style={{ width: `${item.progress}%` }}
-                                    />
-                                </div>
-                                <p className='mb-2 text-[2vw] text-white'>
-                                    {`${item.progress} %`}
-                                </p>
-                            </div>
-
-                        ))}
-
-                    </div>
-                )}
 
                 <div className="space-y-2">
                     {files.length === 0 ? (

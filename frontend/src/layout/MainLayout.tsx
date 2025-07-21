@@ -6,6 +6,7 @@ import MainHeader from '@/components/MainHeader';
 import TicketAppHeader from '@/components/TicketHeader'; 
 import SupportCTA from '@/components/SupportCTA';
 import MainFooter from '@/components/MainFooter';
+import TransferProgress from '@/components/TransferProgress';
 
 export default function MainLayout() {
   const location = useLocation();
@@ -32,6 +33,7 @@ export default function MainLayout() {
       {/* The <Outlet> component renders the matched child route's element */}
       <main className="flex-grow">
         <Outlet />
+        <TransferProgress />
       </main>
 
       {/* The support call-to-action section is hidden on the support page */}
