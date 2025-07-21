@@ -4,21 +4,23 @@
       "type": "motoko",
       "main": "backend/app.mo",
       "declarations": {
-        "node_compatibility": true
+        "node_compatibility": true,
+        "output": "frontend/src/declarations/backend"
       }
     },
     "Document_backend": {
       "main": "backend/Document/Document.mo",
       "type": "motoko",
       "declarations": {
-        "output": "frontend/src/declarations"
+        "output": "frontend/src/declarations/Document_backend"
       }
     },
     "Registry_backend": {
       "main": "backend/Registry.mo",
       "type": "motoko",
       "declarations": {
-        "node_compatibility": false
+        "node_compatibility": false,
+        "output": "frontend/src/declarations/Registry_backend"
       } 
     },
     "User_backend": {
@@ -26,7 +28,10 @@
       "type": "motoko",
       "dependencies": [
         "Registry_backend"
-      ]
+      ],
+      "declarations" : {
+        "output": "frontend/src/declarations/User_backend"
+      }
     },
     "frontend": {
       "dependencies": [
@@ -35,7 +40,10 @@
       "type": "assets",
       "source": [
         "frontend/dist/"
-      ]
+      ],
+      "declarations": {
+        "output": "frontend/src/declarations/frontend"
+      }
     },
     "internet_identity": {
       "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
@@ -46,7 +54,10 @@
           "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
         }
       },
-      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
+      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz",
+      "declarations": {
+        "output": "frontend/src/declarations/internet_identity"
+      }
     }
   },
   "output_env_file": ".env",

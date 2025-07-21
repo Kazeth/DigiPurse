@@ -14,31 +14,25 @@ import Registry "canister:Registry_backend";
 actor class User(ownerPrincipal : Principal) {
 
   var owner : Principal = ownerPrincipal;
-  var profile : Types.UserProfile = {
-    userID = owner;
-    username = "";
+  var profile : Types.Customer = {
+    id = owner;
+    name = "";
     joinDate = Time.now();
-    userAddress = "";
-    isOrganizer = false;
+    address = "";
   };
   var myTickets = HashMap.HashMap<Text, Types.Ticket>(16, Text.equal, Text.hash);
   var myTransactions = HashMap.HashMap<Text, Types.Transaction>(16, Text.equal, Text.hash);
 
-  public func getProfile() : async ?Types.UserProfile {
-    let allUsers : [(Principal, Types.UserProfile)] = await Registry.getAllUsers();
+  public func getMyProfile() : async ?Types.Customer {
+    var allUsers : [(Principal, Types.Customer)] = await Registry.getAllCustomers();
     for ((p, prof) in allUsers.vals()) {
       if (p == owner) {
-        profile := prof;
+        // Optionally update local profile fields here if needed
+        return ?prof;
       }
     };
     return null;
   };
-
-  public func uploadProfile(profile: Types.UserProfile) : async () {
-    await Registry.registerUser(owner, profile);
-  };
-
-  public query func isOrganizer() : async Bool { profile.isOrganizer };
 
   public query func getMyTickets() : async [(Text, Types.Ticket)] {
     var res : [(Text, Types.Ticket)] = [];
@@ -83,6 +77,6 @@ actor class User(ownerPrincipal : Principal) {
   };
 
   public func addTransaction(tx : Types.Transaction) : async () {
-    myTransactions.put(tx.transactionID, tx);
+    myTransactions.put(tx.id, tx);
   };
 };

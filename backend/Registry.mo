@@ -14,17 +14,19 @@ import Ticket "/Event/Ticket";
 
 actor Registry {
 
-  var users : [(Principal, Types.UserProfile)] = [];
+  var customers : [(Principal, Types.Customer)] = [];
+  var organizers : [(Principal, Types.Organizer)] = [];
+  var admins : [(Principal, Types.Admin)] = [];
   var events : [Types.Event] = [];
   var tickets = Buffer.Buffer<(Text, Types.Ticket)>(0);
   var transactions : [Types.Transaction] = [];
 
-  public func registerUser(principal : Principal, profile : Types.UserProfile) : async () {
-    users := Array.append(users, [(principal, profile)]);
+  public func registerCustomer(principal : Principal, profile : Types.Customer) : async () {
+    customers := Array.append(customers, [(principal, profile)]);
   };
 
-  public query func getUserProfile(p : Principal) : async ?Types.UserProfile {
-    for ((id, prof) in users.vals()) {
+  public query func getCustomerProfile(p : Principal) : async ?Types.Customer {
+    for ((id, prof) in customers.vals()) {
       if (id == p) return ?prof;
     };
     return null;
@@ -46,8 +48,8 @@ actor Registry {
     events;
   };
 
-  public query func getAllUsers() : async [(Principal, Types.UserProfile)] {
-    return users;
+  public query func getAllCustomers() : async [(Principal, Types.Customer)] {
+    return customers;
   };
 
   // public func createTicket(eventId : Text, owner : Principal, price : Nat, kind : Types.TicketKind) : async Text {

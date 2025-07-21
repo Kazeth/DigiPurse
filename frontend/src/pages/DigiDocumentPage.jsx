@@ -28,10 +28,6 @@ export default function DigiDocumentPage() {
     const [fileSize, setFileSize] = useState(null)
 
     useEffect(() => {
-
-    }, []);
-
-    useEffect(() => {
         updateActor();
         setErrorMessage();
     }, []);

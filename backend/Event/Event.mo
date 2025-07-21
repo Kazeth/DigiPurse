@@ -18,12 +18,12 @@ module {
     let positiveTimestamp : Nat = Int.abs(timestamp);
     let id : Text = Nat.toText(positiveTimestamp);
     {
-      eventID = id;
+      id = id;
       organizer = organizer;
-      eventName = name;
-      eventDescription = desc;
-      eventDate = date;
-      eventDurationMinutes = duration;
+      name = name;
+      description = desc;
+      date = date;
+      durationMinutes = duration;
       ticketSupply = supply;
     };
   };

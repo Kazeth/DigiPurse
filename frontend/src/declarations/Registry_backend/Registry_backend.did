@@ -1,0 +1,29 @@
+type Time = int;
+type Event = 
+ record {
+   date: Time;
+   description: text;
+   durationMinutes: nat;
+   id: text;
+   name: text;
+   organizer: principal;
+   ticketSupply: nat;
+ };
+type Customer = 
+ record {
+   address: text;
+   id: principal;
+   joinDate: Time;
+   name: text;
+ };
+service : {
+  createEvent: (organizer: principal, name: text, desc: text, date: Time,
+   duration: nat, supply: nat) -> ();
+  getAllCustomers: () -> (vec record {
+                                principal;
+                                Customer;
+                              }) query;
+  getAllEvents: () -> (vec Event) query;
+  getCustomerProfile: (p: principal) -> (opt Customer) query;
+  registerCustomer: ("principal": principal, profile: Customer) -> ();
+}

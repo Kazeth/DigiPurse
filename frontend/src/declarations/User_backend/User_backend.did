@@ -1,0 +1,48 @@
+type User = 
+ service {
+   addTransaction: (tx: Transaction) -> ();
+   getMyProfile: () -> (opt Customer);
+   getMyTickets: () -> (vec record {
+                              text;
+                              Ticket;
+                            }) query;
+   getTransactionHistory: () -> (vec Transaction);
+   receiveTicket: (id: text, ticket: Ticket) -> ();
+   removeTicketForTransfer: (id: text) -> (Ticket);
+   updateTicketPrice: (id: text, newPrice: nat) -> ();
+   uploadProfile: (profile: Customer) -> ();
+ };
+type Transaction = 
+ record {
+   buyer: principal;
+   id: text;
+   method: text;
+   paymentSource: text;
+   price: nat;
+   seller: principal;
+   ticketID: text;
+   timestamp: Time;
+ };
+type Time = int;
+type TicketKind = 
+ variant {
+   Seated: record {seatInfo: text;};
+   Seatless;
+ };
+type Ticket = 
+ record {
+   eventID: text;
+   id: text;
+   kind: TicketKind;
+   owner: principal;
+   price: nat;
+   valid: bool;
+ };
+type Customer = 
+ record {
+   address: text;
+   id: principal;
+   joinDate: Time;
+   name: text;
+ };
+service : (ownerPrincipal: principal) -> User

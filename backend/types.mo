@@ -3,20 +3,32 @@ import Time "mo:base/Time";
 import Blob "mo:base/Blob";
 
 module {
-  public type UserProfile = {
-    userID : Principal;
-    username : Text;
+  public type Customer = {
+    id : Principal;
+    name : Text;
     joinDate : Time.Time;
-    userAddress : Text;
-    isOrganizer : Bool;
+    address : Text;
   };
+
+  public type Organizer = {
+    id : Principal;
+    name : Text;
+    joinDate : Time.Time;
+    address : Text;
+  };
+
+  public type Admin = {
+    id : Principal;
+    name : Text;
+  };
+
   public type Event = {
-    eventID: Text;
+    id: Text;
     organizer: Principal;
-    eventName: Text;
-    eventDescription: Text;
-    eventDate: Time.Time;
-    eventDurationMinutes: Nat;
+    name: Text;
+    description: Text;
+    date: Time.Time;
+    durationMinutes: Nat;
     ticketSupply: Nat; // <-- FIELD BARU
   };
 
@@ -26,16 +38,16 @@ module {
   };
 
   public type Ticket = {
-    ticketID : Text;
+    id: Text;
     eventID: Text;
     owner: Principal;
     price: Nat;
     kind: TicketKind;
-    isValid: Bool;
+    valid: Bool;
   };
 
   public type Transaction = {
-    transactionID: Text;
+    id: Text;
     ticketID: Text;
     buyer: Principal;
     seller: Principal;

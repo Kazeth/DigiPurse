@@ -1,5 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../AuthContext';
+import { createActor , canisterId } from "../declarations/Registry_backend";
+import { HttpAgent } from '@dfinity/agent';
 import { useNavigate } from 'react-router-dom';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,46 +13,47 @@ import { UserPlus, Camera } from 'lucide-react';
 
 export default function PostLoginPage() {
   const navigate = useNavigate();
+  const [actor, setActor] = useState();
+  const { authClient, isAuthenticated, principal } = useAuth();
+
   const [username, setUsername] = useState('');
   const [dob, setDob] = useState('');
   const [address, setAddress] = useState('');
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState(null);
+
+  useEffect(() => {
+    updateActor();
+  }, [principal]);
 
   async function updateActor() {
-    const authClient = await AuthClient.create();
-
-    const isAuthenticated = await authClient.isAuthenticated();
-
-    if (!isAuthenticated) {
-      await authClient.login({
-        identityProvider,
-        onSuccess: async () => {
-          const identity = authClient.getIdentity();
-          const actor = createActor(canisterId, {
-            agentOptions: { identity }
-          });
-          setActor(actor);
-          setIsAuthenticated(true);
-        },
-        onError: (err) => {
-          console.error("Login failed:", err);
-          setErrorMessage("Login failed");
-        }
-      });
-      return;
-    }
-
+    if (!isAuthenticated) return;
     const identity = authClient.getIdentity();
-    const actor = createActor(canisterId, {
-      agentOptions: { identity }
-    });
-
+    // const agent = new HttpAgent({ identity });
+    const actor = createActor(canisterId, { agentOptions: { identity } });
     setActor(actor);
-    setAuthClient(authClient);
-    setIsAuthenticated(true);
+    console.log("Actor initialized:", actor);
   }
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  async function uploadProfile() {
+    if (!actor || !authClient) {
+      console.error("Actor is not initialized");
+      return;
+    }
+    try {
+      const dateObj = new Date(dob);
+      const timeNat = BigInt(dateObj.getTime()) * 1_000_000n; // Convert date to nanoseconds
+      await actor.registerCustomer(principal, {
+        id: principal,
+        name: username,
+        joinDate: timeNat,
+        address: address
+      });
+      console.log("Profile data saved:", { username, dob, address });
+    } catch (error) {
+      console.error("Error saving profile:", error);
+    }
+  }
+  const handleImageChange = (event) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       setImagePreview(URL.createObjectURL(file));
@@ -57,7 +62,7 @@ export default function PostLoginPage() {
     }
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     // Here you would typically save all the user data to your backend.
     console.log({
       username,
@@ -65,6 +70,7 @@ export default function PostLoginPage() {
       address,
       // profileImageFile would be uploaded here
     });
+    uploadProfile();
     navigate('/home');
   };
 

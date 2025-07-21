@@ -1,18 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShieldCheck, Ticket, CreditCard } from 'lucide-react';
 import logo from '@/assets/logo.png';
-
-// DFINITY imports for Internet Identity
-import { AuthClient } from '@dfinity/auth-client';
-
-const network = process.env.DFX_NETWORK;
-const identityProvider =
-  network === 'ic'
-    ? 'https://identity.ic0.app' // Mainnet
-    : `http://${process.env.CANISTER_ID_INTERNET_IDENTITY}.localhost:4943`; // Local
 
 // Feature data
 const features = [
@@ -38,28 +30,16 @@ const features = [
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [authClient, setAuthClient] = useState<AuthClient | null>(null);
-
-  useEffect(() => {
-    // Initialize AuthClient on component mount
-    AuthClient.create().then(async (client) => {
-      setAuthClient(client);
-      const authenticated = await client.isAuthenticated();
-      setIsAuthenticated(authenticated);
-    });
-  }, []);
+  const { authClient, isAuthenticated, login } = useAuth();
 
   const handleLogin = async () => {
     if (!authClient) return;
-    await authClient.login({
-      identityProvider,
-      onSuccess: () => {
-        setIsAuthenticated(true);
-        // Redirect to the post-login page after successful login
-        navigate('/postlogin');
-      },
-    });
+    await login();
+    if (isAuthenticated) {
+      navigate('/home');
+    } else {
+      console.error("Authentication failed");
+    }
   };
 
   const goToHome = async () => {

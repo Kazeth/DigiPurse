@@ -4,12 +4,12 @@ module {
 
   public func createTicket(eventId: Text, ticketId: Text, owner: Principal, price: Nat, kind: Types.TicketKind): Types.Ticket {
     {
+      id = ticketId;
       eventID = eventId;
-      ticketID = ticketId;
       owner = owner;
       price = price;
       kind = kind;
-      isValid = true;
+      valid = true;
     }
   };
 
@@ -23,12 +23,12 @@ module {
 
   public func emptyTicket(): Types.Ticket {
     {
+      id = "";
       eventID = "";
-      ticketID = "";
       owner = Principal.fromText("aaaaa-aa");
       price = 0;
       kind = #Seatless;
-      isValid = false;
+      valid = false;
     }
   };
 }
