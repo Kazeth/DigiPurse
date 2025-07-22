@@ -13,36 +13,43 @@ export const AuthProvider = ({ children }) => {
   const [authClient, setAuthClient] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [principal, setPrincipal] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     AuthClient.create().then(async (client) => {
       setAuthClient(client);
-      const authenticated = client.isAuthenticated();
-      setIsAuthenticated(authenticated);
-      if (authenticated) {
+      if (isLoggedIn) {
         const identity = client.getIdentity();
         setPrincipal(identity.getPrincipal());
+        setIsAuthenticated(client.isAuthenticated());
       }
     });
   }, []);
 
   const login = async () => {
     if (!authClient) return;
-    await authClient.login({
-      identityProvider,
-      onSuccess: async () => {
-        setIsAuthenticated(true);
-        const identity = authClient.getIdentity();
-        setPrincipal(identity.getPrincipal().toText());
-      },
+    return new Promise((resolve) => {
+      authClient.login({
+        identityProvider,
+        onSuccess: async () => {
+          console.log("Login successful");
+          const identity = authClient.getIdentity();
+          setPrincipal(identity.getPrincipal());
+          setIsAuthenticated(authClient.isAuthenticated());
+          setIsLoggedIn(true);
+        },
+        onerror: () => resolve(false),
+      });
     });
   };
 
   const logout = async () => {
     if (!authClient) return;
     await authClient.logout();
+    setAuthClient(null);
     setIsAuthenticated(false);
     setPrincipal(null);
+    setIsLoggedIn(false);
   };
 
   return (

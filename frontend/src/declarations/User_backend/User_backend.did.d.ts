@@ -29,16 +29,10 @@ export interface Transaction {
   'buyer' : Principal,
   'price' : bigint,
 }
-export interface User {
-  'addTransaction' : ActorMethod<[Transaction], undefined>,
+export interface _SERVICE {
   'getMyProfile' : ActorMethod<[], [] | [Customer]>,
   'getMyTickets' : ActorMethod<[], Array<[string, Ticket]>>,
-  'getTransactionHistory' : ActorMethod<[], Array<Transaction>>,
-  'receiveTicket' : ActorMethod<[string, Ticket], undefined>,
-  'removeTicketForTransfer' : ActorMethod<[string], Ticket>,
-  'updateTicketPrice' : ActorMethod<[string, bigint], undefined>,
-  'uploadProfile' : ActorMethod<[Customer], undefined>,
+  'getMyTransactionHistory' : ActorMethod<[], Array<Transaction>>,
 }
-export interface _SERVICE extends User {}
 export declare const idlFactory: IDL.InterfaceFactory;
 export declare const init: (args: { IDL: typeof IDL }) => IDL.Type[];

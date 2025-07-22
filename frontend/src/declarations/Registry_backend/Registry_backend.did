@@ -1,4 +1,25 @@
 type Time = int;
+type TicketKind = 
+ variant {
+   Seated: record {seatInfo: text;};
+   Seatless;
+ };
+type Ticket = 
+ record {
+   eventID: text;
+   id: text;
+   kind: TicketKind;
+   owner: principal;
+   price: nat;
+   valid: bool;
+ };
+type Organizer = 
+ record {
+   address: text;
+   id: principal;
+   joinDate: Time;
+   name: text;
+ };
 type Event = 
  record {
    date: Time;
@@ -25,5 +46,7 @@ service : {
                               }) query;
   getAllEvents: () -> (vec Event) query;
   getCustomerProfile: (p: principal) -> (opt Customer) query;
+  getCustomerTickets: (p: principal) -> (vec Ticket) query;
   registerCustomer: ("principal": principal, profile: Customer) -> ();
+  registerOrganizer: ("principal": principal, profile: Organizer) -> ();
 }

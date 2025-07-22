@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 // DFINITY imports for Internet Identity
 import { AuthClient } from '@dfinity/auth-client';
+import { useAuth } from '@/AuthContext';
 
 const network = process.env.DFX_NETWORK;
 const identityProvider =
@@ -25,22 +26,7 @@ export default function MainHeader() {
   const [scrolled, setScrolled] = useState(false);
 
   // Authentication State
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [authClient, setAuthClient] = useState<AuthClient | null>(null);
-  const [principalId, setPrincipalId] = useState<string | null>(null);
-
-  // Initialize AuthClient
-  useEffect(() => {
-    AuthClient.create().then(async (client) => {
-      setAuthClient(client);
-      const authenticated = await client.isAuthenticated();
-      setIsAuthenticated(authenticated);
-      if (authenticated) {
-        const identity = client.getIdentity();
-        setPrincipalId(identity.getPrincipal().toText());
-      }
-    });
-  }, []);
+  const { isAuthenticated, authClient, principal, login, logout } = useAuth();
 
   // Handle scroll effect
   useEffect(() => {
@@ -50,24 +36,16 @@ export default function MainHeader() {
   }, []);
 
   const handleLogin = async () => {
-    if (!authClient) return;
-    await authClient.login({
-      identityProvider,
-      onSuccess: () => {
-        setIsAuthenticated(true);
-        const identity = authClient.getIdentity();
-        setPrincipalId(identity.getPrincipal().toText());
-        navigate('/postlogin');
-      },
-    });
+    await login();
+    if (isAuthenticated) {
+      navigate('/postlogin');
+    } else {
+      console.error("Authentication failed");
+    }
   };
 
   const handleLogout = async () => {
-    if (!authClient) return;
-    await authClient.logout();
-    setIsAuthenticated(false);
-    setPrincipalId(null);
-    setAuthClient(null);
+    await logout();
     navigate('/');
   };
 
@@ -83,8 +61,8 @@ export default function MainHeader() {
         <div className="flex items-center gap-4">
           <Link to="/postlogin">
             <Avatar>
-              <AvatarImage src={`https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?principal=${principalId}`} alt="User Avatar" />
-              <AvatarFallback>{principalId?.substring(0, 2).toUpperCase()}</AvatarFallback>
+              <AvatarImage src={`https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?principal=${principal}`} alt="User Avatar" />
+              <AvatarFallback>{principal?.toText().substring(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
           </Link>
           <Button variant="destructive" size="sm" onClick={handleLogout}>

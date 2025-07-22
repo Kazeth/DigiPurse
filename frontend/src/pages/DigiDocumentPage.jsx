@@ -1,6 +1,7 @@
-import { AuthClient } from '@dfinity/auth-client';
-import { createActor } from 'declarations/Document_backend';
-import { canisterId } from 'declarations/backend/index.js';
+// import { AuthClient } from '@dfinity/auth-client';
+import { createActor, canisterId } from 'declarations/File_Manager';
+// import { canisterId } from 'declarations/backend/index.js';
+import { useAuth } from '../AuthContext';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import PreviewModal from '@/components/modal/PreviewModal';
@@ -15,8 +16,9 @@ const identityProvider =
         : 'http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:4943'; // Local
 
 export default function DigiDocumentPage() {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [authClient, setAuthClient] = useState();
+    // const [isAuthenticated, setIsAuthenticated] = useState(false);
+    // const [authClient, setAuthClient] = useState();
+    const { isAuthenticated, authClient, principal } = useAuth();
     const [actor, setActor] = useState();
     const [files, setFiles] = useState([]);
     const [errorMessage, setErrorMessage] = useState();
@@ -37,10 +39,10 @@ export default function DigiDocumentPage() {
     }, []);
 
     useEffect(() => {
-        if (isAuthenticated) {
+        if (isAuthenticated && actor) {
             loadFiles();
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, actor]);
 
     // Cleanup
     useEffect(() => {
@@ -52,38 +54,12 @@ export default function DigiDocumentPage() {
     }, [previewUrl]);
 
     async function updateActor() {
-        const authClient = await AuthClient.create();
-
-        const isAuthenticated = await authClient.isAuthenticated();
-
-        if (!isAuthenticated) {
-            await authClient.login({
-                identityProvider,
-                onSuccess: async () => {
-                    const identity = authClient.getIdentity();
-                    const actor = createActor(canisterId, {
-                        agentOptions: { identity }
-                    });
-                    setActor(actor);
-                    setIsAuthenticated(true);
-                },
-                onError: (err) => {
-                    console.error("Login failed:", err);
-                    setErrorMessage("Login failed");
-                }
-            });
-            return;
-        }
-
+        if (!isAuthenticated) return;
         const identity = authClient.getIdentity();
-        const actor = createActor(canisterId, {
-            agentOptions: { identity }
-        });
-
+        const actor = createActor(canisterId, { agentOptions: { identity } });
         setActor(actor);
-        setAuthClient(authClient);
-        setIsAuthenticated(true);
-    }
+        console.log("Actor initialized:", actor);
+      }
 
 
     async function loadFiles() {

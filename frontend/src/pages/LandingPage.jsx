@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShieldCheck, Ticket, CreditCard } from 'lucide-react';
 import logo from '@/assets/logo.png';
+import { createActor, canisterId } from '@/declarations/Registry_backend';
 
 // Feature data
 const features = [
@@ -34,13 +35,26 @@ export default function LandingPage() {
 
   const handleLogin = async () => {
     if (!authClient) return;
-    await login();
-    if (isAuthenticated) {
-      navigate('/home');
+    const success = await login();
+    if (success && checkUserAvailability()) {
+      console.log("User is authenticated and available");
+      navigate('/postlogin');
     } else {
       console.error("Authentication failed");
     }
+    console.log("idk man ini nyasar");
   };
+
+  const checkUserAvailability = async () => {
+    if (!authClient) return;
+    const identity = authClient.getIdentity();
+    const actor = createActor(canisterId, { agentOptions: { identity } });
+    const userExists = await actor.checkUserExists(identity.getPrincipal());
+    if (!userExists) {
+      return true;
+    }
+    return false;
+  }
 
   const goToHome = async () => {
     navigate('/home');

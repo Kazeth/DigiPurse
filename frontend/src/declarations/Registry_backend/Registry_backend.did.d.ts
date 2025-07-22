@@ -17,6 +17,22 @@ export interface Event {
   'ticketSupply' : bigint,
   'durationMinutes' : bigint,
 }
+export interface Organizer {
+  'id' : Principal,
+  'joinDate' : Time,
+  'name' : string,
+  'address' : string,
+}
+export interface Ticket {
+  'id' : string,
+  'eventID' : string,
+  'valid' : boolean,
+  'owner' : Principal,
+  'kind' : TicketKind,
+  'price' : bigint,
+}
+export type TicketKind = { 'Seated' : { 'seatInfo' : string } } |
+  { 'Seatless' : null };
 export type Time = bigint;
 export interface _SERVICE {
   'createEvent' : ActorMethod<
@@ -26,7 +42,9 @@ export interface _SERVICE {
   'getAllCustomers' : ActorMethod<[], Array<[Principal, Customer]>>,
   'getAllEvents' : ActorMethod<[], Array<Event>>,
   'getCustomerProfile' : ActorMethod<[Principal], [] | [Customer]>,
+  'getCustomerTickets' : ActorMethod<[Principal], Array<Ticket>>,
   'registerCustomer' : ActorMethod<[Principal, Customer], undefined>,
+  'registerOrganizer' : ActorMethod<[Principal, Organizer], undefined>,
 }
 export declare const idlFactory: IDL.InterfaceFactory;
 export declare const init: (args: { IDL: typeof IDL }) => IDL.Type[];

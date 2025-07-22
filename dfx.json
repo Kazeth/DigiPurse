@@ -15,6 +15,13 @@
         "output": "frontend/src/declarations/Document_backend"
       }
     },
+    "File_manager": {
+      "main": "backend/FileManager.mo",
+      "type": "motoko",
+      "declarations": {
+        "output": "frontend/src/declarations/File_manager"
+      }
+    },
     "Registry_backend": {
       "main": "backend/Registry.mo",
       "type": "motoko",

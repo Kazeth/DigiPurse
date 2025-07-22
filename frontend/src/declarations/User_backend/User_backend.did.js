@@ -1,15 +1,5 @@
 export const idlFactory = ({ IDL }) => {
   const Time = IDL.Int;
-  const Transaction = IDL.Record({
-    'id' : IDL.Text,
-    'method' : IDL.Text,
-    'paymentSource' : IDL.Text,
-    'seller' : IDL.Principal,
-    'ticketID' : IDL.Text,
-    'timestamp' : Time,
-    'buyer' : IDL.Principal,
-    'price' : IDL.Nat,
-  });
   const Customer = IDL.Record({
     'id' : IDL.Principal,
     'joinDate' : Time,
@@ -28,20 +18,24 @@ export const idlFactory = ({ IDL }) => {
     'kind' : TicketKind,
     'price' : IDL.Nat,
   });
-  const User = IDL.Service({
-    'addTransaction' : IDL.Func([Transaction], [], []),
+  const Transaction = IDL.Record({
+    'id' : IDL.Text,
+    'method' : IDL.Text,
+    'paymentSource' : IDL.Text,
+    'seller' : IDL.Principal,
+    'ticketID' : IDL.Text,
+    'timestamp' : Time,
+    'buyer' : IDL.Principal,
+    'price' : IDL.Nat,
+  });
+  return IDL.Service({
     'getMyProfile' : IDL.Func([], [IDL.Opt(Customer)], []),
     'getMyTickets' : IDL.Func(
         [],
         [IDL.Vec(IDL.Tuple(IDL.Text, Ticket))],
         ['query'],
       ),
-    'getTransactionHistory' : IDL.Func([], [IDL.Vec(Transaction)], []),
-    'receiveTicket' : IDL.Func([IDL.Text, Ticket], [], []),
-    'removeTicketForTransfer' : IDL.Func([IDL.Text], [Ticket], []),
-    'updateTicketPrice' : IDL.Func([IDL.Text, IDL.Nat], [], []),
-    'uploadProfile' : IDL.Func([Customer], [], []),
+    'getMyTransactionHistory' : IDL.Func([], [IDL.Vec(Transaction)], []),
   });
-  return User;
 };
-export const init = ({ IDL }) => { return [IDL.Principal]; };
+export const init = ({ IDL }) => { return []; };

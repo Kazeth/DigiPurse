@@ -63,7 +63,7 @@ export default function HomePage() {
                                 <AvatarImage src={`https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?principal=${principal}`} alt="User Avatar" />
                                 <AvatarFallback className="text-xl bg-purple-800/50">
                                     {/* FIX: Only show fallback if principal exists */}
-                                    {principal ? principal.toText().substring(0, 2).toUpperCase() : '??'}
+                                    {principal ? principal.toText().substring(0, 2) : '??'}
                                 </AvatarFallback>
                             </Avatar>
                         </Link>

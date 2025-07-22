@@ -1,17 +1,3 @@
-type User = 
- service {
-   addTransaction: (tx: Transaction) -> ();
-   getMyProfile: () -> (opt Customer);
-   getMyTickets: () -> (vec record {
-                              text;
-                              Ticket;
-                            }) query;
-   getTransactionHistory: () -> (vec Transaction);
-   receiveTicket: (id: text, ticket: Ticket) -> ();
-   removeTicketForTransfer: (id: text) -> (Ticket);
-   updateTicketPrice: (id: text, newPrice: nat) -> ();
-   uploadProfile: (profile: Customer) -> ();
- };
 type Transaction = 
  record {
    buyer: principal;
@@ -45,4 +31,11 @@ type Customer =
    joinDate: Time;
    name: text;
  };
-service : (ownerPrincipal: principal) -> User
+service : {
+  getMyProfile: () -> (opt Customer);
+  getMyTickets: () -> (vec record {
+                             text;
+                             Ticket;
+                           }) query;
+  getMyTransactionHistory: () -> (vec Transaction);
+}

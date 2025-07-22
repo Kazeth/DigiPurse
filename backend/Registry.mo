@@ -14,13 +14,16 @@ import Ticket "/Event/Ticket";
 
 actor Registry {
 
-  var customers : [(Principal, Types.Customer)] = [];
-  var organizers : [(Principal, Types.Organizer)] = [];
-  var admins : [(Principal, Types.Admin)] = [];
   var events : [Types.Event] = [];
   var tickets = Buffer.Buffer<(Text, Types.Ticket)>(0);
   var transactions : [Types.Transaction] = [];
+  
+  var customers : [(Principal, Types.Customer)] = [];
+  var organizers : [(Principal, Types.Organizer)] = [];
+  var admins : [(Principal, Types.Admin)] = [];
 
+
+  // Customer Regions
   public func registerCustomer(principal : Principal, profile : Types.Customer) : async () {
     customers := Array.append(customers, [(principal, profile)]);
   };
@@ -30,6 +33,21 @@ actor Registry {
       if (id == p) return ?prof;
     };
     return null;
+  };
+
+  public query func getCustomerTickets(p : Principal) : async [Types.Ticket] {
+    var res : [Types.Ticket] = [];
+    for ((id, ticket) in tickets.vals()) {
+      if (ticket.owner == p) {
+        res := Array.append(res, [ticket]);
+      };
+    };
+    return res;
+  };
+
+  // Event Organizers
+  public func registerOrganizer(principal : Principal, profile : Types.Organizer) : async () {
+    organizers := Array.append(organizers, [(principal, profile)]);
   };
 
   public func createEvent(

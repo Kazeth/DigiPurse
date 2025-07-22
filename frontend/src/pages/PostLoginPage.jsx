@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../AuthContext';
 import { createActor , canisterId } from "../declarations/Registry_backend";
-import { HttpAgent } from '@dfinity/agent';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
@@ -24,12 +23,11 @@ export default function PostLoginPage() {
 
   useEffect(() => {
     updateActor();
-  }, [principal]);
+  }, []);
 
   async function updateActor() {
     if (!isAuthenticated) return;
     const identity = authClient.getIdentity();
-    // const agent = new HttpAgent({ identity });
     const actor = createActor(canisterId, { agentOptions: { identity } });
     setActor(actor);
     console.log("Actor initialized:", actor);
