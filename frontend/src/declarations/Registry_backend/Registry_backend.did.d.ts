@@ -35,6 +35,7 @@ export type TicketKind = { 'Seated' : { 'seatInfo' : string } } |
   { 'Seatless' : null };
 export type Time = bigint;
 export interface _SERVICE {
+  'checkUserExist' : ActorMethod<[Principal], boolean>,
   'createEvent' : ActorMethod<
     [Principal, string, string, Time, bigint, bigint],
     undefined

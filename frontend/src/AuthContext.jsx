@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }) => {
           setPrincipal(identity.getPrincipal());
           setIsAuthenticated(authClient.isAuthenticated());
           setIsLoggedIn(true);
+          resolve(true);
         },
         onerror: () => resolve(false),
       });
@@ -46,7 +47,6 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     if (!authClient) return;
     await authClient.logout();
-    setAuthClient(null);
     setIsAuthenticated(false);
     setPrincipal(null);
     setIsLoggedIn(false);

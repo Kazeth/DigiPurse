@@ -45,6 +45,13 @@ actor Registry {
     return res;
   };
 
+  public func checkUserExist(p : Principal) : async Bool {
+    for ((id, _) in customers.vals()) {
+      if (id == p) return true;
+    };
+    return false;
+  };
+
   // Event Organizers
   public func registerOrganizer(principal : Principal, profile : Types.Organizer) : async () {
     organizers := Array.append(organizers, [(principal, profile)]);

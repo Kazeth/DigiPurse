@@ -34,6 +34,7 @@ export const idlFactory = ({ IDL }) => {
     'address' : IDL.Text,
   });
   return IDL.Service({
+    'checkUserExist' : IDL.Func([IDL.Principal], [IDL.Bool], []),
     'createEvent' : IDL.Func(
         [IDL.Principal, IDL.Text, IDL.Text, Time, IDL.Nat, IDL.Nat],
         [],

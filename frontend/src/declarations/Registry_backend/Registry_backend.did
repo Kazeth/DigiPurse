@@ -38,6 +38,7 @@ type Customer =
    name: text;
  };
 service : {
+  checkUserExist: (p: principal) -> (bool);
   createEvent: (organizer: principal, name: text, desc: text, date: Time,
    duration: nat, supply: nat) -> ();
   getAllCustomers: () -> (vec record {

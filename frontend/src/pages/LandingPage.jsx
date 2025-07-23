@@ -36,23 +36,30 @@ export default function LandingPage() {
   const handleLogin = async () => {
     if (!authClient) return;
     const success = await login();
-    if (success && checkUserAvailability()) {
+    if (success) {
       console.log("User is authenticated and available");
-      navigate('/postlogin');
+      if (await checkUserAvailability()) {
+        console.log("User is registered, navigating to home page");
+        navigate('/home');
+      }
+      else 
+        navigate('/postlogin');
     } else {
       console.error("Authentication failed");
     }
-    console.log("idk man ini nyasar");
   };
 
   const checkUserAvailability = async () => {
     if (!authClient) return;
     const identity = authClient.getIdentity();
     const actor = createActor(canisterId, { agentOptions: { identity } });
-    const userExists = await actor.checkUserExists(identity.getPrincipal());
-    if (!userExists) {
+    const userProfile = await actor.checkUserExist(identity.getPrincipal());
+    console.log("Checking user principal:", identity.getPrincipal().toText());
+    if (userProfile) {
+      console.log("User profile found:", userProfile);
       return true;
     }
+    console.log("User profile not found");
     return false;
   }
 
