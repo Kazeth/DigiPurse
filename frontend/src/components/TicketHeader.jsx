@@ -2,18 +2,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, LogOut, Search } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
 import logo from '../assets/logo.png';
 
 // Import UI components
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/seperator';
-import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
 // DFINITY imports
 import { AuthClient } from '@dfinity/auth-client';
+import { useAuth } from '@/AuthContext';
 
 const network = process.env.DFX_NETWORK;
 const identityProvider =
@@ -26,27 +26,11 @@ export default function TicketAppHeader() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
   
-  // Authentication State
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [authClient, setAuthClient] = useState<AuthClient | null>(null);
-  const [principalId, setPrincipalId] = useState<string | null>(null);
+  // Authentication State from context
+  const { isAuthenticated, principal, logout } = useAuth();
 
-  // Initialize AuthClient and check authentication status
-  useEffect(() => {
-    AuthClient.create().then(async (client) => {
-      setAuthClient(client);
-      const authenticated = await client.isAuthenticated();
-      setIsAuthenticated(authenticated);
-      if (authenticated) {
-        const identity = client.getIdentity();
-        setPrincipalId(identity.getPrincipal().toText());
-      }
-    });
-  }, []);
-  
-  // Handle scroll effect to match MainHeader
+  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -54,17 +38,8 @@ export default function TicketAppHeader() {
   }, []);
 
   const handleLogout = async () => {
-    if (!authClient) return;
-    await authClient.logout();
-    setIsAuthenticated(false);
-    setPrincipalId(null);
-    navigate('/'); // Redirect to landing page after logout
-  };
-
-  const handleSearch = () => {
-    if (searchValue.trim()) {
-      navigate(`/events?query=${encodeURIComponent(searchValue.trim())}`);
-    }
+    await logout();
+    navigate('/');
   };
 
   // Navigation items for the ticket app
@@ -72,17 +47,17 @@ export default function TicketAppHeader() {
     { name: 'Dashboard', path: '/home' },
     { name: 'My Tickets', path: '/digiticket' },
     { name: 'Events', path: '/events' },
-    { name: 'Marketplace', path: '/marketplace' }
+    { name: 'Marketplace', path: '/marketplace' },
   ];
 
   const AuthButtons = () => (
     <>
       {isAuthenticated && (
         <div className="flex items-center gap-4">
-          <Link to="/postlogin" title="Profile">
+          <Link to="/profile" title="Profile">
             <Avatar>
-              <AvatarImage src={`https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?principal=${principalId}`} alt="User Avatar" />
-              <AvatarFallback>{principalId ? principalId.substring(0, 2).toUpperCase() : '...'}</AvatarFallback>
+              <AvatarImage src={`https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?principal=${principal}`} alt="User Avatar" />
+              <AvatarFallback>{principal ? principal.toText().substring(0, 2).toUpperCase() : '...'}</AvatarFallback>
             </Avatar>
           </Link>
           <Button variant="destructive" size="sm" onClick={handleLogout}>
@@ -108,7 +83,7 @@ export default function TicketAppHeader() {
             <Link to="/home" className="flex items-center space-x-3 group">
               <img src={logo} alt="DigiPurse Logo" className="h-10 w-10 md:h-12 md:w-12 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
               <span className="text-2xl md:text-3xl font-bold tracking-tight group-hover:text-purple-300 transition-colors duration-300">
-                DigiTicket
+                DigiPurse
               </span>
             </Link>
           </div>
@@ -156,24 +131,6 @@ export default function TicketAppHeader() {
                 <X className="h-7 w-7" />
               </Button>
             </div>
-            
-            {/* Search Bar for Mobile */}
-            <div className="relative mt-6">
-              <Input 
-                placeholder="Search events..."
-                className="bg-white/5 border-purple-400/30 text-white placeholder:text-purple-300/60 pl-10"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSearch();
-                    setMobileMenuOpen(false);
-                  }
-                }}
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-purple-300/60" />
-            </div>
-
             <Separator className="my-4 bg-purple-200/20" />
             <ul className="mt-4 space-y-2">
               {navigationItems.map((item) => (

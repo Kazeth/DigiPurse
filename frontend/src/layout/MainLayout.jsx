@@ -2,9 +2,9 @@ import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 // Import both header components
-import MainHeader from '@/components/MainHeader';
-import TicketAppHeader from '@/components/TicketHeader'; 
-import SupportCTA from '@/components/SupportCTA';
+import MainHeader from '@/components/MainHeader.jsx';
+import TicketAppHeader from '@/components/TicketHeader.jsx'; 
+import SupportCTA from '@/components/SupportCTA.jsx';
 import MainFooter from '@/components/MainFooter';
 import TransferProgress from '@/components/TransferProgress';
 
@@ -15,7 +15,9 @@ export default function MainLayout() {
   const ticketAppPaths = [
     '/digiticket',
     '/marketplace',
-    '/events'
+    '/events',
+    '/create-event',
+    '/sell-ticket',
     // Add any other ticket-related paths here
   ];
 

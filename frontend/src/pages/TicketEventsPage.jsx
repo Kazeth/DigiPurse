@@ -1,14 +1,14 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom'; // FIX: Added import for Link
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Calendar, Tag, Search, FilterX, ArrowLeft, ArrowRight, Armchair, Users, Ticket } from 'lucide-react';
+import { Calendar, Tag, Search, FilterX, ArrowLeft, ArrowRight, Armchair, Users, Ticket, PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // --- MOCK DATA ---
-const generateMockEvents = (count: number) => {
+const generateMockEvents = (count) => {
   const events = [];
   const eventNames = ["ICP Innovate Summit", "Decentralized Future Conf.", "Web3 Builders Workshop", "NFT Showcase 2025", "Global Blockchain Forum"];
   for (let i = 1; i <= count; i++) {
@@ -34,16 +34,16 @@ const allEvents = generateMockEvents(28);
 
 const EVENTS_PER_PAGE = 5;
 
-type SeatFilter = 'all' | 'seated' | 'seatless';
-
 export default function EventsPage() {
+  const navigate = useNavigate(); // FIX: Initialize the navigate hook
   const [filteredEvents, setFilteredEvents] = useState(allEvents);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isOrganizer, setIsOrganizer] = useState(true); // Mock state for organizer role
 
   // Filter states
   const [searchTerm, setSearchTerm] = useState('');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 250 });
-  const [seatType, setSeatType] = useState<SeatFilter>('all');
+  const [seatType, setSeatType] = useState('all');
 
   useMemo(() => {
     let events = allEvents;
@@ -74,11 +74,20 @@ export default function EventsPage() {
   return (
     <div className="min-h-[calc(100vh-10rem)] bg-[#11071F] text-white p-4 sm:p-6 lg:p-8">
       <div className="container mx-auto">
-        <header className="text-center mb-8">
-          <h1 className="text-4xl sm:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
-            Discover Events
-          </h1>
-          <p className="text-lg text-purple-300/80 mt-2">Find and secure your spot at the next big Web3 gathering.</p>
+        <header className="flex flex-col sm:flex-row justify-between items-center mb-8">
+          <div className="text-center sm:text-left">
+            <h1 className="text-4xl sm:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
+              Discover Events
+            </h1>
+            <p className="text-lg text-purple-300/80 mt-2">Find and secure your spot at the next big Web3 gathering.</p>
+          </div>
+          {isOrganizer && (
+            <div className="mt-4 sm:mt-0 flex-shrink-0">
+              <Button onClick={() => navigate('/create-event')}>
+                <PlusCircle className="mr-2 h-5 w-5" /> Create New Event
+              </Button>
+            </div>
+          )}
         </header>
 
         {/* Filters Bar */}

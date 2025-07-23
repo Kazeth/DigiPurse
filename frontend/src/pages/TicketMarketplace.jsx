@@ -1,20 +1,20 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Calendar, Tag, Search, FilterX, ArrowLeft, ArrowRight, Armchair, User } from 'lucide-react';
+import { Calendar, Tag, Search, FilterX, ArrowLeft, ArrowRight, Armchair, User, PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // --- MOCK DATA ---
 const mockEvents = [
-  { eventID: "ICP2025", eventName: "ICP Hackathon 2025", eventDate: new Date('2025-08-01T09:00:00') },
+  { eventID: "EVT-001", eventName: "ICP Hackathon 2025", eventDate: new Date('2025-08-01T09:00:00') },
   { eventID: "WEB3SUMMIT", eventName: "Web3 Summit", eventDate: new Date('2025-09-15T10:00:00') },
   { eventID: "DEVFEST", eventName: "DevFest Global", eventDate: new Date('2025-10-20T11:00:00') },
 ];
 
-const generateMockTickets = (count: number) => {
+const generateMockTickets = (count) => {
   const tickets = [];
   for (let i = 1; i <= count; i++) {
     const event = mockEvents[i % mockEvents.length];
@@ -36,9 +36,10 @@ const allMarketplaceTickets = generateMockTickets(35);
 
 const TICKETS_PER_PAGE = 9; // Adjusted for a 3-column layout
 
-type SeatFilter = 'all' | 'seated' | 'seatless';
+// type SeatFilter = 'all' | 'seated' | 'seatless'; // Removed for JSX
 
 export default function MarketplacePage() {
+  const navigate = useNavigate();
   const [filteredTickets, setFilteredTickets] = useState(allMarketplaceTickets);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -46,7 +47,7 @@ export default function MarketplacePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [maxPrice, setMaxPrice] = useState(250);
   const [filterDate, setFilterDate] = useState('');
-  const [seatType, setSeatType] = useState<SeatFilter>('all');
+  const [seatType, setSeatType] = useState('all'); // Type annotation removed
 
   useMemo(() => {
     let tickets = allMarketplaceTickets;
@@ -84,11 +85,18 @@ export default function MarketplacePage() {
   return (
     <div className="min-h-[calc(100vh-10rem)] bg-[#11071F] text-white p-4 sm:p-6 lg:p-8">
       <div className="container mx-auto">
-        <header className="text-center mb-8">
-          <h1 className="text-4xl sm:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
-            Ticket Marketplace
-          </h1>
-          <p className="text-lg text-purple-300/80 mt-2">Discover and purchase verifiable, on-chain tickets.</p>
+        <header className="flex flex-col sm:flex-row justify-between items-center mb-8">
+          <div className="text-center sm:text-left">
+            <h1 className="text-4xl sm:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
+              Ticket Marketplace
+            </h1>
+            <p className="text-lg text-purple-300/80 mt-2">Discover and purchase verifiable, on-chain tickets.</p>
+          </div>
+          <div className="mt-4 sm:mt-0 flex-shrink-0">
+            <Button onClick={() => navigate('/sell-ticket')}>
+                <PlusCircle className="mr-2 h-5 w-5" /> Sell a Ticket
+            </Button>
+          </div>
         </header>
 
         {/* Filters Bar */}
@@ -124,7 +132,7 @@ export default function MarketplacePage() {
             {currentTickets.map(ticket => {
               const event = mockEvents.find(e => e.eventID === ticket.eventID);
               return (
-                <Link key={ticket.ticketID} to={`/events/${ticket.eventID}?from=marketplace`}>
+                <Link key={ticket.ticketID} to={`/events/${ticket.eventID}?from=marketplace&ticketID=${ticket.ticketID}`}>
                   <Card className="bg-white/5 border border-purple-400/20 flex flex-col group hover:border-purple-400/60 hover:shadow-lg hover:shadow-purple-900/20 transition-all duration-300 transform hover:-translate-y-1 h-full">
                     <CardHeader>
                       <CardTitle className="text-white group-hover:text-purple-300 transition-colors">{event?.eventName}</CardTitle>

@@ -26,7 +26,7 @@ export default function MainHeader() {
   const [scrolled, setScrolled] = useState(false);
 
   // Authentication State
-  const { isAuthenticated, authClient, principal, login, logout } = useAuth();
+  const { isAuthenticated, principal, login, logout } = useAuth();
 
   // Handle scroll effect
   useEffect(() => {
@@ -35,31 +35,30 @@ export default function MainHeader() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleLogin = async () => {
+  const handleLoginAndRedirect = async () => {
     await login();
-    if (isAuthenticated) {
-      navigate('/postlogin');
-    } else {
-      console.error("Authentication failed");
-    }
+    // The redirect logic should be handled by your AuthContext or routing setup
+    // after a successful login.
   };
-
+  
   const handleLogout = async () => {
     await logout();
     navigate('/');
   };
 
   const navigationItems = [
-    { name: 'Features', path: '#features' },
+    { name: 'Dashboard', path: '/home' },
     { name: 'About Us', path: '/about' },
     { name: 'Support', path: '/support' },
   ];
+  
+  const navLinkClasses = "font-medium text-purple-200 hover:text-white transition-colors duration-300 pb-1 border-b-2 border-transparent hover:border-purple-400";
 
   const AuthButtons = () => (
     <>
       {isAuthenticated ? (
         <div className="flex items-center gap-4">
-          <Link to="/postlogin">
+          <Link to="/profile">
             <Avatar>
               <AvatarImage src={`https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?principal=${principal}`} alt="User Avatar" />
               <AvatarFallback>{principal?.toText().substring(0, 2).toUpperCase()}</AvatarFallback>
@@ -70,7 +69,7 @@ export default function MainHeader() {
           </Button>
         </div>
       ) : (
-        <Button onClick={handleLogin} aria-label="Start Now with DigiPurse">
+        <Button onClick={handleLoginAndRedirect} aria-label="Start Now with DigiPurse">
           Start Now
         </Button>
       )}
@@ -96,7 +95,20 @@ export default function MainHeader() {
           <div className="hidden lg:flex items-center space-x-8">
             <ul className="flex items-center space-x-6">
               {navigationItems.map((item) => (
-                <li key={item.name}><a href={item.path} className="font-medium text-purple-200 hover:text-white transition-colors duration-300 pb-1 border-b-2 border-transparent hover:border-purple-400">{item.name}</a></li>
+                <li key={item.name}>
+                  <Link 
+                    to={item.path} 
+                    className={navLinkClasses}
+                    onClick={(e) => {
+                      if (item.name === 'Dashboard' && !isAuthenticated) {
+                        e.preventDefault(); // Prevent navigation
+                        handleLoginAndRedirect(); // Trigger login flow
+                      }
+                    }}
+                  >
+                    {item.name}
+                  </Link>
+                </li>
               ))}
             </ul>
             <AuthButtons />
@@ -122,7 +134,21 @@ export default function MainHeader() {
             </div>
             <ul className="mt-8 space-y-4">
               {navigationItems.map((item) => (
-                <li key={item.name}><a href={item.path} className="block text-lg font-medium text-purple-200 hover:text-white p-2 rounded-md" onClick={() => setMobileMenuOpen(false)}>{item.name}</a></li>
+                <li key={item.name}>
+                   <Link 
+                     to={item.path} 
+                     className="block text-lg font-medium text-purple-200 hover:text-white p-2 rounded-md" 
+                     onClick={(e) => {
+                       if (item.name === 'Dashboard' && !isAuthenticated) {
+                         e.preventDefault();
+                         handleLoginAndRedirect();
+                       }
+                       setMobileMenuOpen(false);
+                     }}
+                   >
+                     {item.name}
+                   </Link>
+                </li>
               ))}
             </ul>
             <Separator className="my-6 bg-purple-200/20" />

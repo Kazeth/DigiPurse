@@ -5,13 +5,14 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Send, Bot, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface Message {
-  text: string;
-  sender: 'user' | 'bot';
-}
+// TypeScript interface is removed in JSX
+// interface Message {
+//   text: string;
+//   sender: 'user' | 'bot';
+// }
 
 export default function SupportPage() {
-  const [messages, setMessages] = useState<Message[]>([
+  const [messages, setMessages] = useState([
     {
       sender: 'bot',
       text: "Hello! I'm the DigiPurse support assistant. How can I help you today?",
@@ -19,14 +20,28 @@ export default function SupportPage() {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef(null);
   const isInitialMount = useRef(true);
 
-  const handleSendMessage = async (e: React.FormEvent) => {
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+    } else {
+      scrollToBottom();
+    }
+  }, [messages]);
+
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (inputValue.trim() === '' || isLoading) return;
 
-    const userMessage: Message = { text: inputValue, sender: 'user' };
+    const userMessage = { text: inputValue, sender: 'user' };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
     setInputValue('');
     setIsLoading(true);
@@ -45,12 +60,12 @@ export default function SupportPage() {
       }
 
       const data = await response.json();
-      const botResponse: Message = { text: data.reply, sender: 'bot' };
+      const botResponse = { text: data.reply, sender: 'bot' };
       setMessages((prevMessages) => [...prevMessages, botResponse]);
 
     } catch (error) {
       console.error("Failed to fetch chatbot response:", error);
-      const errorResponse: Message = { text: "Sorry, I'm having trouble connecting. Please try again later.", sender: 'bot' };
+      const errorResponse = { text: "Sorry, I'm having trouble connecting. Please try again later.", sender: 'bot' };
       setMessages((prevMessages) => [...prevMessages, errorResponse]);
     } finally {
       setIsLoading(false);

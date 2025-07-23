@@ -13,15 +13,17 @@ import Layout from './layout/MainLayout';
 
 // User Pages
 import HomePage from './pages/HomePage';
-import PostLoginPage from './pages/PostLoginPage'
+import PostLoginPage from './pages/PostLoginPage';
+import ProfilePage from './pages/ProfilePage';
 import DigiDocumentPage from './pages/DigiDocumentPage';
 import DigiPaymentPage from './pages/DigiPaymentPage';
 import DigiTicketPage from './pages/TicketDashboard';
 import TicketMarketplace from './pages/TicketMarketplace'
 import TicketEventsPage from './pages/TicketEventsPage'
+import TicketSellTicketPage from './pages/TicketSellTicketPage'
 import TicketEventDetailsPage from './pages/TicketEventDetailsPage'
+import TicketCreateEventPage from './pages/TicketCreateEventPage'
 import { UserRoute } from './routes/UserRoute';
-
 import { AuthProvider } from './AuthContext';
 
 // Document Upload/Download Progress
@@ -47,10 +49,13 @@ function App() {
               <Route element={<UserRoute />}>
                 <Route path='postlogin' element={<PostLoginPage />} />
                 <Route path='home' element={<HomePage />} />
+                <Route path='profile' element={<ProfilePage />} />
                 <Route path='digidocument' element={<DigiDocumentPage />} />
                 <Route path='digipayment' element={<DigiPaymentPage />} />
                 <Route path='digiticket' element={<DigiTicketPage />} />
                 <Route path='marketplace' element={<TicketMarketplace />} />
+                <Route path='sell-ticket' element={<TicketSellTicketPage />} />
+                <Route path='create-event' element={<TicketCreateEventPage />} />
                 <Route path='events' element={<TicketEventsPage />} />
                 <Route path='events/:eventID' element={<TicketEventDetailsPage />} />
               </Route>

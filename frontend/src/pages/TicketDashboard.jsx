@@ -139,7 +139,9 @@ export default function DigiTicketPage() {
                     )}
                     {/* Action Buttons */}
                     <div className="pt-4 border-t border-purple-400/20 space-y-2">
-                         <Button className="w-full">Sell on Marketplace</Button>
+                         <Link to="/sell-ticket">
+                            <Button className="w-full">Sell on Marketplace</Button>
+                         </Link>
                          <Button className="w-full" variant="outline">Transfer Ownership</Button>
                          <Link to={`/events/${selectedTicket.eventID}`}>
                             <Button className="w-full" variant="ghost">View Event Details</Button>
