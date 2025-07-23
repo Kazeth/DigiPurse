@@ -83,7 +83,7 @@ export default function TicketAppHeader() {
             <Link to="/home" className="flex items-center space-x-3 group">
               <img src={logo} alt="DigiPurse Logo" className="h-10 w-10 md:h-12 md:w-12 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
               <span className="text-2xl md:text-3xl font-bold tracking-tight group-hover:text-purple-300 transition-colors duration-300">
-                DigiPurse
+                DigiTicket
               </span>
             </Link>
           </div>

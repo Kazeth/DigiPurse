@@ -3,17 +3,33 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Shield, Ticket, Wallet, Loader2 } from 'lucide-react';
+import { Shield, Ticket, Wallet, Loader2, FilePlus, ShoppingCart, Repeat } from 'lucide-react';
 import { useAuth } from '../AuthContext';
 
+// --- MOCK DATA ---
+// In a real app, this would come from your backend/AuthContext
+const mockUserProfile = {
+    username: 'Mismoela',
+    tickets: 2,
+    documents: 5,
+    balance: 12.5 // Example ICP balance
+};
+// --- END MOCK DATA ---
+
 export default function HomePage() {
-    const [isLoading, setIsLoading] = useState(true); // Add loading state
-    const { authClient, isAuthenticated, principal } = useAuth();
+    const [isLoading, setIsLoading] = useState(true);
+    const [userProfile, setUserProfile] = useState(null);
+    const { isAuthenticated, principal } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if(isAuthenticated) setIsLoading(false);
-    }, []);
+        if(isAuthenticated) {
+            // Simulate fetching user profile data
+            setUserProfile(mockUserProfile);
+            setIsLoading(false);
+        }
+    }, [isAuthenticated]);
+
     // Data for the main action cards
     const mainActions = [
         {
@@ -39,6 +55,28 @@ export default function HomePage() {
         },
     ];
 
+    // Data for the new Quick Actions section
+    const quickActions = [
+        {
+            title: 'Buy a Ticket',
+            description: 'Browse the marketplace for new tickets.',
+            icon: ShoppingCart,
+            path: '/marketplace',
+        },
+        {
+            title: 'Sell a Ticket',
+            description: 'List one of your tickets for sale.',
+            icon: Repeat,
+            path: '/sell-ticket',
+        },
+        {
+            title: 'Add a Document',
+            description: 'Securely upload a new document or credential.',
+            icon: FilePlus,
+            path: '/digidocument', // Or a dedicated upload page
+        },
+    ]
+
     // Show a loading spinner while fetching identity
     if (isLoading) {
         return (
@@ -54,23 +92,23 @@ export default function HomePage() {
                 {/* Welcome Header */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
                     <div>
-                        <h1 className="text-3xl sm:text-4xl font-bold text-white">Welcome Back</h1>
+                        <h1 className="text-3xl sm:text-4xl font-bold text-white">
+                            Welcome Back, {userProfile?.username}!
+                        </h1>
                         <p className="text-lg text-purple-300/80 mt-1">Here's your personal dashboard.</p>
                     </div>
                     <div className="flex items-center gap-4 mt-4 sm:mt-0">
-                        <Link to="/postlogin">
+                        <Link to="/profile">
                             <Avatar className="h-16 w-16">
                                 <AvatarImage src={`https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?principal=${principal}`} alt="User Avatar" />
                                 <AvatarFallback className="text-xl bg-purple-800/50">
-                                    {/* FIX: Only show fallback if principal exists */}
-                                    {principal ? principal.toText().substring(0, 2) : '??'}
+                                    {principal ? principal.toText().substring(0, 2).toUpperCase() : '??'}
                                 </AvatarFallback>
                             </Avatar>
                         </Link>
                         <div className='hidden sm:block'>
-                            <p className='text-white font-semibold'>User</p>
-                            {/* FIX: Show placeholder if principal is not yet available */}
-                            <p className='text-sm text-purple-400 truncate w-32'>{principal.toText() || 'Loading...'}</p>
+                            <p className='text-white font-semibold'>{userProfile?.username}</p>
+                            <p className='text-sm text-purple-400 truncate w-32'>{principal?.toText()}</p>
                         </div>
                     </div>
                 </div>
@@ -85,31 +123,40 @@ export default function HomePage() {
                                 className="bg-white/5 border-purple-400/20 text-white backdrop-blur-lg hover:border-purple-400/50 transition-all duration-300 cursor-pointer"
                                 onClick={() => navigate(action.path)}
                             >
-                                <CardHeader>
-                                    <div className="flex items-center gap-4">
+                                <CardContent className="pt-6">
+                                    <div className="flex items-center gap-4 mb-2">
                                         <action.icon className={`h-8 w-8 ${action.color}`} />
                                         <CardTitle className="text-xl text-white">{action.title}</CardTitle>
                                     </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <p className="text-purple-300/80">{action.description}</p>
+                                    <p className="text-purple-300/80 pl-12"> {/* Added padding to align with title */}
+                                        {action.description}
+                                    </p>
                                 </CardContent>
                             </Card>
                         ))}
                     </div>
                 </div>
 
-                {/* Recent Activity Section (Placeholder) */}
+                {/* Quick Actions Section */}
                 <div>
-                    <h2 className="text-2xl font-semibold text-white mb-4">Recent Activity</h2>
-                    <Card className="bg-white/5 border-purple-400/20 text-white backdrop-blur-lg">
-                        <CardContent className="pt-6">
-                            {/* Placeholder content */}
-                            <div className="text-center text-purple-300/70">
-                                <p>Your recent activity will appear here.</p>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <h2 className="text-2xl font-semibold text-white mb-4">Quick Actions</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {quickActions.map((action) => (
+                             <Card 
+                                key={action.title} 
+                                className="bg-white/5 border-purple-400/20 text-white backdrop-blur-lg hover:border-purple-400/50 transition-all duration-300 cursor-pointer"
+                                onClick={() => navigate(action.path)}
+                            >
+                                <CardContent className="pt-6 flex items-center gap-4">
+                                    <action.icon className="h-8 w-8 text-purple-400" />
+                                    <div>
+                                        <p className="font-semibold text-lg">{action.title}</p>
+                                        <p className="text-sm text-purple-300/80">{action.description}</p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>
