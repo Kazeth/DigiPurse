@@ -15,13 +15,27 @@
         "output": "frontend/src/declarations/File_manager"
       }
     },
+    "Ticket_backend": {
+      "main": "backend/Event/Ticket.mo",
+      "type": "motoko",
+      "declarations": {
+        "output": "frontend/src/declarations/Ticket_backend"
+      }
+    },
+    "Event_backend": {
+      "main": "backend/Event/Event.mo",
+      "type": "motoko",
+      "declarations": {
+        "output": "frontend/src/declarations/Event_backend"
+      }
+    },
     "Registry_backend": {
       "main": "backend/Registry.mo",
       "type": "motoko",
       "declarations": {
         "node_compatibility": false,
         "output": "frontend/src/declarations/Registry_backend"
-      } 
+      }
     },
     "User_backend": {
       "main": "backend/User.mo",
@@ -29,7 +43,7 @@
       "dependencies": [
         "Registry_backend"
       ],
-      "declarations" : {
+      "declarations": {
         "output": "frontend/src/declarations/User_backend"
       }
     },

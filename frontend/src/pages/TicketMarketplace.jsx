@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { createActor, canisterId } from 'declarations/Ticket_backend';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';

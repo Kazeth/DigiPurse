@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { createActor, canisterId } from 'declarations/Event_backend';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
