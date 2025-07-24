@@ -2,17 +2,16 @@ import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, ScanLine } from 'lucide-react';
+import { createWorker } from 'tesseract.js';
 
 export default function DigiIdentity() {
     const [formData, setFormData] = useState({
         fullName: '',
         passportNumber: '',
         nationality: '',
-        placeOfBirth: '',
         dateOfBirth: '',
         gender: '',
-        dateOfIssue: '',
         dateOfExpiry: '',
         countryCode: '',
     });
@@ -20,6 +19,8 @@ export default function DigiIdentity() {
     const [passportImage, setPassportImage] = useState(null);
     const [imagePreview, setImagePreview] = useState('');
     const fileInputRef = useRef(null);
+    const [isScanning, setIsScanning] = useState(false);
+    const [scanResult, setScanResult] = useState('');
 
     const handleInputChange = (e) => {
         const { id, value } = e.target;
@@ -37,32 +38,120 @@ export default function DigiIdentity() {
         }
     };
 
-    // Allows triggering the hidden file input
     const handleUploadBoxClick = () => {
         fileInputRef.current.click();
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const startScan = async () => {
         if (!passportImage) {
-            alert('Please upload a passport image.');
+            alert('Insert Passport Image.');
             return;
         }
-        console.log('Submitting Form Data:', formData);
-        console.log('Submitting Passport Image:', passportImage.name);
-        alert('Identity information saved successfully!');
+
+        setIsScanning(true);
+        setScanResult('');
+
+        let worker;
+        try {
+            worker = await createWorker('eng');
+
+            const { data: { text } } = await worker.recognize(passportImage);
+
+            setScanResult(text);
+            console.log("OCR Result:", text);
+
+            parseOcrResultAndFillForm(text);
+
+        } catch (error) {
+            console.error("OCR Error:", error);
+            alert("Failed To Scan Image.");
+        } finally {
+            if (worker) {
+                await worker.terminate();
+            }
+            setIsScanning(false);
+        }
+    };
+
+    const parseOcrResultAndFillForm = (text) => {
+        const mrzRegex = /[A-Z0-9<]{44}/g;
+        const mrzLines = text.match(mrzRegex);
+
+        console.log("Raw OCR Text:", text);
+        console.log("Detected MRZ Lines:", mrzLines);
+
+        if (!mrzLines || mrzLines.length < 2) {
+            alert("Unable to detect two complete MRZ lines. The image quality might be poor.");
+            return;
+        }
+
+        const potentialLines = mrzLines.slice(-2);
+
+        let line1 = potentialLines.find(line => line.startsWith('P<'));
+        let line2 = potentialLines.find(line => line !== line1);
+
+        if (!line1 || !line2) {
+            const hasManyDigits = (line) => /\d{7,}/.test(line);
+            if (hasManyDigits(potentialLines[0]) && !hasManyDigits(potentialLines[1])) {
+                line2 = potentialLines[0];
+                line1 = potentialLines[1];
+            } else {
+                line2 = potentialLines[1];
+                line1 = potentialLines[0];
+            }
+        }
+
+        if (!line1 || !line2) {
+            alert("Failed to differentiate MRZ lines. Please try again.");
+            return;
+        }
+
+        const nameField = line1.substring(5).split('<<');
+        const surname = nameField[0].replace(/</g, ' ').trim();
+        const givenName = (nameField[1] || '').replace(/</g, ' ').trim();
+        const fullName = `${givenName} ${surname}`.trim();
+
+        const passportNumber = line2.substring(0, 9).replace(/</g, '');
+        const nationality = line2.substring(10, 13).replace(/</g, '');
+        const dob = line2.substring(13, 19);
+        const gender = line2.substring(20, 21);
+        const expiryDate = line2.substring(21, 27);
+
+        const formatYYMMDD = (yymmdd) => {
+            if (yymmdd.length !== 6) return '';
+            let year = parseInt(yymmdd.substring(0, 2), 10);
+            const month = yymmdd.substring(2, 4);
+            const day = yymmdd.substring(4, 6);
+            year = (year < 50) ? 2000 + year : 1900 + year;
+            return `${year}-${month}-${day}`;
+        };
+
+        const formattedDob = formatYYMMDD(dob);
+        const formattedExpiry = formatYYMMDD(expiryDate);
+        const finalGender = gender === 'M' ? 'Male' : (gender === 'F' ? 'Female' : 'Other');
+
+        setFormData(prev => ({
+            ...prev,
+            fullName,
+            passportNumber,
+            nationality,
+            dateOfBirth: formattedDob,
+            gender: finalGender,
+            dateOfExpiry: formattedExpiry,
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
     };
 
     const formFields = [
         { id: 'fullName', label: 'Full Name', type: 'text' },
         { id: 'passportNumber', label: 'Passport Number', type: 'text' },
         { id: 'nationality', label: 'Nationality', type: 'text' },
-        { id: 'placeOfBirth', label: 'Place Of Birth', type: 'text' },
         { id: 'dateOfBirth', label: 'Date Of Birth', type: 'date' },
         { id: 'gender', label: 'Sex/Gender', type: 'text' },
-        { id: 'dateOfIssue', label: 'Date Of Issue', type: 'date' },
         { id: 'dateOfExpiry', label: 'Date Of Expiry', type: 'date' },
-        { id: 'countryCode', label: 'Country Code', type: 'text' },
     ];
 
     return (
@@ -95,7 +184,7 @@ export default function DigiIdentity() {
                             ))}
                         </div>
 
-                        <div className="space-y-2">
+                        <div className="space-y-4">
                             <Label className="font-medium text-purple-300">Passport Image</Label>
                             <div
                                 onClick={handleUploadBoxClick}
@@ -117,6 +206,23 @@ export default function DigiIdentity() {
                                 className="hidden"
                                 accept="image/png, image/jpeg, image/jpg"
                             />
+
+                            {imagePreview && (
+                                <div className="text-center space-y-4 pt-4">
+                                    <Button
+                                        type="button"
+                                        onClick={startScan}
+                                        disabled={isScanning}
+                                        className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500"
+                                    >
+                                        {isScanning ? 'Scanning...' : (
+                                            <>
+                                                <ScanLine className="mr-2 h-4 w-4" /> Scan Passport
+                                            </>
+                                        )}
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                     </div>
 
