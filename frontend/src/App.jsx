@@ -15,6 +15,7 @@ import Layout from './layout/MainLayout';
 import HomePage from './pages/HomePage';
 import PostLoginPage from './pages/PostLoginPage';
 import ProfilePage from './pages/ProfilePage';
+import DigiIdentityPage from './pages/DigiIdentityPage';
 import DigiDocumentPage from './pages/DigiDocumentPage';
 import DigiPaymentPage from './pages/DigiPaymentPage';
 import DigiTicketPage from './pages/TicketDashboard';
@@ -50,6 +51,7 @@ function App() {
                 <Route path='postlogin' element={<PostLoginPage />} />
                 <Route path='home' element={<HomePage />} />
                 <Route path='profile' element={<ProfilePage />} />
+                <Route path='digiidentity' element={<DigiIdentityPage />} />
                 <Route path='digidocument' element={<DigiDocumentPage />} />
                 <Route path='digipayment' element={<DigiPaymentPage />} />
                 <Route path='digiticket' element={<DigiTicketPage />} />

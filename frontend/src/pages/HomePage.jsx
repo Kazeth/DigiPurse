@@ -3,18 +3,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Shield, Ticket, Wallet, Loader2, FilePlus, ShoppingCart, Repeat } from 'lucide-react';
+import { Shield, Ticket, Wallet, Loader2, FilePlus, ShoppingCart, Repeat, Fingerprint } from 'lucide-react';
 import { useAuth } from '../AuthContext';
 
-// --- MOCK DATA ---
-// In a real app, this would come from your backend/AuthContext
 const mockUserProfile = {
     username: 'Mismoela',
     tickets: 2,
     documents: 5,
-    balance: 12.5 // Example ICP balance
+    balance: 12.5 
 };
-// --- END MOCK DATA ---
 
 export default function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
@@ -24,14 +21,19 @@ export default function HomePage() {
 
     useEffect(() => {
         if(isAuthenticated) {
-            // Simulate fetching user profile data
             setUserProfile(mockUserProfile);
             setIsLoading(false);
         }
     }, [isAuthenticated]);
 
-    // Data for the main action cards
     const mainActions = [
+        {
+            title: 'My Identity',
+            description: 'Manage personal identity for event verification.',
+            icon: Fingerprint,
+            path: '/digiidentity',
+            color: 'text-indigo-400',
+        },
         {
             title: 'My Documents',
             description: 'Access your verifiable credentials and digital IDs.',
@@ -55,7 +57,6 @@ export default function HomePage() {
         },
     ];
 
-    // Data for the new Quick Actions section
     const quickActions = [
         {
             title: 'Buy a Ticket',
@@ -73,11 +74,10 @@ export default function HomePage() {
             title: 'Add a Document',
             description: 'Securely upload a new document or credential.',
             icon: FilePlus,
-            path: '/digidocument', // Or a dedicated upload page
+            path: '/digidocument', 
         },
     ]
 
-    // Show a loading spinner while fetching identity
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] bg-[#11071F]">
@@ -113,7 +113,6 @@ export default function HomePage() {
                     </div>
                 </div>
 
-                {/* Main Action Grid */}
                 <div className="mb-8">
                     <h2 className="text-2xl font-semibold text-white mb-4">Manage Your Assets</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -128,7 +127,7 @@ export default function HomePage() {
                                         <action.icon className={`h-8 w-8 ${action.color}`} />
                                         <CardTitle className="text-xl text-white">{action.title}</CardTitle>
                                     </div>
-                                    <p className="text-purple-300/80 pl-12"> {/* Added padding to align with title */}
+                                    <p className="text-purple-300/80 pl-12"> 
                                         {action.description}
                                     </p>
                                 </CardContent>
@@ -137,7 +136,6 @@ export default function HomePage() {
                     </div>
                 </div>
 
-                {/* Quick Actions Section */}
                 <div>
                     <h2 className="text-2xl font-semibold text-white mb-4">Quick Actions</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

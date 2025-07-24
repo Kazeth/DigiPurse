@@ -1,6 +1,4 @@
-// import { AuthClient } from '@dfinity/auth-client';
 import { createActor, canisterId } from 'declarations/File_Manager';
-// import { canisterId } from 'declarations/backend/index.js';
 import { useAuth } from '../AuthContext';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -16,8 +14,6 @@ const identityProvider =
         : 'http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:4943'; // Local
 
 export default function DigiDocumentPage() {
-    // const [isAuthenticated, setIsAuthenticated] = useState(false);
-    // const [authClient, setAuthClient] = useState();
     const { isAuthenticated, authClient, principal } = useAuth();
     const [actor, setActor] = useState();
     const [files, setFiles] = useState([]);
