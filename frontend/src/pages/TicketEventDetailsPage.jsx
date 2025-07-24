@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useSearchParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Calendar, Tag, Users, Ticket, Armchair, User, ArrowLeft } from 'lucide-react';
@@ -31,7 +31,9 @@ export default function EventDetailPage() {
   const fromMarketplace = searchParams.get('from') === 'marketplace';
   const marketplaceTicketID = searchParams.get('ticketID');
 
-  const event = mockEvents.find(e => e.id === eventID);
+  const location = useLocation();
+  const { event } = location.state || {};
+  console.log(event)
   
   const marketplaceTicket = fromMarketplace 
     ? mockMarketplaceTickets.find(t => t.id === marketplaceTicketID) 
@@ -48,7 +50,7 @@ export default function EventDetailPage() {
       <div className="h-64 md:h-80 bg-cover bg-center relative" style={{ backgroundImage: `url(${event.image})` }}>
         <div className="absolute inset-0 bg-black/60 flex items-end p-8">
             <div className="container mx-auto">
-                <h1 className="text-4xl md:text-6xl font-bold">{event.name}</h1>
+                <h1 className="text-4xl md:text-6xl font-bold">{event.eventName}</h1>
             </div>
         </div>
       </div>
@@ -65,10 +67,10 @@ export default function EventDetailPage() {
                 <Card className="bg-white/5 border-purple-400/20 sticky top-24">
                     <CardHeader><CardTitle className="text-2xl">Event Details</CardTitle></CardHeader>
                     <CardContent className="space-y-4 text-purple-300/80">
-                        <p>{event.description}</p>
-                        <div className="flex items-center gap-3"><Calendar className="h-5 w-5 text-purple-400" /><span>{event.date.toLocaleString()}</span></div>
-                        <div className="flex items-center gap-3"><User className="h-5 w-5 text-purple-400" /><span>Organizer: {event.organizer.substring(0, 15)}...</span></div>
-                        <div className="flex items-center gap-3"><Users className="h-5 w-5 text-purple-400" /><span>{event.ticketSupply - event.ticketsSold} / {event.ticketSupply} Tickets Left</span></div>
+                        <p>{event.eventDesc}</p>
+                        <div className="flex items-center gap-3"><Calendar className="h-5 w-5 text-purple-400" /><span>{event.eventDate.toLocaleString()}</span></div>
+                        <div className="flex items-center gap-3"><User className="h-5 w-5 text-purple-400" /><span>OrganizerID: {event.organizerID}</span></div>
+                        <div className="flex items-center gap-3"><Users className="h-5 w-5 text-purple-400" /><span>{Number(event.ticketCount)} Tickets Left</span></div>
                     </CardContent>
                 </Card>
             </div>
@@ -81,7 +83,7 @@ export default function EventDetailPage() {
                         <Card className="bg-white/10 border-purple-400/30">
                             <CardHeader>
                                 <CardTitle className="text-2xl">{'#Seated' in marketplaceTicket.kind ? `Seated: ${marketplaceTicket.kind['#Seated'].seatInfo}` : 'General Admission'}</CardTitle>
-                                <CardDescription className="text-purple-300/70">Ticket ID: {marketplaceTicket.id}</CardDescription>
+                                <CardDescription className="text-purple-300/70">Ticket ID: {'ticket id'}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="flex items-center gap-3"><User className="h-5 w-5 text-purple-400" /><span>Seller: {marketplaceTicket.owner}</span></div>

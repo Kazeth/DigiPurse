@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
-import { createActor, canisterId } from 'declarations/Ticket_backend';
+import React, { useState, useEffect, useMemo } from 'react';
+import { MasterTicket_backend } from 'declarations/MasterTicket_backend';
+import { Event_backend } from 'declarations/Event_backend';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,32 +16,13 @@ const mockEvents = [
   { eventID: "DEVFEST", eventName: "DevFest Global", eventDate: new Date('2025-10-20T11:00:00') },
 ];
 
-const generateMockTickets = (count) => {
-  const tickets = [];
-  for (let i = 1; i <= count; i++) {
-    const event = mockEvents[i % mockEvents.length];
-    const isSeated = Math.random() > 0.5;
-    tickets.push({
-      ticketID: `${event.eventID}-${String(i).padStart(3, '0')}`,
-      eventID: event.eventID,
-      owner: `a4gq6-...-${String(i).padStart(4, '0')}`,
-      price: Math.floor(Math.random() * 200) + 20,
-      forSale: true,
-      isValid: true,
-      kind: isSeated ? { '#Seated': { seatInfo: `Sec ${i % 10}, Row ${i % 5}` } } : { '#Seatless': null },
-    });
-  }
-  return tickets;
-};
-
-const allMarketplaceTickets = generateMockTickets(35);
-
 const TICKETS_PER_PAGE = 9; // Adjusted for a 3-column layout
 
 // type SeatFilter = 'all' | 'seated' | 'seatless'; // Removed for JSX
 
 export default function MarketplacePage() {
   const navigate = useNavigate();
+  const [allMarketplaceTickets, setAllMarketplaceTickets] = useState([]);
   const [filteredTickets, setFilteredTickets] = useState(allMarketplaceTickets);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -49,6 +31,36 @@ export default function MarketplacePage() {
   const [maxPrice, setMaxPrice] = useState(250);
   const [filterDate, setFilterDate] = useState('');
   const [seatType, setSeatType] = useState('all'); // Type annotation removed
+
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const response = await MasterTicket_backend.getAllMasterTicket();
+        const response2 = await Event_backend.getAllEvents();
+        console.log(response); // tickets response
+        console.log(response2); // events response
+
+        // response: Array<[string, Event]>
+        const parsed = response.map(([id, masterTicket]) => {
+          return {
+            ticketID: id,
+            eventID: masterTicket.eventID,
+            ticketDesc: masterTicket.ticketDesc,
+            price: Number(masterTicket.price),
+            kind: masterTicket.kind,
+            valid: masterTicket.valid,
+          };
+        });
+
+        console.log(parsed);
+        setAllMarketplaceTickets(parsed); // ✅ Benar
+
+      } catch (err) {
+        console.error("Failed to fetch events:", err);
+      }
+    };
+    fetchTickets();
+  }, []);
 
   useMemo(() => {
     let tickets = allMarketplaceTickets;
@@ -68,10 +80,10 @@ export default function MarketplacePage() {
     }
     if (seatType === 'seated') tickets = tickets.filter(t => t.kind['#Seated']);
     if (seatType === 'seatless') tickets = tickets.filter(t => t.kind['#Seatless']);
-    
+
     setFilteredTickets(tickets);
     setCurrentPage(1);
-  }, [searchTerm, maxPrice, filterDate, seatType]);
+  }, [searchTerm, maxPrice, filterDate, seatType, allMarketplaceTickets]);
 
   const totalPages = Math.ceil(filteredTickets.length / TICKETS_PER_PAGE);
   const currentTickets = filteredTickets.slice((currentPage - 1) * TICKETS_PER_PAGE, currentPage * TICKETS_PER_PAGE);
@@ -95,7 +107,7 @@ export default function MarketplacePage() {
           </div>
           <div className="mt-4 sm:mt-0 flex-shrink-0">
             <Button onClick={() => navigate('/sell-ticket')}>
-                <PlusCircle className="mr-2 h-5 w-5" /> Sell a Ticket
+              <PlusCircle className="mr-2 h-5 w-5" /> Sell a Ticket
             </Button>
           </div>
         </header>
@@ -146,11 +158,11 @@ export default function MarketplacePage() {
                         <Tag className="h-5 w-5" /> {ticket.price} ICP
                       </div>
                       <div className="flex items-center gap-2 text-xs text-purple-400/80 truncate">
-                          <User className="h-4 w-4" /> Owner: {ticket.owner}
+                        <User className="h-4 w-4" /> Owner: {ticket.owner}
                       </div>
                       {ticket.kind['#Seated'] && (
                         <div className="flex items-center gap-2 text-sm text-purple-400">
-                            <Armchair className="h-4 w-4" /> {ticket.kind['#Seated'].seatInfo}
+                          <Armchair className="h-4 w-4" /> {ticket.kind['#Seated'].seatInfo}
                         </div>
                       )}
                     </CardContent>

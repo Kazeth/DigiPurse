@@ -22,12 +22,33 @@
         "output": "frontend/src/declarations/Ticket_backend"
       }
     },
+    "MasterTicket_backend": {
+      "main": "backend/Event/MasterTicket.mo",
+      "type": "motoko",
+      "declarations": {
+        "output": "frontend/src/declarations/MasterTicket_backend"
+      }
+    },
     "Event_backend": {
       "main": "backend/Event/Event.mo",
       "type": "motoko",
       "declarations": {
         "output": "frontend/src/declarations/Event_backend"
       }
+    },
+    "Event_seeder": {
+      "main": "backend/Seeder/EventSeeder.mo",
+      "type": "motoko",
+      "dependencies": [
+        "Event_backend"
+      ]
+    },
+    "MasterTicket_seeder": {
+      "main": "backend/Seeder/MasterTicketSeeder.mo",
+      "type": "motoko",
+      "dependencies": [
+        "Event_backend", "Event_seeder", "MasterTicket_backend"
+      ]
     },
     "Registry_backend": {
       "main": "backend/Registry.mo",

@@ -17,9 +17,7 @@ export const idlFactory = ({ IDL }) => {
         [Ticket],
         [],
       ),
-    'emptyTicket' : IDL.Func([], [Ticket], []),
     'transferTicket' : IDL.Func([Ticket, IDL.Principal], [Ticket], []),
-    'updateTicketPrice' : IDL.Func([Ticket, IDL.Nat], [Ticket], []),
   });
   return TicketActor;
 };

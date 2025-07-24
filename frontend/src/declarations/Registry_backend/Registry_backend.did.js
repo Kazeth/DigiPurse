@@ -10,6 +10,10 @@ export const idlFactory = ({ IDL }) => {
     'buyer' : IDL.Principal,
     'price' : IDL.Nat,
   });
+  const TicketKind = IDL.Variant({
+    'Seated' : IDL.Record({ 'seatInfo' : IDL.Text }),
+    'Seatless' : IDL.Null,
+  });
   const Customer = IDL.Record({
     'id' : IDL.Principal,
     'joinDate' : Time,
@@ -18,16 +22,15 @@ export const idlFactory = ({ IDL }) => {
   });
   const Event = IDL.Record({
     'id' : IDL.Text,
-    'organizer' : IDL.Principal,
+    'valid' : IDL.Bool,
     'date' : Time,
+    'kind' : TicketKind,
     'name' : IDL.Text,
     'description' : IDL.Text,
+    'organizerId' : IDL.Text,
     'ticketSupply' : IDL.Nat,
     'durationMinutes' : IDL.Nat,
-  });
-  const TicketKind = IDL.Variant({
-    'Seated' : IDL.Record({ 'seatInfo' : IDL.Text }),
-    'Seatless' : IDL.Null,
+    'prices' : IDL.Vec(IDL.Nat),
   });
   const Ticket = IDL.Record({
     'id' : IDL.Nat,
@@ -47,7 +50,17 @@ export const idlFactory = ({ IDL }) => {
     'addTransaction' : IDL.Func([Transaction], [], []),
     'checkUserExist' : IDL.Func([IDL.Principal], [IDL.Bool], []),
     'createEvent' : IDL.Func(
-        [IDL.Principal, IDL.Text, IDL.Text, Time, IDL.Nat, IDL.Nat],
+        [
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          Time,
+          IDL.Nat,
+          IDL.Nat,
+          IDL.Vec(IDL.Nat),
+          TicketKind,
+          IDL.Bool,
+        ],
         [],
         [],
       ),

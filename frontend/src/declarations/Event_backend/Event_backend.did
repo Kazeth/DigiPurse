@@ -1,8 +1,18 @@
 type Time = int;
+type TicketKind = 
+ variant {
+   Seated: record {seatInfo: text;};
+   Seatless;
+ };
 type EventActor = 
  service {
-   createEvent: (organizer: principal, name: text, desc: text, date: 
-    Time, duration: nat, supply: nat) -> (Event);
+   createEvent: (name: text, organizerId: text, desc: text, date: Time,
+    duration: nat, supply: nat, prices: vec nat, kind: TicketKind, valid:
+    bool) -> (Event);
+   getAllEvents: () -> (vec record {
+                              text;
+                              Event;
+                            }) query;
  };
 type Event = 
  record {
@@ -10,8 +20,11 @@ type Event =
    description: text;
    durationMinutes: nat;
    id: text;
+   kind: TicketKind;
    name: text;
-   organizer: principal;
+   organizerId: text;
+   prices: vec nat;
    ticketSupply: nat;
+   valid: bool;
  };
 service : () -> EventActor

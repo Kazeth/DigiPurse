@@ -1,0 +1,25 @@
+type TicketKind = 
+ variant {
+   Seated: record {seatInfo: text;};
+   Seatless;
+ };
+type MasterTicketActor = 
+ service {
+   createMasterTicket: (eventId: text, ticketDesc: text, price: nat, kind:
+    TicketKind) -> (MasterTicket);
+   emptyTicket: () -> (MasterTicket);
+   getAllMasterTicket: () -> (vec record {
+                                    text;
+                                    MasterTicket;
+                                  }) query;
+   updateTicketPrice: (ticket: MasterTicket, price: nat) -> (MasterTicket);
+ };
+type MasterTicket = 
+ record {
+   eventID: text;
+   kind: TicketKind;
+   price: nat;
+   ticketDesc: text;
+   valid: bool;
+ };
+service : () -> MasterTicketActor

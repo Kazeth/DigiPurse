@@ -23,38 +23,49 @@ module {
   };
 
   public type Event = {
-    id: Text;
-    organizer: Principal;
-    name: Text;
-    description: Text;
-    date: Time.Time;
-    durationMinutes: Nat;
-    ticketSupply: Nat; // <-- FIELD BARU
+    id : Text;
+    organizerId : Text;
+    name : Text;
+    description : Text;
+    date : Time.Time;
+    durationMinutes : Nat;
+    ticketSupply : Nat; // <-- FIELD BARU
+    prices : [Nat];
+    kind : TicketKind;
+    valid : Bool;
   };
 
   public type TicketKind = {
-    #Seated: { seatInfo: Text };
+    #Seated : { seatInfo : Text };
     #Seatless;
   };
 
   public type Ticket = {
-    id: Nat;
-    eventID: Text;
-    owner: Principal;
-    price: Nat;
-    kind: TicketKind;
-    valid: Bool;
+    id : Nat;
+    eventID : Text;
+    owner : Principal;
+    price : Nat;
+    kind : TicketKind;
+    valid : Bool;
+  };
+
+  public type MasterTicket = {
+    eventID : Text;
+    ticketDesc : Text;
+    price : Nat;
+    kind : TicketKind;
+    valid : Bool;
   };
 
   public type Transaction = {
-    id: Text;
-    ticketID: Text;
-    buyer: Principal;
-    seller: Principal;
-    method: Text;
-    paymentSource: Text;
-    price: Nat;
-    timestamp: Time.Time;
+    id : Text;
+    ticketID : Text;
+    buyer : Principal;
+    seller : Principal;
+    method : Text;
+    paymentSource : Text;
+    price : Nat;
+    timestamp : Time.Time;
   };
 
   public type FileChunk = {

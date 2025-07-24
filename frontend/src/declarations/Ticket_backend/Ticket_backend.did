@@ -7,9 +7,7 @@ type TicketActor =
  service {
    createTicket: (eventId: text, ticketId: nat, owner: principal, price: 
     nat, kind: TicketKind) -> (Ticket);
-   emptyTicket: () -> (Ticket);
    transferTicket: (ticket: Ticket, newOwner: principal) -> (Ticket);
-   updateTicketPrice: (ticket: Ticket, price: nat) -> (Ticket);
  };
 type Ticket = 
  record {
