@@ -31,7 +31,7 @@ const features = [
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const { authClient, isAuthenticated, login, principal } = useAuth();
+  const { authClient, isAuthenticated, login, principal, isLoggedIn } = useAuth();
   const { registry } = useUser();
 
   const handleLogin = async () => {
@@ -39,7 +39,7 @@ export default function LandingPage() {
     const success = await login();
     if (success) {
       console.log("User is authenticated and available");
-      if (await registry.checkUserExist(principal)) {
+      if (await registry.checkUserExist(authClient.getIdentity().getPrincipal())) {
         console.log("User is registered, navigating to home page");
         navigate('/home');
       }

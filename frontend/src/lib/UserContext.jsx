@@ -26,7 +26,7 @@ export const UserProvider = ({ children }) => {
         }
     }
     fetchProfile();
-  }, [registry]);
+  }, [authClient, isAuthenticated]);
 
   const declareActors = async () => {
     if (!authClient) {

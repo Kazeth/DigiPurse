@@ -34,9 +34,9 @@ export const AuthProvider = ({ children }) => {
         identityProvider,
         onSuccess: async () => {
           console.log("Login successful");
-          await setPrincipal(authClient.getIdentity().getPrincipal());
-          await setIsAuthenticated(true);
-          await setIsLoggedIn(true);
+          setPrincipal(authClient.getIdentity().getPrincipal());
+          setIsAuthenticated(true);
+          setIsLoggedIn(true);
           resolve(true);
         },
         onerror: () => resolve(false),
