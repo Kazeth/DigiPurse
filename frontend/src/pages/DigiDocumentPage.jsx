@@ -1,5 +1,5 @@
 import { createActor, canisterId } from 'declarations/File_Manager';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../lib/AuthContext';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import PreviewModal from '@/components/modal/PreviewModal';

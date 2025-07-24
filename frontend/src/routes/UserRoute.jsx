@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AuthClient } from '@dfinity/auth-client';
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '@/AuthContext';
+import { useAuth } from '@/lib/AuthContext';
 
 export const UserRoute = () => {
   const { isAuthenticated } = useAuth();

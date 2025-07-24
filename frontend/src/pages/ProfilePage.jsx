@@ -7,15 +7,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/seperator';
 import { User, Shield, History, Edit, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { AuthClient } from '@dfinity/auth-client';
 
-// --- MOCK DATA ---
-const mockUserProfile = {
-  username: 'Mismoela',
-  joinDate: new Date('2024-01-15T10:00:00'),
-  userAddress: '123 Blockchain Avenue, Ether City',
-  isOrganizer: true,
-};
+import { useAuth } from '@/lib/AuthContext';
+import { useUser } from '@/lib/UserContext';
 
 const mockTransactionHistory = [
     { id: 1, type: 'Purchase', details: 'Ticket for ICP Hackathon 2025', amount: -50, date: new Date('2025-07-20') },
@@ -26,21 +20,14 @@ const mockTransactionHistory = [
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('profile');
-  const [principalId, setPrincipalId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState(mockUserProfile);
-
-  useEffect(() => {
-    AuthClient.create().then(async (client) => {
-      if (await client.isAuthenticated()) {
-        setPrincipalId(client.getIdentity().getPrincipal().toText());
-      }
-    });
-  }, []);
+  // const [profileData, setProfileData] = useState(null);
+  const { authClient, principal } = useAuth();
+  const { userProfile, updateProfile } = useUser();
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    setProfileData(prev => ({ ...prev, [id]: value }));
+    // setProfileData(prev => ({ ...prev, [id]: value }));
   };
 
   return (
@@ -49,13 +36,13 @@ export default function ProfilePage() {
         {/* Profile Header */}
         <header className="flex flex-col sm:flex-row items-center gap-6 mb-8">
           <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-purple-500/50">
-            <AvatarImage src={`https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?principal=${principalId}`} alt={profileData.username} />
-            <AvatarFallback className="text-4xl bg-purple-800/50">{profileData.username.substring(0, 2).toUpperCase()}</AvatarFallback>
+            <AvatarImage src={`https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?principal=${principal}`} alt={userProfile.name} />
+            <AvatarFallback className="text-4xl bg-purple-800/50">{userProfile.name.substring(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-center sm:text-left">{profileData.username}</h1>
-            <p className="text-sm text-purple-300/70 text-center sm:text-left mt-1 truncate max-w-xs sm:max-w-md">Principal ID: {principalId}</p>
-            <p className="text-sm text-purple-300/70 text-center sm:text-left">Joined: {profileData.joinDate.toLocaleDateString()}</p>
+            <h1 className="text-3xl sm:text-4xl font-bold text-center sm:text-left">{userProfile.name}</h1>
+            <p className="text-sm text-purple-300/70 text-center sm:text-left mt-1 truncate max-w-xs sm:max-w-md">Principal ID: {principal.toText()}</p>
+            <p className="text-sm text-purple-300/70 text-center sm:text-left">Joined: {userProfile.joinDate.toLocaleDateString()}</p>
           </div>
         </header>
 

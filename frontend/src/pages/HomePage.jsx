@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Shield, Ticket, Wallet, Loader2, FilePlus, ShoppingCart, Repeat, Fingerprint } from 'lucide-react';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '@/lib/AuthContext';
+import { useUser } from '@/lib/UserContext';
 
 const mockUserProfile = {
     username: 'Mismoela',
@@ -15,16 +16,13 @@ const mockUserProfile = {
 
 export default function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
-    const [userProfile, setUserProfile] = useState(null);
-    const { isAuthenticated, principal } = useAuth();
+    const { isAuthenticated, authClient, principal, isLoggedIn } = useAuth();
+    const { userProfile } = useUser();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if(isAuthenticated) {
-            setUserProfile(mockUserProfile);
-            setIsLoading(false);
-        }
-    }, [isAuthenticated]);
+        setIsLoading(false);
+    }, [isLoggedIn]);
 
     const mainActions = [
         {
@@ -93,7 +91,7 @@ export default function HomePage() {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
                     <div>
                         <h1 className="text-3xl sm:text-4xl font-bold text-white">
-                            Welcome Back, {userProfile?.username}!
+                            Welcome Back, {userProfile?.name}!
                         </h1>
                         <p className="text-lg text-purple-300/80 mt-1">Here's your personal dashboard.</p>
                     </div>
@@ -102,12 +100,12 @@ export default function HomePage() {
                             <Avatar className="h-16 w-16">
                                 <AvatarImage src={`https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?principal=${principal}`} alt="User Avatar" />
                                 <AvatarFallback className="text-xl bg-purple-800/50">
-                                    {principal ? principal.toText().substring(0, 2).toUpperCase() : '??'}
+                                    {userProfile ? userProfile.name.substring(0,2).toUpperCase() : '??'}
                                 </AvatarFallback>
                             </Avatar>
                         </Link>
                         <div className='hidden sm:block'>
-                            <p className='text-white font-semibold'>{userProfile?.username}</p>
+                            <p className='text-white font-semibold'>{userProfile?.name}</p>
                             <p className='text-sm text-purple-400 truncate w-32'>{principal?.toText()}</p>
                         </div>
                     </div>

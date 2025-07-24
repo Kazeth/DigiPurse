@@ -18,10 +18,11 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     AuthClient.create().then(async (client) => {
       setAuthClient(client);
-      if (isLoggedIn) {
+      console.log("AuthClient created:", client);
+      if (client.isAuthenticated()) {
         const identity = client.getIdentity();
         setPrincipal(identity.getPrincipal());
-        setIsAuthenticated(client.isAuthenticated());
+        setIsAuthenticated(true);
       }
     });
   }, []);
@@ -33,10 +34,9 @@ export const AuthProvider = ({ children }) => {
         identityProvider,
         onSuccess: async () => {
           console.log("Login successful");
-          const identity = authClient.getIdentity();
-          setPrincipal(identity.getPrincipal());
-          setIsAuthenticated(authClient.isAuthenticated());
-          setIsLoggedIn(true);
+          await setPrincipal(authClient.getIdentity().getPrincipal());
+          await setIsAuthenticated(true);
+          await setIsLoggedIn(true);
           resolve(true);
         },
         onerror: () => resolve(false),
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ authClient, isAuthenticated, principal, login, logout }}>
+    <AuthContext.Provider value={{ authClient, isAuthenticated, principal, login, logout, isLoggedIn }}>
       {children}
     </AuthContext.Provider>
   );

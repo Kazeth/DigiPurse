@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '@/lib/AuthContext';
+import { useUser } from '@/lib/UserContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShieldCheck, Ticket, CreditCard } from 'lucide-react';
 import logo from '@/assets/logo.png';
-import { createActor, canisterId } from '@/declarations/Registry_backend';
 
 // Feature data
 const features = [
@@ -31,37 +31,26 @@ const features = [
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const { authClient, isAuthenticated, login } = useAuth();
+  const { authClient, isAuthenticated, login, principal } = useAuth();
+  const { registry } = useUser();
 
   const handleLogin = async () => {
     if (!authClient) return;
     const success = await login();
     if (success) {
       console.log("User is authenticated and available");
-      if (await checkUserAvailability()) {
+      if (await registry.checkUserExist(principal)) {
         console.log("User is registered, navigating to home page");
         navigate('/home');
       }
-      else 
+      else {
+        console.log("User is not registered, navigating to post-login page");
         navigate('/postlogin');
+      }
     } else {
       console.error("Authentication failed");
     }
   };
-
-  const checkUserAvailability = async () => {
-    if (!authClient) return;
-    const identity = authClient.getIdentity();
-    const actor = createActor(canisterId, { agentOptions: { identity } });
-    const userProfile = await actor.checkUserExist(identity.getPrincipal());
-    console.log("Checking user principal:", identity.getPrincipal().toText());
-    if (userProfile) {
-      console.log("User profile found:", userProfile);
-      return true;
-    }
-    console.log("User profile not found");
-    return false;
-  }
 
   const goToHome = async () => {
     navigate('/home');

@@ -12,14 +12,8 @@ import { Separator } from '@/components/ui/seperator';
 import { cn } from '@/lib/utils';
 
 // DFINITY imports
-import { AuthClient } from '@dfinity/auth-client';
-import { useAuth } from '@/AuthContext';
-
-const network = process.env.DFX_NETWORK;
-const identityProvider =
-  network === 'ic'
-    ? 'https://identity.ic0.app' // Mainnet
-    : `http://${process.env.CANISTER_ID_INTERNET_IDENTITY}.localhost:4943`; // Local
+// import { AuthClient } from '@dfinity/auth-client';
+import { useAuth } from '@/lib/AuthContext';
 
 export default function TicketAppHeader() {
   const navigate = useNavigate();

@@ -11,14 +11,9 @@ import { Separator } from '@/components/ui/seperator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 // DFINITY imports for Internet Identity
-import { AuthClient } from '@dfinity/auth-client';
-import { useAuth } from '@/AuthContext';
-
-const network = process.env.DFX_NETWORK;
-const identityProvider =
-  network === 'ic'
-    ? 'https://identity.ic0.app' // Mainnet
-    : `http://${process.env.CANISTER_ID_INTERNET_IDENTITY}.localhost:4943`; // Local
+// import { AuthClient } from '@dfinity/auth-client';
+import { useAuth } from '@/lib/AuthContext';
+import { useUser } from '@/lib/UserContext';
 
 export default function MainHeader() {
   const navigate = useNavigate();
@@ -26,7 +21,8 @@ export default function MainHeader() {
   const [scrolled, setScrolled] = useState(false);
 
   // Authentication State
-  const { isAuthenticated, principal, login, logout } = useAuth();
+  const { isAuthenticated, authClient, principal, login, logout } = useAuth();
+  const { registry } = useUser();
 
   // Handle scroll effect
   useEffect(() => {
@@ -35,10 +31,22 @@ export default function MainHeader() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleLoginAndRedirect = async () => {
-    await login();
-    // The redirect logic should be handled by your AuthContext or routing setup
-    // after a successful login.
+  const handleLogin = async () => {
+    if (!authClient) return;
+    const success = await login();
+    if (success) {
+      console.log("User is authenticated and available");
+      if (await registry.checkUserExist(authClient.getIdentity().getPrincipal())) {
+        console.log("User is registered, navigating to home page");
+        navigate('/home');
+      }
+      else {
+        console.log("User is not registered, navigating to post-login page");
+        navigate('/postlogin');
+      }
+    } else {
+      console.error("Authentication failed");
+    }
   };
   
   const handleLogout = async () => {
@@ -69,7 +77,7 @@ export default function MainHeader() {
           </Button>
         </div>
       ) : (
-        <Button onClick={handleLoginAndRedirect} aria-label="Start Now with DigiPurse">
+        <Button onClick={handleLogin} aria-label="Start Now with DigiPurse">
           Start Now
         </Button>
       )}
@@ -102,7 +110,7 @@ export default function MainHeader() {
                     onClick={(e) => {
                       if (item.name === 'Dashboard' && !isAuthenticated) {
                         e.preventDefault(); // Prevent navigation
-                        handleLoginAndRedirect(); // Trigger login flow
+                        handleLogin(); // Trigger login flow
                       }
                     }}
                   >
@@ -141,7 +149,7 @@ export default function MainHeader() {
                      onClick={(e) => {
                        if (item.name === 'Dashboard' && !isAuthenticated) {
                          e.preventDefault();
-                         handleLoginAndRedirect();
+                         handleLogin();
                        }
                        setMobileMenuOpen(false);
                      }}

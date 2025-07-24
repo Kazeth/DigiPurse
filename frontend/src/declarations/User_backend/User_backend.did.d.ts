@@ -9,7 +9,7 @@ export interface Customer {
   'address' : string,
 }
 export interface Ticket {
-  'id' : string,
+  'id' : bigint,
   'eventID' : string,
   'valid' : boolean,
   'owner' : Principal,

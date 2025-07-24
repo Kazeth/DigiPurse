@@ -24,7 +24,7 @@ export interface Organizer {
   'address' : string,
 }
 export interface Ticket {
-  'id' : string,
+  'id' : bigint,
   'eventID' : string,
   'valid' : boolean,
   'owner' : Principal,
@@ -34,18 +34,31 @@ export interface Ticket {
 export type TicketKind = { 'Seated' : { 'seatInfo' : string } } |
   { 'Seatless' : null };
 export type Time = bigint;
+export interface Transaction {
+  'id' : string,
+  'method' : string,
+  'paymentSource' : string,
+  'seller' : Principal,
+  'ticketID' : string,
+  'timestamp' : Time,
+  'buyer' : Principal,
+  'price' : bigint,
+}
 export interface _SERVICE {
+  'addTransaction' : ActorMethod<[Transaction], undefined>,
   'checkUserExist' : ActorMethod<[Principal], boolean>,
   'createEvent' : ActorMethod<
     [Principal, string, string, Time, bigint, bigint],
     undefined
   >,
-  'getAllCustomers' : ActorMethod<[], Array<[Principal, Customer]>>,
+  'getAllCustomers' : ActorMethod<[], Array<Customer>>,
   'getAllEvents' : ActorMethod<[], Array<Event>>,
+  'getAllTransactions' : ActorMethod<[], Array<Transaction>>,
   'getCustomerProfile' : ActorMethod<[Principal], [] | [Customer]>,
-  'getCustomerTickets' : ActorMethod<[Principal], Array<Ticket>>,
+  'getCustomerTickets' : ActorMethod<[Principal], [] | [Array<Ticket>]>,
   'registerCustomer' : ActorMethod<[Principal, Customer], undefined>,
   'registerOrganizer' : ActorMethod<[Principal, Organizer], undefined>,
+  'updateCustomerProfile' : ActorMethod<[Principal, Customer], undefined>,
 }
 export declare const idlFactory: IDL.InterfaceFactory;
 export declare const init: (args: { IDL: typeof IDL }) => IDL.Type[];

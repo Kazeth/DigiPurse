@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../AuthContext';
-import { createActor , canisterId } from "../declarations/Registry_backend";
+import { useAuth } from '@/lib/AuthContext';
+import { useUser } from '@/lib/UserContext';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
@@ -15,43 +15,12 @@ export default function PostLoginPage() {
   const navigate = useNavigate();
   const [actor, setActor] = useState();
   const { authClient, isAuthenticated, principal } = useAuth();
-
+  const { uploadProfile } = useUser();
   const [username, setUsername] = useState('');
   const [dob, setDob] = useState('');
   const [address, setAddress] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
 
-  useEffect(() => {
-    updateActor();
-  }, []);
-
-  async function updateActor() {
-    if (!isAuthenticated) return;
-    const identity = authClient.getIdentity();
-    const actor = createActor(canisterId, { agentOptions: { identity } });
-    setActor(actor);
-    console.log("Actor initialized:", actor);
-  }
-
-  async function uploadProfile() {
-    if (!actor || !authClient) {
-      console.error("Actor is not initialized");
-      return;
-    }
-    try {
-      const dateObj = new Date(dob);
-      const timeNat = BigInt(dateObj.getTime()) * 1_000_000n; // Convert date to nanoseconds
-      await actor.registerCustomer(principal, {
-        id: principal,
-        name: username,
-        joinDate: timeNat,
-        address: address
-      });
-      console.log("Profile data saved:", { username, dob, address });
-    } catch (error) {
-      console.error("Error saving profile:", error);
-    }
-  }
   const handleImageChange = (event) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
@@ -69,7 +38,11 @@ export default function PostLoginPage() {
       address,
       // profileImageFile would be uploaded here
     });
-    uploadProfile();
+    uploadProfile({
+      name: username,
+      joinDate: BigInt(new Date(dob).getTime()) * 1_000_000n,
+      address: address
+    });
     navigate('/home');
   };
 
