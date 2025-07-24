@@ -1,6 +1,7 @@
 import Time "mo:base/Time";
+import Principal "mo:base/Principal";
 
-module {
+actor class TransactionActor() {
   public type Transaction = {
     txId: Nat;
     ticketId: Nat;
@@ -12,7 +13,7 @@ module {
     timestamp: Time.Time;
   };
 
-  public func createTransaction(txId: Nat, ticketId: Nat, buyer: Principal, seller: Principal, method: Text, source: Text, price: Nat): Transaction {
+  public func createTransaction(txId: Nat, ticketId: Nat, buyer: Principal, seller: Principal, method: Text, source: Text, price: Nat): async Transaction {
     {
       txId = txId;
       ticketId = ticketId;
@@ -24,4 +25,4 @@ module {
       timestamp = Time.now();
     }
   };
-}
+};

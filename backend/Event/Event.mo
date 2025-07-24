@@ -5,15 +5,15 @@ import Int "mo:base/Int";
 import Principal "mo:base/Principal";
 import Type "../types";
 
-module {
+actor class EventActor() {
   public func createEvent(
     organizer : Principal,
     name : Text,
     desc : Text,
     date : Time.Time,
     duration : Nat,
-    supply : Nat // <-- PARAMETER BARU
-  ) : Type.Event {
+    supply : Nat
+  ) : async Type.Event {
     let timestamp : Int = Time.now();
     let positiveTimestamp : Nat = Int.abs(timestamp);
     let id : Text = Nat.toText(positiveTimestamp);
