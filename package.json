@@ -4,7 +4,8 @@
     "frontend": "cd frontend && npm run dev",
     "build": "npm run build --workspaces --if-present",
     "prebuild": "npm run prebuild --workspaces --if-present",
-    "dev": "npm run dev --workspaces --if-present"
+    "dev": "npm run dev --workspaces --if-present",
+    "digi": "dfx stop && dfx start --clean --background && dfx deploy && npm run dev"
   },
   "type": "module",
   "workspaces": [
@@ -26,6 +27,7 @@
     "react-progress-bar": "^0.1.0",
     "react-router-dom": "^7.6.3",
     "tailwind-merge": "^3.3.1",
+    "tesseract.js": "^6.0.1",
     "vite": "^7.0.4"
   },
   "devDependencies": {
