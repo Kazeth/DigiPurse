@@ -11,7 +11,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/seperator';
 import { cn } from '@/lib/utils';
 
-// DFINITY imports
 // import { AuthClient } from '@dfinity/auth-client';
 import { useAuth } from '@/lib/AuthContext';
 
@@ -20,11 +19,11 @@ export default function TicketAppHeader() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  
-  // Authentication State from context
+
+  // Authentication State 
   const { isAuthenticated, principal, logout } = useAuth();
 
-  // Handle scroll effect
+  // Handle scroll 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -36,7 +35,6 @@ export default function TicketAppHeader() {
     navigate('/');
   };
 
-  // Navigation items for the ticket app
   const navigationItems = [
     { name: 'Dashboard', path: '/home' },
     { name: 'My Tickets', path: '/digiticket' },
@@ -65,14 +63,12 @@ export default function TicketAppHeader() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
-          scrolled
-            ? 'bg-[#2B0B3F]/95 backdrop-blur-lg shadow-purple-900/20 shadow-lg'
-            : 'bg-[#2B0B3F]/80 backdrop-blur-sm'
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${scrolled
+          ? 'bg-[#2B0B3F]/95 backdrop-blur-lg shadow-purple-900/20 shadow-lg'
+          : 'bg-[#2B0B3F]/80 backdrop-blur-sm'
+          }`}
       >
         <nav className="container mx-auto flex items-center justify-between p-4 text-white">
-          {/* Left Section: Logo and App Name */}
           <div className="flex items-center flex-shrink-0">
             <Link to="/home" className="flex items-center space-x-3 group">
               <img src={logo} alt="DigiPurse Logo" className="h-10 w-10 md:h-12 md:w-12 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
@@ -82,13 +78,12 @@ export default function TicketAppHeader() {
             </Link>
           </div>
 
-          {/* Right Section: Navigation & Auth (Desktop) */}
           <div className="hidden lg:flex items-center space-x-8 flex-shrink-0">
             <ul className="flex items-center space-x-6">
               {navigationItems.map((item) => (
                 <li key={item.name}>
-                  <Link 
-                    to={item.path} 
+                  <Link
+                    to={item.path}
                     className="font-medium text-purple-200 hover:text-white transition-colors duration-300 pb-1 border-b-2 border-transparent hover:border-purple-400"
                   >
                     {item.name}
@@ -99,12 +94,11 @@ export default function TicketAppHeader() {
             <AuthButtons />
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="lg:hidden">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => setMobileMenuOpen(true)} 
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileMenuOpen(true)}
               aria-label="Open menu"
               className="text-white hover:bg-purple-800/50 hover:text-white"
             >
@@ -114,7 +108,6 @@ export default function TicketAppHeader() {
         </nav>
       </header>
 
-      {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
@@ -129,9 +122,9 @@ export default function TicketAppHeader() {
             <ul className="mt-4 space-y-2">
               {navigationItems.map((item) => (
                 <li key={item.name}>
-                  <Link 
-                    to={item.path} 
-                    className="block text-lg font-medium text-purple-200 hover:text-white p-3 rounded-md hover:bg-white/5" 
+                  <Link
+                    to={item.path}
+                    className="block text-lg font-medium text-purple-200 hover:text-white p-3 rounded-md hover:bg-white/5"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.name}
@@ -146,7 +139,6 @@ export default function TicketAppHeader() {
           </div>
         </div>
       )}
-      {/* Spacer for fixed header */}
       <div className="h-20" />
     </>
   );

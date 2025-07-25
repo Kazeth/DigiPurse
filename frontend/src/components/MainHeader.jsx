@@ -5,12 +5,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, LogOut } from 'lucide-react';
 import logo from '../assets/logo.png';
 
-// Import the UI components we built
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/seperator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-// DFINITY imports for Internet Identity
 // import { AuthClient } from '@dfinity/auth-client';
 import { useAuth } from '@/lib/AuthContext';
 import { createActor, canisterId } from '@/declarations/Registry_backend';
@@ -24,7 +22,7 @@ export default function MainHeader() {
   // Authentication State
   const { isAuthenticated, authClient, principal, login, logout } = useAuth();
 
-  // Handle scroll effect
+  // Handle scroll
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -51,7 +49,7 @@ export default function MainHeader() {
       console.error("Authentication failed");
     }
   };
-  
+
   const handleLogout = async () => {
     await logout();
     navigate('/');
@@ -62,7 +60,7 @@ export default function MainHeader() {
     { name: 'About Us', path: '/about' },
     { name: 'Support', path: '/support' },
   ];
-  
+
   const navLinkClasses = "font-medium text-purple-200 hover:text-white transition-colors duration-300 pb-1 border-b-2 border-transparent hover:border-purple-400";
 
   const AuthButtons = () => (
@@ -91,12 +89,12 @@ export default function MainHeader() {
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${scrolled
-            ? 'bg-[#2B0B3F]/95 backdrop-blur-lg shadow-purple-900/20 shadow-lg'
-            : 'bg-[#2B0B3F]/80 backdrop-blur-sm'
+          ? 'bg-[#2B0B3F]/95 backdrop-blur-lg shadow-purple-900/20 shadow-lg'
+          : 'bg-[#2B0B3F]/80 backdrop-blur-sm'
           }`}
       >
         <nav className="container mx-auto flex items-center justify-between p-4 text-white">
-          <Link to="/" className="flex items-center space-x-3 group">
+          <Link to="/home" className="flex items-center space-x-3 group">
             <img src={logo} alt="DigiPurse Logo" className="h-10 w-10 md:h-12 md:w-12 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
             <span className="text-2xl md:text-3xl font-bold tracking-tight group-hover:text-purple-300 transition-colors duration-300">
               DigiPurse
@@ -107,13 +105,13 @@ export default function MainHeader() {
             <ul className="flex items-center space-x-6">
               {navigationItems.map((item) => (
                 <li key={item.name}>
-                  <Link 
-                    to={item.path} 
+                  <Link
+                    to={item.path}
                     className={navLinkClasses}
                     onClick={(e) => {
                       if (item.name === 'Dashboard' && !isAuthenticated) {
-                        e.preventDefault(); // Prevent navigation
-                        handleLogin(); // Trigger login flow
+                        e.preventDefault();
+                        handleLogin();
                       }
                     }}
                   >
@@ -146,19 +144,19 @@ export default function MainHeader() {
             <ul className="mt-8 space-y-4">
               {navigationItems.map((item) => (
                 <li key={item.name}>
-                   <Link 
-                     to={item.path} 
-                     className="block text-lg font-medium text-purple-200 hover:text-white p-2 rounded-md" 
-                     onClick={(e) => {
-                       if (item.name === 'Dashboard' && !isAuthenticated) {
-                         e.preventDefault();
-                         handleLogin();
-                       }
-                       setMobileMenuOpen(false);
-                     }}
-                   >
-                     {item.name}
-                   </Link>
+                  <Link
+                    to={item.path}
+                    className="block text-lg font-medium text-purple-200 hover:text-white p-2 rounded-md"
+                    onClick={(e) => {
+                      if (item.name === 'Dashboard' && !isAuthenticated) {
+                        e.preventDefault();
+                        handleLogin();
+                      }
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    {item.name}
+                  </Link>
                 </li>
               ))}
             </ul>
