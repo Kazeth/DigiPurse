@@ -41,7 +41,7 @@ module {
   };
 
   public type Ticket = {
-    id : Nat;
+    ticketID : Text;
     eventID : Text;
     owner : Principal;
     price : Nat;
