@@ -20,6 +20,10 @@ actor class EventActor() {
     events := TrieMap.fromEntries<Text, Type.Event>(Iter.fromArray(stableEvents), Text.equal, Text.hash);
   };
 
+  public query func getEventByEventId(eventId : Text) : async ?Type.Event {
+    return events.get(eventId);
+  };
+
   public query func getAllEvents() : async [(Text, Type.Event)] {
     return Iter.toArray(events.entries());
   };
@@ -63,6 +67,5 @@ actor class EventActor() {
 
     return tempEvent;
   };
-
 
 };

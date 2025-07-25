@@ -9,6 +9,12 @@
 
 DigiPurse is designed to simplify digital life management while ensuring user privacy and security through blockchain technology. Whether you're managing event tickets or storing personal documents, DigiPurse brings it all under one decentralized platform.
 
+📝 Documentation
+Notion : https://www.notion.so/Digipurse-Documentation-23bd79ae3c3280f29fa6f920eea6fd88
+
+📈 Pitch Deck
+Canva : https://www.canva.com/design/DAGuMMkT9lU/csS4Q6U6rroCYq-V0zdX1g/edit?utm_content=DAGuMMkT9lU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton 
+
 ---
 
 ## 🚀 Features

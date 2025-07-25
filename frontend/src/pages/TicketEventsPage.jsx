@@ -46,8 +46,8 @@ export default function EventsPage() {
             eventDate: new Date(Number(event.date) / 1_000_000),
             eventDuration: Number(event.durationMinutes),
             ticketCount: Number(event.ticketSupply),
-            minPrice : Number(Math.min(...prices)),
-            maxPrice : Number(Math.max(...prices)),
+            minPrice: Number(Math.min(...prices)),
+            maxPrice: Number(Math.max(...prices)),
             seatInfo: isSeated ? event.kind.Seated.seatInfo : '',
             hasSeated: isSeated,
             hasSeatless: isSeatless,
@@ -135,16 +135,13 @@ export default function EventsPage() {
                 <Button variant={seatType === 'seatless' ? 'secondary' : 'outline'} onClick={() => setSeatType('seatless')} className="flex-1 text-sm">Seatless</Button>
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="price">Max Price ({priceRange.max} ICP)</Label>
-              <Input id="price" type="range" min="0" max="250" step="5" value={priceRange.max} onChange={(e) => setPriceRange({ ...priceRange, max: Number(e.target.value) })} className="w-full h-2 bg-purple-900/50 rounded-lg appearance-none cursor-pointer" />
+            <div className="text-center mt-4">
+              <Button variant="ghost" onClick={handleResetFilters} className="text-purple-300/70 hover:text-white">
+                <FilterX className="mr-2 h-4 w-4" /> Reset Filters
+              </Button>
             </div>
           </div>
-          <div className="text-center mt-4">
-            <Button variant="ghost" onClick={handleResetFilters} className="text-purple-300/70 hover:text-white">
-              <FilterX className="mr-2 h-4 w-4" /> Reset Filters
-            </Button>
-          </div>
+
         </Card>
 
         {/* Events List */}
