@@ -16,7 +16,6 @@ import Types "types";
 
 actor Registry {
 
-  var events : [Types.Event] = [];
   var transactions : [Types.Transaction] = [];
   var tickets = Hashmap.HashMap<Principal, [Types.Ticket]>(0, Principal.equal, Principal.hash);
 
@@ -49,26 +48,6 @@ actor Registry {
   // Event Organizers
   public func registerOrganizer(principal : Principal, profile : Types.Organizer) : async () {
     organizers.put(principal, profile);
-  };
-
-  public func createEvent(
-    name : Text,
-    organizerId : Text,
-    desc : Text,
-    date : Time.Time,
-    duration : Nat,
-    supply : Nat,
-    price : [Nat],
-    kind : Types.TicketKind,
-    valid : Bool,
-  ) : async () {
-    let eventActor = await Event.EventActor();
-    let ev = await eventActor.createEvent(name, organizerId, desc, date, duration, supply, price, kind, valid);
-    events := Array.append(events, [ev]);
-  };
-
-  public query func getAllEvents() : async [Types.Event] {
-    events;
   };
 
   public query func getAllCustomers() : async [Types.Customer] {

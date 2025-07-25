@@ -6,9 +6,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, PlusCircle, Ticket, Armchair, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { createActor, canisterId } from '@/declarations/Event_backend';
+import { useAuth } from '@/lib/AuthContext';
 
 export default function CreateEventPage() {
   const navigate = useNavigate();
+  const { authClient } = useAuth();
+  const identity = authClient ? authClient.getIdentity() : null;
+  const principal = identity ? identity.getPrincipal() : null;
   
   // State for Event Details
   const [eventName, setEventName] = useState('');
@@ -22,7 +27,7 @@ export default function CreateEventPage() {
   const [ticketSupply, setTicketSupply] = useState('');
   const [ticketKind, setTicketKind] = useState('#Seatless'); // Default to Seatless
 
-  const handleCreateEvent = () => {
+  const handleCreateEvent = async () => {
     // In a real app, you would format this data according to your Motoko types
     // and send it to your backend canister.
     const eventData = {
@@ -38,6 +43,19 @@ export default function CreateEventPage() {
         quantity: Number(ticketSupply),
         kind: ticketKind === '#Seated' ? { '#Seated': { seatInfo: 'General Seating' } } : { '#Seatless': null }
     };
+
+    const actor = createActor(canisterId, { agentOptions: { identity } });
+    await actor.createEvent(
+      eventName,
+      "organizer-001",
+      eventDescription,
+      BigInt(new Date(`${eventDate}T${eventTime}`).getTime()) * 1_000_000n,
+      BigInt(durationMinutes),
+      BigInt(ticketSupply),
+      [BigInt(ticketPrice)],
+      ticketKind === '#Seated' ? { Seated: { seatInfo: '22' } } : { Seatless: null },
+      true
+    );
 
     console.log("Creating Event:", eventData);
     console.log("With Ticket Details:", ticketData);

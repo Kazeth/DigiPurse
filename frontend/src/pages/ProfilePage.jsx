@@ -22,15 +22,14 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
-  // const [profileData, setProfileData] = useState(null);
-  const { authClient, isLoggedIn } = useAuth();
   const [userProfile, setUserProfile] = useState(null);
+  const { authClient, isLoggedIn } = useAuth();
   const identity = authClient.getIdentity();
   const principal = identity.getPrincipal();
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    // setProfileData(prev => ({ ...prev, [id]: value }));
+    console.log(id, value);
   };
 
   useEffect(() => {
@@ -38,16 +37,18 @@ export default function ProfilePage() {
           if (!authClient || !identity || !principal || !isLoggedIn) return;
           const actor = createActor(canisterId, { agentOptions: { identity } });
           try {
-              const profArr = await actor.getCustomerProfile(principal);
-              setUserProfile(profArr ? profArr[0] : null);
-              console.log("User profile fetched:", profArr);
+            console.log("Trying this principal : ", principal.toText());
+            const profArr = await actor.getCustomerProfile(principal);
+            setUserProfile(profArr ? profArr[0] : null);
+            console.log("User profile fetched:", profArr);
           } catch (err) {
-              setUserProfile(null);
+            console.error("Error fetching user profile:", err);
+            setUserProfile(null);
           }
           setIsLoading(false);
       }
       fetchProfile();
-  }, [isLoggedIn, authClient, identity, principal]);
+  }, [isLoggedIn]);
 
   if (isLoading) {
       return (
@@ -64,7 +65,7 @@ export default function ProfilePage() {
         <header className="flex flex-col sm:flex-row items-center gap-6 mb-8">
           <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-purple-500/50">
             <AvatarImage src={`https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?principal=${principal}`} alt="User Avatar" />
-            <AvatarFallback className="text-4xl bg-purple-800/50">{principal.toText().substring(0, 2).toUpperCase()}</AvatarFallback>
+            <AvatarFallback className="text-4xl bg-purple-800/50">{userProfile ? userProfile.name.substring(0,2).toUpperCase() : principal.toText().substring(0,2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold text-center sm:text-left">{userProfile.name}</h1>

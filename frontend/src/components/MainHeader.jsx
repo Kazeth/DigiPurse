@@ -18,9 +18,12 @@ export default function MainHeader() {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
 
   // Authentication State
-  const { isAuthenticated, authClient, principal, login, logout } = useAuth();
+  const { isAuthenticated, authClient, login, logout, isLoggedIn } = useAuth();
+  const identity = authClient ? authClient.getIdentity() : null;
+  const principal = identity ? identity.getPrincipal() : null;
 
   // Handle scroll
   useEffect(() => {
@@ -29,20 +32,36 @@ export default function MainHeader() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    // console.log("logged in ? ", isLoggedIn);
+      async function fetchProfile() {
+          if (!authClient || !identity || !principal || !isLoggedIn) return;
+          const actor = createActor(canisterId, { agentOptions: { identity } });
+          // await actor.agent.fetchRootKey();
+          try {
+              const profArr = await actor.getCustomerProfile(principal);
+              setUserProfile(profArr ? profArr[0] : null);
+          } catch (err) {
+              setUserProfile(null);
+          }
+      }
+      fetchProfile();
+  }, [isLoggedIn]);
+
   const handleLogin = async () => {
     if (!authClient) return;
     const status = await login();
     if (status) {
       console.log("User is authenticated and available");
       const identity = authClient.getIdentity();
-      const actor = await createActor(canisterId, { agentOptions: { identity } });
+      const actor = createActor(canisterId, { agentOptions: { identity } });
       const exist = await actor.checkUserExist(identity.getPrincipal());
       if (exist) {
-        console.log("User is registered, navigating to home page");
+        // console.log("User is registered, navigating to home page");
         navigate('/home');
       }
       else {
-        console.log("User is not registered, navigating to post-login page");
+        // console.log("User is not registered, navigating to post-login page");
         navigate('/postlogin');
       }
     } else {
@@ -70,7 +89,7 @@ export default function MainHeader() {
           <Link to="/profile">
             <Avatar>
               <AvatarImage src={`https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?principal=${principal}`} alt="User Avatar" />
-              <AvatarFallback>{principal?.toText().substring(0, 2).toUpperCase()}</AvatarFallback>
+              <AvatarFallback>{userProfile ? userProfile.name.substring(0, 2).toUpperCase() : principal.toText().substring(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
           </Link>
           <Button variant="destructive" size="sm" onClick={handleLogout}>

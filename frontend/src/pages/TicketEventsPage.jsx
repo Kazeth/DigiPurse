@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar, Tag, Search, FilterX, ArrowLeft, ArrowRight, Armchair, Users, Ticket, PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/lib/AuthContext';
 
 const EVENTS_PER_PAGE = 5;
 
@@ -16,6 +17,9 @@ export default function EventsPage() {
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isOrganizer, setIsOrganizer] = useState(true); // Mock state for organizer role
+  const { authClient } = useAuth();
+  const identity = authClient ? authClient.getIdentity() : null;
+  const principal = identity ? identity.getPrincipal() : null;
 
 
   // Filter states
@@ -26,7 +30,7 @@ export default function EventsPage() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const actor = createActor(canisterId);
+        const actor = createActor(canisterId, { agentOptions: { identity } });
         const response = await actor.getAllEvents();
         console.log(response);
         // response: Array<[string, Event]>
@@ -50,7 +54,7 @@ export default function EventsPage() {
             image: `https://placehold.co/300x300/1E0A2E/FFFFFF?text=${event.name.split(' ').map(w => w[0]).join('')}`
           };
         });
-        console.log(parsed);
+        console.log("parsed:", parsed);
         setAllEvents(parsed);
       } catch (err) {
         console.error("Failed to fetch events:", err);
