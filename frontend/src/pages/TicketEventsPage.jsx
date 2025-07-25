@@ -32,7 +32,7 @@ export default function EventsPage() {
       try {
         const actor = createActor(canisterId, { agentOptions: { identity } });
         const response = await actor.getAllEvents();
-        console.log(response);
+        // console.log(response);
         // response: Array<[string, Event]>
         const parsed = response.map(([id, event]) => {
           const isSeated = event.kind.hasOwnProperty('Seated');

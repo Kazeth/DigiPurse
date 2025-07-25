@@ -37,10 +37,10 @@ export default function ProfilePage() {
           if (!authClient || !identity || !principal || !isLoggedIn) return;
           const actor = createActor(canisterId, { agentOptions: { identity } });
           try {
-            console.log("Trying this principal : ", principal.toText());
+            // console.log("Trying this principal : ", principal.toText());
             const profArr = await actor.getCustomerProfile(principal);
             setUserProfile(profArr ? profArr[0] : null);
-            console.log("User profile fetched:", profArr);
+            // console.log("User profile fetched:", profArr);
           } catch (err) {
             console.error("Error fetching user profile:", err);
             setUserProfile(null);

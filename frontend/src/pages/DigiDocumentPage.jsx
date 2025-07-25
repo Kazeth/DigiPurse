@@ -54,7 +54,7 @@ export default function DigiDocumentPage() {
         const identity = authClient.getIdentity();
         const actor = createActor(canisterId, { agentOptions: { identity } });
         setActor(actor);
-        console.log("Actor initialized:", actor);
+        // console.log("Actor initialized:", actor);
       }
 
 

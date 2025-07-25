@@ -28,7 +28,7 @@ export default function HomePage() {
             setIsLoading(false);
         }
         fetchProfile();
-    }, [isLoggedIn, authClient, identity, principal]);
+    }, [isLoggedIn, authClient]);
 
     const mainActions = [
         {

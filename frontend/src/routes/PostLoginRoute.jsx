@@ -15,10 +15,10 @@ export const PostLoginRoute = () => {
         try {
           const actor = createActor(canisterId, { agentOptions: { identity } });
           const exist = await actor.checkUserExist(principal);
-          console.log("User exists:", exist);
+          // console.log("User exists:", exist);
           setUserExists(exist);
         } catch (err) {
-          console.error('Error checking profile:', err);
+          // console.error('Error checking profile:', err);
           setUserExists(false); // fallback
         } finally {
           setLoading(false);
