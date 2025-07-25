@@ -28,7 +28,7 @@ export const PostLoginRoute = () => {
 
     checkProfile();
   }, [isAuthenticated, principal, identity]);
-  console.log("post")
+  // console.log("post")
   if (!isAuthenticated) return <Navigate to="/" replace />;
   if (loading || userExists === null) return <LoadingScene/>;
   if (userExists) return <Navigate to="/home" replace />;

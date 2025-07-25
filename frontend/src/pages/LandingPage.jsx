@@ -4,28 +4,28 @@ import { createActor, canisterId } from '@/declarations/Registry_backend';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShieldCheck, Ticket, CreditCard } from 'lucide-react';
+import { ShieldCheck, Ticket, FileText } from 'lucide-react';
 import logo from '@/assets/logo.png';
 
 // Feature data
 const features = [
   {
     icon: ShieldCheck,
-    title: 'DigiPurse : IAM',
+    title: 'DigiIdentity',
     description: 'Utilizes Decentralized Identifiers (DIDs) and Verifiable Credentials (VCs) to enable users to securely manage digital versions of passports, ID cards, and other credentials.',
     image: 'https://placehold.co/600x400/4C1D95/FFFFFF?text=Identity',
   },
   {
     icon: Ticket,
-    title: 'DigiPurse : Ticket',
+    title: 'DigiTicket',
     description: 'Employs NFT-based tickets to prevent fraud and scalping. Each ticket is unique and traceable on the blockchain, providing transparency and authenticity.',
     image: 'https://placehold.co/600x400/4C1D95/FFFFFF?text=Tickets',
   },
   {
-    icon: CreditCard,
-    title: 'DigiPurse : Wallet',
-    description: 'Facilitates peer-to-peer transactions with enhanced security and reduced fees. Blockchain integration ensures fast, transparent, and tamper-proof payment processing.',
-    image: 'https://placehold.co/600x400/4C1D95/FFFFFF?text=Payments',
+    icon: FileText,
+    title: 'DigiDocument',
+    description: 'A decentralized document storage system that allows users to securely upload, view, and manage their files on the blockchain. Ensures data privacy, ownership, and immutability in a trustless environment.',
+  image: 'https://placehold.co/600x400/4C1D95/FFFFFF?text=Documents',
   },
 ];
 
@@ -72,7 +72,7 @@ export default function LandingPage() {
                 <span className="block text-purple-400">Decentralized.</span>
               </h1>
               <p className="mt-6 max-w-xl mx-auto lg:mx-0 text-lg text-purple-200/80">
-                DigiPurse is a Web3 application designed to streamline digital life by integrating ticketing, identity, and payments into one secure platform, giving you full control.
+                DigiPurse is a Web3 application designed to streamline digital life by integrating ticketing, identity, and documents into one secure platform, giving you full control.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                 {isAuthenticated ?

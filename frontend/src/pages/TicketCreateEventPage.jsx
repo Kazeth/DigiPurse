@@ -47,7 +47,7 @@ export default function CreateEventPage() {
     const actor = createActor(canisterId, { agentOptions: { identity } });
     await actor.createEvent(
       eventName,
-      "organizer-001",
+      "OR-001",
       eventDescription,
       BigInt(new Date(`${eventDate}T${eventTime}`).getTime()) * 1_000_000n,
       BigInt(durationMinutes),
