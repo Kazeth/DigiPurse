@@ -48,7 +48,12 @@ export default function PostLoginPage() {
       joinDate: BigInt(new Date(dob).getTime()) * 1_000_000n,
       address: address
     });
-    navigate('/home');
+    const exist = await actor.checkUserExist(principal);
+    if (exist) {
+      navigate('/home');
+    } else {
+      console.error('User registration failed unexpectedly');
+    }
   };
 
   const areRequiredFieldsFilled = () => {

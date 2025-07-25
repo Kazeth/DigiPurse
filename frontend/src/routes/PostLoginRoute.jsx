@@ -4,7 +4,7 @@ import { useAuth } from '@/lib/AuthContext';
 import { createActor, canisterId } from 'declarations/Registry_backend';
 import LoadingScene from '@/components/LoadingScene';
 
-export const UserRoute = () => {
+export const PostLoginRoute = () => {
   const { isAuthenticated, principal, identity } = useAuth();
   const [loading, setLoading] = useState(true);
   const [userExists, setUserExists] = useState(null);
@@ -15,9 +15,10 @@ export const UserRoute = () => {
         try {
           const actor = createActor(canisterId, { agentOptions: { identity } });
           const exist = await actor.checkUserExist(principal);
+          console.log("User exists:", exist);
           setUserExists(exist);
         } catch (err) {
-          console.error('Error checking user profile:', err);
+          console.error('Error checking profile:', err);
           setUserExists(false); // fallback
         } finally {
           setLoading(false);
@@ -27,13 +28,10 @@ export const UserRoute = () => {
 
     checkProfile();
   }, [isAuthenticated, principal, identity]);
-  console.log("user")
-  if (isAuthenticated === null || loading || userExists === null) {
-    return <LoadingScene />;
-  }
-
+  console.log("post")
   if (!isAuthenticated) return <Navigate to="/" replace />;
-  if (!userExists) return <Navigate to="/postlogin" replace />;
-
+  if (loading || userExists === null) return <LoadingScene/>;
+  if (userExists) return <Navigate to="/home" replace />;
+  
   return <Outlet />;
 };

@@ -11,14 +11,26 @@ const identityProvider =
 
 export const AuthProvider = ({ children }) => {
   const [authClient, setAuthClient] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [principal, setPrincipal] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    AuthClient.create().then(async (client) => {
+    const initAuth = async () => {
+      const client = await AuthClient.create();
       setAuthClient(client);
-    });
+
+      const isAuthenticated = await client.isAuthenticated();
+      setIsAuthenticated(isAuthenticated);
+
+      if (isAuthenticated) {
+        const identity = client.getIdentity();
+        setPrincipal(identity.getPrincipal());
+        setIsLoggedIn(true);
+      }
+    };
+
+    initAuth();
   }, []);
 
   const login = async () => {
@@ -42,7 +54,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     if (!authClient) return;
     await authClient.logout();
-    setIsAuthenticated(false);
+    setIsAuthenticated(null);
     setPrincipal(null);
     setIsLoggedIn(false);
   };
