@@ -22,13 +22,12 @@ const TICKETS_PER_PAGE = 9;
 export default function MarketplacePage() {
   const navigate = useNavigate();
   const { isAuthenticated, principal } = useAuth();
-
   const [isVerified, setIsVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [allMarketplaceTickets, setAllMarketplaceTickets] = useState([]);
+  const [eventsMap, setEventsMap] = useState(new Map());
   const [filteredTickets, setFilteredTickets] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-
   const [searchTerm, setSearchTerm] = useState('');
   const [maxPrice, setMaxPrice] = useState(250);
   const [filterDate, setFilterDate] = useState('');
@@ -40,15 +39,18 @@ export default function MarketplacePage() {
         setIsLoading(false);
         return;
       }
-
       setIsLoading(true);
       try {
         const identityOpt = await Identity_backend.getIdentity(principal);
         if (identityOpt.length > 0 && identityOpt[0].isVerified) {
           setIsVerified(true);
-
-          const response = await MasterTicket_backend.getAllMasterTicket();
-          const parsed = response.map(([id, masterTicket]) => ({
+          const [ticketResponse, eventResponse] = await Promise.all([
+            MasterTicket_backend.getAllMasterTicket(),
+            Event_backend.getAllEvents()
+          ]);
+          const events = new Map(eventResponse.map(([id, event]) => [id, event]));
+          setEventsMap(events);
+          const parsed = ticketResponse.map(([id, masterTicket]) => ({
             ticketID: id,
             eventID: masterTicket.eventID,
             ticketDesc: masterTicket.ticketDesc,
@@ -57,7 +59,6 @@ export default function MarketplacePage() {
             valid: masterTicket.valid,
           }));
           setAllMarketplaceTickets(parsed);
-
         } else {
           setIsVerified(false);
         }
@@ -68,7 +69,6 @@ export default function MarketplacePage() {
         setIsLoading(false);
       }
     };
-
     checkAndFetchData();
   }, [isAuthenticated, principal]);
 
@@ -77,8 +77,8 @@ export default function MarketplacePage() {
     if (searchTerm) {
       const lowercasedTerm = searchTerm.toLowerCase();
       tickets = tickets.filter(ticket => {
-        const event = mockEvents.find(e => e.eventID === ticket.eventID);
-        return event?.eventName.toLowerCase().includes(lowercasedTerm);
+        const event = eventsMap.get(ticket.eventID);
+        return event?.name.toLowerCase().includes(lowercasedTerm);
       });
     }
     if (maxPrice < 250) {
@@ -95,7 +95,7 @@ export default function MarketplacePage() {
 
     setFilteredTickets(tickets);
     setCurrentPage(1);
-  }, [searchTerm, maxPrice, filterDate, seatType, allMarketplaceTickets]);
+  }, [searchTerm, maxPrice, filterDate, seatType, allMarketplaceTickets, eventsMap]);
 
   const totalPages = Math.ceil(filteredTickets.length / TICKETS_PER_PAGE);
   const currentTickets = filteredTickets.slice((currentPage - 1) * TICKETS_PER_PAGE, currentPage * TICKETS_PER_PAGE);
@@ -154,7 +154,6 @@ export default function MarketplacePage() {
           </div>
         </header>
 
-        {/* Filters Bar */}
         <Card className="bg-white/5 border-purple-400/20 p-4 mb-8 backdrop-blur-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
             <div className="lg:col-span-2 space-y-2">
@@ -183,39 +182,38 @@ export default function MarketplacePage() {
 
         <main>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {currentTickets.length > 0 ? currentTickets.map(ticket => {
-              const event = mockEvents.find(e => e.eventID === ticket.eventID);
+            {currentTickets.map(ticket => {
+              const event = eventsMap.get(ticket.eventID);
+              if (!event) return null;
               return (
                 <Link key={ticket.ticketID} to={`/events/${ticket.eventID}?from=marketplace&ticketID=${ticket.ticketID}`}>
-                  <Card className="bg-white/5 border border-purple-400/20 flex flex-col group hover:border-purple-400/60 hover:shadow-lg hover:shadow-purple-900/20 transition-all duration-300 transform hover:-translate-y-1 h-full">
+                  <Card className="bg-white/5 border border-purple-400/20 flex flex-col group h-full">
                     <CardHeader>
-                      <CardTitle className="text-white group-hover:text-purple-300 transition-colors">{event?.eventName}</CardTitle>
-                      <CardDescription className="flex items-center gap-2 pt-1 text-purple-300/70">
-                        <Calendar className="h-4 w-4" /> {event?.eventDate.toLocaleDateString()}
+                      <CardTitle>{event.name}</CardTitle>
+                      <CardDescription className="flex items-center gap-2 pt-1">
+                        <Calendar className="h-4 w-4" /> {new Date(Number(event.date) / 1000000).toLocaleDateString()}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="flex-grow space-y-3">
-                      <div className="flex items-center gap-2 text-xl font-bold text-purple-300">
+                      <div className="flex items-center gap-2 text-xl font-bold">
                         <Tag className="h-5 w-5" /> {ticket.price} ICP
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-purple-400/80 truncate">
+                      <div className="flex items-center gap-2 text-xs truncate">
                         <User className="h-4 w-4" /> Owner: {ticket.owner ? ticket.owner.toText() : 'N/A'}
                       </div>
                       {ticket.kind['#Seated'] && (
-                        <div className="flex items-center gap-2 text-sm text-purple-400">
-                          <Armchair className="h-4 w-4" /> {ticket.kind['#Seated'].seatInfo}
+                        <div className="flex items-center gap-2 text-sm">
+                          <Armchair className="h-4 w-4" /> {ticket.kind['#Seated'].seatInfo || 'Seated'}
                         </div>
                       )}
                     </CardContent>
                     <CardFooter>
-                      <Button className="w-full bg-purple-600 hover:bg-purple-500">View Details</Button>
+                      <Button className="w-full">View Details</Button>
                     </CardFooter>
                   </Card>
                 </Link>
               );
-            }) : (
-              <p className="text-center col-span-full text-purple-300/80 text-lg">No tickets found in the marketplace.</p>
-            )}
+            })}
           </div>
 
           {filteredTickets.length > TICKETS_PER_PAGE && (
