@@ -68,6 +68,13 @@
         "output": "frontend/src/declarations/User_backend"
       }
     },
+    "Identity_backend": {
+      "main": "backend/Identity/Identity.mo",
+      "type": "motoko",
+      "declarations": {
+        "output": "frontend/src/declarations/Identity_backend"
+      }
+    },
     "frontend": {
       "dependencies": [
         "backend"

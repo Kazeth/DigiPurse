@@ -1,0 +1,14 @@
+type PassportInfo = 
+ record {
+   dateOfBirth: text;
+   dateOfExpiry: text;
+   fullName: text;
+   gender: text;
+   nationality: text;
+   passportNumber: text;
+ };
+service : {
+  getIdentity: () -> (opt PassportInfo) query;
+  hasIdentity: () -> (bool) query;
+  saveIdentity: (info: PassportInfo) -> ();
+}

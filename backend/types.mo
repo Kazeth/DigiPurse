@@ -78,4 +78,14 @@ module {
     totalSize : Nat;
     fileType : Text;
   };
+  public type Identity = {
+    name: Text;
+    gender: Text;
+    dob: Text;
+    nationality: Text;
+    passportNumber: Text;
+    dateOfExpiry: Text;
+    passportImageName: Text;
+    isVerified: Bool;
+  };
 };

@@ -1,0 +1,16 @@
+type Identity = 
+ record {
+   dateOfExpiry: text;
+   dob: text;
+   gender: text;
+   isVerified: bool;
+   name: text;
+   nationality: text;
+   passportImageName: text;
+   passportNumber: text;
+ };
+service : {
+  clearIdentity: (user: principal) -> ();
+  getIdentity: (user: principal) -> (opt Identity) query;
+  saveIdentity: (user: principal, data: Identity) -> ();
+}

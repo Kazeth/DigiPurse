@@ -1,0 +1,64 @@
+type Transaction = 
+ record {
+   buyer: principal;
+   id: text;
+   method: text;
+   paymentSource: text;
+   price: nat;
+   seller: principal;
+   ticketID: text;
+   timestamp: Time;
+ };
+type Time = int;
+type TicketKind = 
+ variant {
+   Seated: record {seatInfo: text;};
+   Seatless;
+ };
+type Ticket = 
+ record {
+   eventID: text;
+   id: nat;
+   kind: TicketKind;
+   owner: principal;
+   price: nat;
+   valid: bool;
+ };
+type Organizer = 
+ record {
+   address: text;
+   id: principal;
+   joinDate: Time;
+   name: text;
+ };
+type Event = 
+ record {
+   date: Time;
+   description: text;
+   durationMinutes: nat;
+   id: text;
+   name: text;
+   organizer: principal;
+   ticketSupply: nat;
+ };
+type Customer = 
+ record {
+   address: text;
+   id: principal;
+   joinDate: Time;
+   name: text;
+ };
+service : {
+  addTransaction: (tx: Transaction) -> ();
+  checkUserExist: (p: principal) -> (bool);
+  createEvent: (organizer: principal, name: text, desc: text, date: Time,
+   duration: nat, supply: nat) -> ();
+  getAllCustomers: () -> (vec Customer) query;
+  getAllEvents: () -> (vec Event) query;
+  getAllTransactions: () -> (vec Transaction) query;
+  getCustomerProfile: (p: principal) -> (opt Customer) query;
+  getCustomerTickets: (p: principal) -> (opt vec Ticket) query;
+  registerCustomer: ("principal": principal, profile: Customer) -> ();
+  registerOrganizer: ("principal": principal, profile: Organizer) -> ();
+  updateCustomerProfile: ("principal": principal, profile: Customer) -> ();
+}

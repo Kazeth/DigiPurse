@@ -1,0 +1,41 @@
+type Transaction = 
+ record {
+   buyer: principal;
+   id: text;
+   method: text;
+   paymentSource: text;
+   price: nat;
+   seller: principal;
+   ticketID: text;
+   timestamp: Time;
+ };
+type Time = int;
+type TicketKind = 
+ variant {
+   Seated: record {seatInfo: text;};
+   Seatless;
+ };
+type Ticket = 
+ record {
+   eventID: text;
+   id: nat;
+   kind: TicketKind;
+   owner: principal;
+   price: nat;
+   valid: bool;
+ };
+type Customer = 
+ record {
+   address: text;
+   id: principal;
+   joinDate: Time;
+   name: text;
+ };
+service : {
+  getMyProfile: () -> (opt Customer);
+  getMyTickets: () -> (vec record {
+                             text;
+                             Ticket;
+                           }) query;
+  getMyTransactionHistory: () -> (vec Transaction);
+}
