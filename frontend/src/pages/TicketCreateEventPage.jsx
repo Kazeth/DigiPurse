@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, PlusCircle, Ticket, Armchair, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { createActor, canisterId } from '@/declarations/Event_backend';
+import { createActor as createEventActor, canisterId as eventCanisterId } from '@/declarations/Event_backend';
+import { createActor as createTicketActor, canisterId as ticketCanisterId } from '@/declarations/MasterTicket_backend';
 import { useAuth } from '@/lib/AuthContext';
 
 export default function CreateEventPage() {
@@ -44,8 +45,8 @@ export default function CreateEventPage() {
         kind: ticketKind === '#Seated' ? { '#Seated': { seatInfo: 'General Seating' } } : { '#Seatless': null }
     };
 
-    const actor = createActor(canisterId, { agentOptions: { identity } });
-    await actor.createEvent(
+    const eventActor = createEventActor(eventCanisterId, { agentOptions: { identity } });
+    await eventActor.createEvent(
       eventName,
       "organizer-001",
       eventDescription,
@@ -55,6 +56,14 @@ export default function CreateEventPage() {
       [BigInt(ticketPrice)],
       ticketKind === '#Seated' ? { Seated: { seatInfo: '22' } } : { Seatless: null },
       true
+    );
+
+    const ticketActor = createTicketActor(ticketCanisterId, { agentOptions: { identity } });
+    await ticketActor.createMasterTicket(
+      "event-001",
+      eventDescription,
+      BigInt(ticketPrice),
+      ticketKind === '#Seated' ? { Seated: { seatInfo: ' 22' } } : { Seatless: null }
     );
 
     console.log("Creating Event:", eventData);
