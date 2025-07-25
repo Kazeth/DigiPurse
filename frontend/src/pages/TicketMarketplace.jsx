@@ -4,63 +4,73 @@ import { Event_backend } from 'declarations/Event_backend';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Calendar, Tag, Search, FilterX, ArrowLeft, ArrowRight, Armchair, User, PlusCircle, Loader2, ShieldAlert } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Calendar, Tag, Search, FilterX, ArrowLeft, ArrowRight, Armchair, User, PlusCircle } from 'lucide-react';
+import { useAuth } from '../lib/AuthContext';
+import { Identity_backend } from 'declarations/Identity_backend';
 import { cn } from '@/lib/utils';
 
-// --- MOCK DATA ---
 const mockEvents = [
   { eventID: "EVT-001", eventName: "ICP Hackathon 2025", eventDate: new Date('2025-08-01T09:00:00') },
   { eventID: "WEB3SUMMIT", eventName: "Web3 Summit", eventDate: new Date('2025-09-15T10:00:00') },
   { eventID: "DEVFEST", eventName: "DevFest Global", eventDate: new Date('2025-10-20T11:00:00') },
 ];
 
-const TICKETS_PER_PAGE = 9; // Adjusted for a 3-column layout
-
-// type SeatFilter = 'all' | 'seated' | 'seatless'; // Removed for JSX
+const TICKETS_PER_PAGE = 9;
 
 export default function MarketplacePage() {
   const navigate = useNavigate();
+  const { isAuthenticated, principal } = useAuth();
+
+  const [isVerified, setIsVerified] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [allMarketplaceTickets, setAllMarketplaceTickets] = useState([]);
-  const [filteredTickets, setFilteredTickets] = useState(allMarketplaceTickets);
+  const [filteredTickets, setFilteredTickets] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Filter states
   const [searchTerm, setSearchTerm] = useState('');
   const [maxPrice, setMaxPrice] = useState(250);
   const [filterDate, setFilterDate] = useState('');
-  const [seatType, setSeatType] = useState('all'); // Type annotation removed
+  const [seatType, setSeatType] = useState('all');
 
   useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        const response = await MasterTicket_backend.getAllMasterTicket();
-        const response2 = await Event_backend.getAllEvents();
-        console.log(response); // tickets response
-        console.log(response2); // events response
+    const checkAndFetchData = async () => {
+      if (!isAuthenticated || !principal) {
+        setIsLoading(false);
+        return;
+      }
 
-        // response: Array<[string, Event]>
-        const parsed = response.map(([id, masterTicket]) => {
-          return {
+      setIsLoading(true);
+      try {
+        const identityOpt = await Identity_backend.getIdentity(principal);
+        if (identityOpt.length > 0 && identityOpt[0].isVerified) {
+          setIsVerified(true);
+
+          const response = await MasterTicket_backend.getAllMasterTicket();
+          const parsed = response.map(([id, masterTicket]) => ({
             ticketID: id,
             eventID: masterTicket.eventID,
             ticketDesc: masterTicket.ticketDesc,
             price: Number(masterTicket.price),
             kind: masterTicket.kind,
             valid: masterTicket.valid,
-          };
-        });
+          }));
+          setAllMarketplaceTickets(parsed);
 
-        console.log(parsed);
-        setAllMarketplaceTickets(parsed); // ✅ Benar
-
-      } catch (err) {
-        console.error("Failed to fetch events:", err);
+        } else {
+          setIsVerified(false);
+        }
+      } catch (error) {
+        console.error("Failed to check identity or fetch data:", error);
+        setIsVerified(false);
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchTickets();
-  }, []);
+
+    checkAndFetchData();
+  }, [isAuthenticated, principal]);
 
   useMemo(() => {
     let tickets = allMarketplaceTickets;
@@ -71,7 +81,9 @@ export default function MarketplacePage() {
         return event?.eventName.toLowerCase().includes(lowercasedTerm);
       });
     }
-    tickets = tickets.filter(ticket => ticket.price <= maxPrice);
+    if (maxPrice < 250) {
+      tickets = tickets.filter(ticket => ticket.price <= maxPrice);
+    }
     if (filterDate) {
       tickets = tickets.filter(ticket => {
         const event = mockEvents.find(e => e.eventID === ticket.eventID);
@@ -94,6 +106,36 @@ export default function MarketplacePage() {
     setFilterDate('');
     setSeatType('all');
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] bg-[#11071F]">
+        <Loader2 className="h-12 w-12 text-white animate-spin" />
+        <p className="ml-4 text-white text-lg">Checking your identity...</p>
+      </div>
+    );
+  }
+
+  if (!isVerified) {
+    return (
+      <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div className="bg-[#1e1033] p-8 rounded-lg shadow-2xl shadow-purple-900/50 border border-purple-400/30 text-center max-w-sm w-full">
+          <ShieldAlert className="mx-auto h-16 w-16 text-yellow-400 mb-4" />
+          <h2 className="text-2xl font-bold text-white mb-2">Verification Required</h2>
+          <p className="text-purple-200/80 mb-6">
+            You must verify your identity before accessing the marketplace.
+          </p>
+          <Button
+            size="lg"
+            className="w-full bg-purple-600 hover:bg-purple-500"
+            onClick={() => navigate('/digiIdentity')}
+          >
+            Go to Verification
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[calc(100vh-10rem)] bg-[#11071F] text-white p-4 sm:p-6 lg:p-8">
@@ -139,10 +181,9 @@ export default function MarketplacePage() {
           </div>
         </Card>
 
-        {/* Ticket Listings */}
         <main>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {currentTickets.map(ticket => {
+            {currentTickets.length > 0 ? currentTickets.map(ticket => {
               const event = mockEvents.find(e => e.eventID === ticket.eventID);
               return (
                 <Link key={ticket.ticketID} to={`/events/${ticket.eventID}?from=marketplace&ticketID=${ticket.ticketID}`}>
@@ -158,7 +199,7 @@ export default function MarketplacePage() {
                         <Tag className="h-5 w-5" /> {ticket.price} ICP
                       </div>
                       <div className="flex items-center gap-2 text-xs text-purple-400/80 truncate">
-                        <User className="h-4 w-4" /> Owner: {ticket.owner}
+                        <User className="h-4 w-4" /> Owner: {ticket.owner ? ticket.owner.toText() : 'N/A'}
                       </div>
                       {ticket.kind['#Seated'] && (
                         <div className="flex items-center gap-2 text-sm text-purple-400">
@@ -172,21 +213,24 @@ export default function MarketplacePage() {
                   </Card>
                 </Link>
               );
-            })}
+            }) : (
+              <p className="text-center col-span-full text-purple-300/80 text-lg">No tickets found in the marketplace.</p>
+            )}
           </div>
 
-          {/* Pagination */}
-          <div className="flex items-center justify-center mt-8 space-x-4">
-            <Button variant="outline" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>
-              <ArrowLeft className="mr-2 h-4 w-4" /> Previous
-            </Button>
-            <span className="font-semibold">
-              Page {currentPage} of {totalPages}
-            </span>
-            <Button variant="outline" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
-              Next <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
+          {filteredTickets.length > TICKETS_PER_PAGE && (
+            <div className="flex items-center justify-center mt-8 space-x-4">
+              <Button variant="outline" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+              </Button>
+              <span className="font-semibold">
+                Page {currentPage} of {totalPages}
+              </span>
+              <Button variant="outline" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+                Next <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          )}
         </main>
       </div>
     </div>
