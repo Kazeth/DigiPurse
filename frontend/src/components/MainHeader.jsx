@@ -13,7 +13,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 // DFINITY imports for Internet Identity
 // import { AuthClient } from '@dfinity/auth-client';
 import { useAuth } from '@/lib/AuthContext';
-import { useUser } from '@/lib/UserContext';
+import { createActor, canisterId } from '@/declarations/Registry_backend';
+// import { useUser } from '@/lib/UserContext';
 
 export default function MainHeader() {
   const navigate = useNavigate();
@@ -22,7 +23,6 @@ export default function MainHeader() {
 
   // Authentication State
   const { isAuthenticated, authClient, principal, login, logout } = useAuth();
-  const { registry } = useUser();
 
   // Handle scroll effect
   useEffect(() => {
@@ -33,10 +33,13 @@ export default function MainHeader() {
 
   const handleLogin = async () => {
     if (!authClient) return;
-    const success = await login();
-    if (success) {
+    const status = await login();
+    if (status) {
       console.log("User is authenticated and available");
-      if (await registry.checkUserExist(authClient.getIdentity().getPrincipal())) {
+      const identity = authClient.getIdentity();
+      const actor = await createActor(canisterId, { agentOptions: { identity } });
+      const exist = await actor.checkUserExist(identity.getPrincipal());
+      if (exist) {
         console.log("User is registered, navigating to home page");
         navigate('/home');
       }

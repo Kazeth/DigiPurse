@@ -5,11 +5,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/seperator';
-import { User, Shield, History, Edit, Save } from 'lucide-react';
+import { User, Shield, History, Edit, Save, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 import { useAuth } from '@/lib/AuthContext';
-import { useUser } from '@/lib/UserContext';
+import { createActor, canisterId } from '@/declarations/Registry_backend';
 
 const mockTransactionHistory = [
     { id: 1, type: 'Purchase', details: 'Ticket for ICP Hackathon 2025', amount: -50, date: new Date('2025-07-20') },
@@ -19,16 +19,43 @@ const mockTransactionHistory = [
 // --- END MOCK DATA ---
 
 export default function ProfilePage() {
+  const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
   // const [profileData, setProfileData] = useState(null);
-  const { authClient, principal } = useAuth();
-  const { userProfile, updateProfile } = useUser();
+  const { authClient, isLoggedIn } = useAuth();
+  const [userProfile, setUserProfile] = useState(null);
+  const identity = authClient.getIdentity();
+  const principal = identity.getPrincipal();
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
     // setProfileData(prev => ({ ...prev, [id]: value }));
   };
+
+  useEffect(() => {
+      async function fetchProfile() {
+          if (!authClient || !identity || !principal || !isLoggedIn) return;
+          const actor = createActor(canisterId, { agentOptions: { identity } });
+          try {
+              const profArr = await actor.getCustomerProfile(principal);
+              setUserProfile(profArr ? profArr[0] : null);
+              console.log("User profile fetched:", profArr);
+          } catch (err) {
+              setUserProfile(null);
+          }
+          setIsLoading(false);
+      }
+      fetchProfile();
+  }, [isLoggedIn, authClient, identity, principal]);
+
+  if (isLoading) {
+      return (
+          <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] bg-[#11071F]">
+              <Loader2 className="h-12 w-12 text-white animate-spin" />
+          </div>
+      );
+  }
 
   return (
     <div className="min-h-[calc(100vh-10rem)] bg-[#11071F] text-white p-4 sm:p-6 lg:p-8">
@@ -36,13 +63,13 @@ export default function ProfilePage() {
         {/* Profile Header */}
         <header className="flex flex-col sm:flex-row items-center gap-6 mb-8">
           <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-purple-500/50">
-            <AvatarImage src={`https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?principal=${principal}`} alt={userProfile.name} />
-            <AvatarFallback className="text-4xl bg-purple-800/50">{userProfile.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+            <AvatarImage src={`https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?principal=${principal}`} alt="User Avatar" />
+            <AvatarFallback className="text-4xl bg-purple-800/50">{principal.toText().substring(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold text-center sm:text-left">{userProfile.name}</h1>
             <p className="text-sm text-purple-300/70 text-center sm:text-left mt-1 truncate max-w-xs sm:max-w-md">Principal ID: {principal.toText()}</p>
-            <p className="text-sm text-purple-300/70 text-center sm:text-left">Joined: {userProfile.joinDate.toLocaleDateString()}</p>
+            {/* <p className="text-sm text-purple-300/70 text-center sm:text-left">Joined: {userProfile.joinDate}</p> */}
           </div>
         </header>
 
@@ -70,11 +97,11 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
                         <Label htmlFor="username">Username</Label>
-                        <Input id="username" value={profileData.username} onChange={handleInputChange} disabled={!isEditing} className="bg-black/20 border-purple-400/30" />
+                        <Input id="username" value={userProfile.name} onChange={handleInputChange} disabled={!isEditing} className="bg-black/20 border-purple-400/30" />
                     </div>
                     <div className="space-y-1">
                         <Label htmlFor="userAddress">Address</Label>
-                        <Input id="userAddress" value={profileData.userAddress} onChange={handleInputChange} disabled={!isEditing} className="bg-black/20 border-purple-400/30" />
+                        <Input id="userAddress" value={userProfile.address} onChange={handleInputChange} disabled={!isEditing} className="bg-black/20 border-purple-400/30" />
                     </div>
                 </div>
               </CardContent>

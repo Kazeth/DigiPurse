@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/AuthContext';
-import { useUser } from '@/lib/UserContext';
+import { createActor, canisterId } from '@/declarations/Registry_backend';
+// import { useUser } from '@/lib/UserContext';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
@@ -14,8 +15,8 @@ import { UserPlus, Camera } from 'lucide-react';
 export default function PostLoginPage() {
   const navigate = useNavigate();
   const [actor, setActor] = useState();
-  const { authClient, isAuthenticated, principal } = useAuth();
-  const { uploadProfile } = useUser();
+  const { authClient, isAuthenticated } = useAuth();
+  // const { uploadProfile } = useUser();
   const [username, setUsername] = useState('');
   const [dob, setDob] = useState('');
   const [address, setAddress] = useState('');
@@ -38,7 +39,11 @@ export default function PostLoginPage() {
       address,
       // profileImageFile would be uploaded here
     });
-    uploadProfile({
+    const identity = authClient.getIdentity();
+    const principal = identity.getPrincipal();
+    const actor = createActor(canisterId, { agentOptions: { identity } });
+    await actor.registerCustomer(principal, {
+      id: principal,
       name: username,
       joinDate: BigInt(new Date(dob).getTime()) * 1_000_000n,
       address: address

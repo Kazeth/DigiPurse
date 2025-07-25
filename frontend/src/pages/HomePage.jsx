@@ -5,24 +5,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Shield, Ticket, Wallet, Loader2, FilePlus, ShoppingCart, Repeat, Fingerprint } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
-import { useUser } from '@/lib/UserContext';
-
-const mockUserProfile = {
-    username: 'Mismoela',
-    tickets: 2,
-    documents: 5,
-    balance: 12.5 
-};
+import { createActor, canisterId } from '@/declarations/Registry_backend';
 
 export default function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
-    const { isAuthenticated, authClient, principal, isLoggedIn } = useAuth();
-    const { userProfile } = useUser();
+    const [userProfile, setUserProfile] = useState(null);
+    const { authClient, isLoggedIn } = useAuth();
     const navigate = useNavigate();
+    const identity = authClient ? authClient.getIdentity() : null;
+    const principal = identity ? identity.getPrincipal() : null;
 
     useEffect(() => {
-        setIsLoading(false);
-    }, [isLoggedIn]);
+        async function fetchProfile() {
+            if (!authClient || !identity || !principal || !isLoggedIn) return;
+            const actor = createActor(canisterId, { agentOptions: { identity } });
+            try {
+                const profArr = await actor.getCustomerProfile(principal);
+                setUserProfile(profArr ? profArr[0] : null);
+            } catch (err) {
+                setUserProfile(null);
+            }
+            setIsLoading(false);
+        }
+        fetchProfile();
+    }, [isLoggedIn, authClient, identity, principal]);
 
     const mainActions = [
         {
@@ -106,7 +112,7 @@ export default function HomePage() {
                         </Link>
                         <div className='hidden sm:block'>
                             <p className='text-white font-semibold'>{userProfile?.name}</p>
-                            <p className='text-sm text-purple-400 truncate w-32'>{principal?.toText()}</p>
+                            <p className='text-sm text-purple-400 truncate w-32'>{principal.toText()}</p>
                         </div>
                     </div>
                 </div>

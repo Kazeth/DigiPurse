@@ -43,10 +43,7 @@ actor Registry {
 
   public func checkUserExist(p : Principal) : async Bool {
     Debug.print("Checking if user exists...");
-    switch (customers.get(p)) {
-      case (null) { return false };
-      case (?_) { return true };
-    };
+    return Option.isSome(customers.get(p));
   };
 
   // Event Organizers

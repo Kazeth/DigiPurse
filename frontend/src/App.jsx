@@ -26,7 +26,6 @@ import TicketEventDetailsPage from './pages/TicketEventDetailsPage'
 import TicketCreateEventPage from './pages/TicketCreateEventPage'
 import { UserRoute } from './routes/UserRoute';
 import { AuthProvider } from './lib/AuthContext';
-import { UserProvider } from './lib/UserContext';
 
 // Document Upload/Download Progress
 import TransferProgress from './components/TransferProgress';
@@ -37,7 +36,6 @@ function App() {
   return (
     <AuthProvider>
     <TransferProvider>
-    <UserProvider>
       <Router>
         <ScrollToTop />
         <Routes>
@@ -68,7 +66,6 @@ function App() {
         </Routes>
         <TransferProgress />
       </Router>
-    </UserProvider>
     </TransferProvider>
     </AuthProvider>
   );

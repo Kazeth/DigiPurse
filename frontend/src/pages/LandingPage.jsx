@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/AuthContext';
-import { useUser } from '@/lib/UserContext';
+import { createActor, canisterId } from '@/declarations/Registry_backend';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,24 +31,26 @@ const features = [
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const { authClient, isAuthenticated, login, principal, isLoggedIn } = useAuth();
-  const { registry } = useUser();
+  const { authClient, isAuthenticated, login } = useAuth();
 
   const handleLogin = async () => {
     if (!authClient) return;
-    const success = await login();
-    if (success) {
+    const status = await login();
+    if (status) {
       console.log("User is authenticated and available");
-      if (await registry.checkUserExist(authClient.getIdentity().getPrincipal())) {
-        console.log("User is registered, navigating to home page");
+      const identity = authClient.getIdentity();
+      const actor = await createActor(canisterId, { agentOptions: { identity } });
+      const exist = await actor.checkUserExist(identity.getPrincipal());
+      if (exist) {
+        // console.log("User is registered, navigating to home page");
         navigate('/home');
       }
       else {
-        console.log("User is not registered, navigating to post-login page");
+        // console.log("User is not registered, navigating to post-login page");
         navigate('/postlogin');
       }
     } else {
-      console.error("Authentication failed");
+      // console.error("Authentication failed");
     }
   };
 
