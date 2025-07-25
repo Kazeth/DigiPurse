@@ -5,7 +5,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, LogOut } from 'lucide-react';
 import logo from '../assets/logo.png';
 
-// Import UI components
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/seperator';
