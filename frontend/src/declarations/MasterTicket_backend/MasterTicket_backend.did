@@ -10,8 +10,9 @@ type MasterTicketActor =
    emptyTicket: () -> (MasterTicket);
    getAllMasterTicket: () -> (vec record {
                                     text;
-                                    MasterTicket;
+                                    vec MasterTicket;
                                   }) query;
+   getMasterTicketByEventId: (eventId: text) -> (opt vec MasterTicket) query;
    updateTicketPrice: (ticket: MasterTicket, price: nat) -> (MasterTicket);
  };
 type MasterTicket = 

@@ -29,17 +29,18 @@ export default function EventDetailPage() {
                 const masterTicketActor = createMasterTicketActor(masterTicketCanisterId, {
                     agentOptions: { identity }
                 });
-
-                const allMasterTicketsResponse = await masterTicketActor.getAllMasterTicket();
-
-                const relevantTickets = allMasterTicketsResponse
-                    .filter(([_, masterTicket]) => masterTicket.eventID === eventID)
-                    .map(([_, masterTicket]) => ({
-                        eventID: masterTicket.eventID,
-                        desc: masterTicket.ticketDesc,
-                        price: Number(masterTicket.price),
-                        kind: masterTicket.kind,
-                    }));
+                
+                console.log(eventID);
+                const relevantMasterTickets = await masterTicketActor.getMasterTicketByEventId(eventID);
+                const relevantTickets = relevantMasterTickets[0].map((masterTicket) => ({
+                    eventID: masterTicket.eventID,
+                    desc: masterTicket.ticketDesc,
+                    price: Number(masterTicket.price),
+                    kind: masterTicket.kind,
+                    valid: masterTicket.valid,
+                }));
+                console.log("Fetched master tickets:", relevantMasterTickets);
+                console.log("Relevant tickets:", relevantTickets);
 
                 setOfficialTicketTypes(relevantTickets);
 

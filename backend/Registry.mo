@@ -41,7 +41,7 @@ persistent actor Registry {
   };
 
   public func checkUserExist(p : Principal) : async Bool {
-    Debug.print("Checking if user exists...");
+    // Debug.print("Checking if user exists...");
     return Option.isSome(customers.get(p));
   };
 

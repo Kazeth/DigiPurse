@@ -65,27 +65,27 @@ export default function EventsPage() {
 
   useMemo(() => {
     let events = allEvents;
-    console.log("Total before filtering:", events.length);
+    // console.log("Total before filtering:", events.length);
 
     if (searchTerm) {
       const lowercasedTerm = searchTerm.toLowerCase();
       events = events.filter(event =>
         event.eventName.toLowerCase().includes(lowercasedTerm)
       );
-      console.log("After searchTerm filter:", events.length);
+      // console.log("After searchTerm filter:", events.length);
     }
 
     events = events.filter(
       event => Number(event.minPrice) >= priceRange.min && Number(event.maxPrice) <= priceRange.max
     );
-    console.log("After priceRange filter:", events.length);
+    // console.log("After priceRange filter:", events.length);
 
     if (seatType === 'seated') {
       events = events.filter(event => event.hasSeated);
-      console.log("After seated filter:", events.length);
+      // console.log("After seated filter:", events.length);
     } else if (seatType === 'seatless') {
       events = events.filter(event => event.hasSeatless);
-      console.log("After seatless filter:", events.length);
+      // console.log("After seatless filter:", events.length);
     }
 
     setFilteredEvents(events);

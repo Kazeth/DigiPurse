@@ -3,7 +3,7 @@ import TrieMap "mo:base/TrieMap";
 import Iter "mo:base/Iter";
 import Text "mo:base/Text";
 import Array "mo:base/Array";
-
+import Debug "mo:base/Debug";
 persistent actor class MasterTicketActor() {
 
   var stableMasterTickets : [(Text, [Type.MasterTicket])] = [];
@@ -19,6 +19,12 @@ persistent actor class MasterTicketActor() {
 
   public query func getAllMasterTicket() : async [(Text, [Type.MasterTicket])] {
     Iter.toArray(masterTickets.entries());
+  };
+
+  public query func getMasterTicketByEventId(eventId : Text) : async ?[Type.MasterTicket] {
+    var res = masterTickets.get(eventId);
+    Debug.print(debug_show(res));
+    return res;
   };
 
   public func createMasterTicket(eventId : Text, ticketDesc : Text, price : Nat, kind : Type.TicketKind) : async Type.MasterTicket {

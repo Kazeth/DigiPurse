@@ -19,7 +19,12 @@ export const idlFactory = ({ IDL }) => {
     'emptyTicket' : IDL.Func([], [MasterTicket], []),
     'getAllMasterTicket' : IDL.Func(
         [],
-        [IDL.Vec(IDL.Tuple(IDL.Text, MasterTicket))],
+        [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Vec(MasterTicket)))],
+        ['query'],
+      ),
+    'getMasterTicketByEventId' : IDL.Func(
+        [IDL.Text],
+        [IDL.Opt(IDL.Vec(MasterTicket))],
         ['query'],
       ),
     'updateTicketPrice' : IDL.Func([MasterTicket, IDL.Nat], [MasterTicket], []),
