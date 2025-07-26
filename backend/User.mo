@@ -13,15 +13,15 @@ import Region "mo:base/Region";
 import Types "./types";
 import Registry "canister:Registry_backend";
 
-actor User{
+persistent actor User{
   var profile : Types.Customer = {
     id = Principal.fromText("aaaaa-aa");
     name = "";
     joinDate = Time.now();
     address = "";
   };
-  var myTickets = HashMap.HashMap<Text, Types.Ticket>(16, Text.equal, Text.hash);
-  var myTransactions = HashMap.HashMap<Text, Types.Transaction>(16, Text.equal, Text.hash);
+  transient var myTickets = HashMap.HashMap<Text, Types.Ticket>(16, Text.equal, Text.hash);
+  transient var myTransactions = HashMap.HashMap<Text, Types.Transaction>(16, Text.equal, Text.hash);
 
   public func getMyProfile() : async ?Types.Customer {
     return await Registry.getCustomerProfile(profile.id);

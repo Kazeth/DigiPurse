@@ -11,7 +11,7 @@ import Option "mo:base/Option";
 
 import Types "./types";
 
-actor FileManager {
+persistent actor FileManager {
 
   type UserFiles = HashMap.Map<Text, Types.File>;
 

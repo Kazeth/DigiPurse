@@ -13,6 +13,7 @@ type EventActor =
                               text;
                               Event;
                             }) query;
+   getEventByEventId: (eventId: text) -> (opt Event) query;
  };
 type Event = 
  record {

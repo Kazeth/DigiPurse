@@ -18,10 +18,10 @@ type TicketKind =
 type Ticket = 
  record {
    eventID: text;
-   id: nat;
    kind: TicketKind;
    owner: principal;
    price: nat;
+   ticketID: text;
    valid: bool;
  };
 type Customer = 

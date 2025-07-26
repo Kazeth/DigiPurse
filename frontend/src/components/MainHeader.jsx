@@ -46,7 +46,7 @@ export default function MainHeader() {
           }
       }
       fetchProfile();
-  }, [isLoggedIn]);
+  }, [isLoggedIn, authClient]);
 
   const handleLogin = async () => {
     if (!authClient) return;

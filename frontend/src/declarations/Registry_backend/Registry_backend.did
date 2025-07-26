@@ -18,10 +18,10 @@ type TicketKind =
 type Ticket = 
  record {
    eventID: text;
-   id: nat;
    kind: TicketKind;
    owner: principal;
    price: nat;
+   ticketID: text;
    valid: bool;
  };
 type Organizer = 
@@ -30,19 +30,6 @@ type Organizer =
    id: principal;
    joinDate: Time;
    name: text;
- };
-type Event = 
- record {
-   date: Time;
-   description: text;
-   durationMinutes: nat;
-   id: text;
-   kind: TicketKind;
-   name: text;
-   organizerId: text;
-   prices: vec nat;
-   ticketSupply: nat;
-   valid: bool;
  };
 type Customer = 
  record {
@@ -54,11 +41,7 @@ type Customer =
 service : {
   addTransaction: (tx: Transaction) -> ();
   checkUserExist: (p: principal) -> (bool);
-  createEvent: (name: text, organizerId: text, desc: text, date: Time,
-   duration: nat, supply: nat, price: vec nat, kind: TicketKind, valid:
-   bool) -> ();
   getAllCustomers: () -> (vec Customer) query;
-  getAllEvents: () -> (vec Event) query;
   getAllTransactions: () -> (vec Transaction) query;
   getCustomerProfile: (p: principal) -> (opt Customer) query;
   getCustomerTickets: (p: principal) -> (opt vec Ticket) query;

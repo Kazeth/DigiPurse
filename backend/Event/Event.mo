@@ -5,12 +5,12 @@ import Iter "mo:base/Iter";
 import TrieMap "mo:base/TrieMap";
 import Type "../types";
 
-actor class EventActor() {
+persistent actor class EventActor() {
 
-  stable var eventIdCounter : Nat = 0;
+  var eventIdCounter : Nat = 0;
 
-  stable var stableEvents : [(Text, Type.Event)] = [];
-  private var events = TrieMap.TrieMap<Text, Type.Event>(Text.equal, Text.hash);
+  var stableEvents : [(Text, Type.Event)] = [];
+  private transient var events = TrieMap.TrieMap<Text, Type.Event>(Text.equal, Text.hash);
 
   system func preupgrade() {
     stableEvents := Iter.toArray(events.entries());

@@ -30,6 +30,7 @@ export interface EventActor {
     Event
   >,
   'getAllEvents' : ActorMethod<[], Array<[string, Event]>>,
+  'getEventByEventId' : ActorMethod<[string], [] | [Event]>,
 }
 export type TicketKind = { 'Seated' : { 'seatInfo' : string } } |
   { 'Seatless' : null };

@@ -37,6 +37,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Tuple(IDL.Text, Event))],
         ['query'],
       ),
+    'getEventByEventId' : IDL.Func([IDL.Text], [IDL.Opt(Event)], ['query']),
   });
   return EventActor;
 };

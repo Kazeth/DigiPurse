@@ -11,11 +11,11 @@ export const idlFactory = ({ IDL }) => {
     'Seatless' : IDL.Null,
   });
   const Ticket = IDL.Record({
-    'id' : IDL.Nat,
     'eventID' : IDL.Text,
     'valid' : IDL.Bool,
     'owner' : IDL.Principal,
     'kind' : TicketKind,
+    'ticketID' : IDL.Text,
     'price' : IDL.Nat,
   });
   const Transaction = IDL.Record({

@@ -48,7 +48,7 @@ export default function ProfilePage() {
           setIsLoading(false);
       }
       fetchProfile();
-  }, [isLoggedIn]);
+  }, [isLoggedIn, authClient]);
 
   if (isLoading) {
       return (

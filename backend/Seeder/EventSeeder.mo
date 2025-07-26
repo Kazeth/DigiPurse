@@ -6,7 +6,7 @@ import Iter "mo:base/Iter";
 import Type "../types";
 import Event "canister:Event_backend";
 
-actor {
+persistent actor {
 
     public func seedMockEvents() : async () {
         let eventNames : [Text] = [

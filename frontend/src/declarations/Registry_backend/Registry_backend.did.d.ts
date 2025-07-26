@@ -8,18 +8,6 @@ export interface Customer {
   'name' : string,
   'address' : string,
 }
-export interface Event {
-  'id' : string,
-  'valid' : boolean,
-  'date' : Time,
-  'kind' : TicketKind,
-  'name' : string,
-  'description' : string,
-  'organizerId' : string,
-  'ticketSupply' : bigint,
-  'durationMinutes' : bigint,
-  'prices' : Array<bigint>,
-}
 export interface Organizer {
   'id' : Principal,
   'joinDate' : Time,
@@ -27,11 +15,11 @@ export interface Organizer {
   'address' : string,
 }
 export interface Ticket {
-  'id' : bigint,
   'eventID' : string,
   'valid' : boolean,
   'owner' : Principal,
   'kind' : TicketKind,
+  'ticketID' : string,
   'price' : bigint,
 }
 export type TicketKind = { 'Seated' : { 'seatInfo' : string } } |
@@ -50,22 +38,7 @@ export interface Transaction {
 export interface _SERVICE {
   'addTransaction' : ActorMethod<[Transaction], undefined>,
   'checkUserExist' : ActorMethod<[Principal], boolean>,
-  'createEvent' : ActorMethod<
-    [
-      string,
-      string,
-      string,
-      Time,
-      bigint,
-      bigint,
-      Array<bigint>,
-      TicketKind,
-      boolean,
-    ],
-    undefined
-  >,
   'getAllCustomers' : ActorMethod<[], Array<Customer>>,
-  'getAllEvents' : ActorMethod<[], Array<Event>>,
   'getAllTransactions' : ActorMethod<[], Array<Transaction>>,
   'getCustomerProfile' : ActorMethod<[Principal], [] | [Customer]>,
   'getCustomerTickets' : ActorMethod<[Principal], [] | [Array<Ticket>]>,

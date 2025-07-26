@@ -2,22 +2,23 @@ import Type "../types";
 import TrieMap "mo:base/TrieMap";
 import Iter "mo:base/Iter";
 import Text "mo:base/Text";
+import Array "mo:base/Array";
 
-actor class MasterTicketActor() {
+persistent actor class MasterTicketActor() {
 
-  stable var stableMasterTickets : [(Text, Type.MasterTicket)] = [];
-  private var masterTickets = TrieMap.TrieMap<Text, Type.MasterTicket>(Text.equal, Text.hash);
+  var stableMasterTickets : [(Text, [Type.MasterTicket])] = [];
+  private transient var masterTickets = TrieMap.TrieMap<Text, [Type.MasterTicket]>(Text.equal, Text.hash);
 
   system func preupgrade() {
     stableMasterTickets := Iter.toArray(masterTickets.entries());
   };
 
   system func postupgrade() {
-    masterTickets := TrieMap.fromEntries<Text, Type.MasterTicket>(Iter.fromArray(stableMasterTickets), Text.equal, Text.hash);
+    masterTickets := TrieMap.fromEntries<Text, [Type.MasterTicket]>(Iter.fromArray(stableMasterTickets), Text.equal, Text.hash);
   };
 
-  public query func getAllMasterTicket() : async [(Text, Type.MasterTicket)] {
-    return Iter.toArray(masterTickets.entries());
+  public query func getAllMasterTicket() : async [(Text, [Type.MasterTicket])] {
+    Iter.toArray(masterTickets.entries());
   };
 
   public func createMasterTicket(eventId : Text, ticketDesc : Text, price : Nat, kind : Type.TicketKind) : async Type.MasterTicket {
@@ -29,7 +30,16 @@ actor class MasterTicketActor() {
       valid = true;
     };
 
-    masterTickets.put(eventId, tempTicket);
+    switch (masterTickets.get(eventId)) {
+      case (?tickets) {
+        var mutableTickets = tickets;
+        mutableTickets := Array.append(mutableTickets, [tempTicket]);
+        masterTickets.put(eventId, mutableTickets);
+      };
+      case (null) {
+        masterTickets.put(eventId, [tempTicket]);
+      };
+    };
     return tempTicket;
   };
 

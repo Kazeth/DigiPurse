@@ -9,11 +9,11 @@ export interface Customer {
   'address' : string,
 }
 export interface Ticket {
-  'id' : bigint,
   'eventID' : string,
   'valid' : boolean,
   'owner' : Principal,
   'kind' : TicketKind,
+  'ticketID' : string,
   'price' : bigint,
 }
 export type TicketKind = { 'Seated' : { 'seatInfo' : string } } |

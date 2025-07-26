@@ -4,18 +4,23 @@ export const idlFactory = ({ IDL }) => {
     'Seatless' : IDL.Null,
   });
   const Ticket = IDL.Record({
-    'id' : IDL.Nat,
     'eventID' : IDL.Text,
     'valid' : IDL.Bool,
     'owner' : IDL.Principal,
     'kind' : TicketKind,
+    'ticketID' : IDL.Text,
     'price' : IDL.Nat,
   });
   const TicketActor = IDL.Service({
     'createTicket' : IDL.Func(
-        [IDL.Text, IDL.Nat, IDL.Principal, IDL.Nat, TicketKind],
+        [IDL.Text, IDL.Principal, IDL.Nat, TicketKind],
         [Ticket],
         [],
+      ),
+    'getAllUserTicket' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Vec(IDL.Tuple(IDL.Text, Ticket))],
+        ['query'],
       ),
     'transferTicket' : IDL.Func([Ticket, IDL.Principal], [Ticket], []),
   });

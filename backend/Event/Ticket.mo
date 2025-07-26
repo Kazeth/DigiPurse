@@ -5,12 +5,12 @@ import Iter "mo:base/Iter";
 import Text "mo:base/Text";
 import Nat "mo:base/Nat";
 
-actor class TicketActor() {
+persistent actor class TicketActor() {
 
-  stable var ticketIdCounter : Nat = 0;
+  var ticketIdCounter : Nat = 0;
 
-  stable var stableTickets : [(Text, Type.Ticket)] = [];
-  private var tickets = TrieMap.TrieMap<Text, Type.Ticket>(Text.equal, Text.hash);
+  var stableTickets : [(Text, Type.Ticket)] = [];
+  private transient var tickets = TrieMap.TrieMap<Text, Type.Ticket>(Text.equal, Text.hash);
 
   system func preupgrade() {
     stableTickets := Iter.toArray(tickets.entries());

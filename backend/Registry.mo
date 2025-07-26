@@ -14,13 +14,13 @@ import Event "/Event/Event";
 import Ticket "/Event/Ticket";
 import Types "types";
 
-actor Registry {
+persistent actor Registry {
 
   var transactions : [Types.Transaction] = [];
-  var tickets = Hashmap.HashMap<Principal, [Types.Ticket]>(0, Principal.equal, Principal.hash);
+  transient var tickets = Hashmap.HashMap<Principal, [Types.Ticket]>(0, Principal.equal, Principal.hash);
 
-  var customers = Hashmap.HashMap<Principal, Types.Customer>(0, Principal.equal, Principal.hash);
-  var organizers = Hashmap.HashMap<Principal, Types.Organizer>(0, Principal.equal, Principal.hash);
+  transient var customers = Hashmap.HashMap<Principal, Types.Customer>(0, Principal.equal, Principal.hash);
+  transient var organizers = Hashmap.HashMap<Principal, Types.Organizer>(0, Principal.equal, Principal.hash);
   // var admins = Hashmap.HashMap<Principal, Types.Admin>(0, Principal.equal, Principal.hash);
 
   // Customer Regions

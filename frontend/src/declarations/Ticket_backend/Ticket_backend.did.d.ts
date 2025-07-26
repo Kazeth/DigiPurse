@@ -3,18 +3,16 @@ import type { ActorMethod } from '@dfinity/agent';
 import type { IDL } from '@dfinity/candid';
 
 export interface Ticket {
-  'id' : bigint,
   'eventID' : string,
   'valid' : boolean,
   'owner' : Principal,
   'kind' : TicketKind,
+  'ticketID' : string,
   'price' : bigint,
 }
 export interface TicketActor {
-  'createTicket' : ActorMethod<
-    [string, bigint, Principal, bigint, TicketKind],
-    Ticket
-  >,
+  'createTicket' : ActorMethod<[string, Principal, bigint, TicketKind], Ticket>,
+  'getAllUserTicket' : ActorMethod<[Principal], Array<[string, Ticket]>>,
   'transferTicket' : ActorMethod<[Ticket, Principal], Ticket>,
 }
 export type TicketKind = { 'Seated' : { 'seatInfo' : string } } |

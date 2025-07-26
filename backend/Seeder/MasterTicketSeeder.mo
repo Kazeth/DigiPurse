@@ -5,12 +5,12 @@ import Nat "mo:base/Nat";
 import Text "mo:base/Text";
 import Iter "mo:base/Iter";
 
-actor {
+persistent actor {
 
   public func seedMockTickets() : async () {
     let events = await Event.getAllEvents();
     for (pair in events.vals()) {
-      let event = pair.1; // ambil elemen kedua dari tuple
+      let event = pair.1;
       let priceArray = event.prices;
       var index : Nat = 0;
 
