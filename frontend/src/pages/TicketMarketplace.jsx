@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { MasterTicket_backend } from 'declarations/MasterTicket_backend';
 import { Event_backend } from 'declarations/Event_backend';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar, Tag, Search, FilterX, ArrowLeft, ArrowRight, Armchair, User, PlusCircle, Loader2, ShieldAlert } from 'lucide-react';
+import { Calendar, Tag, Search, FilterX, ArrowLeft, ArrowRight, Armchair, User, PlusCircle, Loader2, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { useAuth } from '../lib/AuthContext';
 import { Identity_backend } from 'declarations/Identity_backend';
 import { cn } from '@/lib/utils';
@@ -32,6 +32,8 @@ export default function MarketplacePage() {
   const [maxPrice, setMaxPrice] = useState(250);
   const [filterDate, setFilterDate] = useState('');
   const [seatType, setSeatType] = useState('all');
+  const [buyModalOpen, setBuyModalOpen] = useState(false);
+  const [purchasedTicket, setPurchasedTicket] = useState(null);
 
   useEffect(() => {
     const checkAndFetchData = async () => {
@@ -44,21 +46,35 @@ export default function MarketplacePage() {
         const identityOpt = await Identity_backend.getIdentity(principal);
         if (identityOpt.length > 0 && identityOpt[0].isVerified) {
           setIsVerified(true);
-          const [ticketResponse, eventResponse] = await Promise.all([
-            MasterTicket_backend.getAllMasterTicket(),
-            Event_backend.getAllEvents()
-          ]);
+          // Fetch events
+          const eventResponse = await Event_backend.getAllEvents();
           const events = new Map(eventResponse.map(([id, event]) => [id, event]));
           setEventsMap(events);
-          const parsed = ticketResponse.map(([id, masterTicket]) => ({
-            ticketID: id,
-            eventID: masterTicket.eventID,
-            ticketDesc: masterTicket.ticketDesc,
-            price: Number(masterTicket.price),
-            kind: masterTicket.kind,
-            valid: masterTicket.valid,
+
+          // Placeholder for Ticket_backend.getAllTickets()
+          // const ticketResponse = await Ticket_backend.getAllTickets();
+          // const parsed = ticketResponse.map(([id, ticket]) => ({
+          //   ticketID: id,
+          //   eventID: ticket.eventID,
+          //   ticketDesc: ticket.ticketDesc,
+          //   price: Number(ticket.price),
+          //   kind: ticket.kind,
+          //   owner: ticket.owner.toText(),
+          //   valid: ticket.valid,
+          // }));
+          // setAllMarketplaceTickets(parsed);
+
+          // Temporary: Use mock ticket data based on mockEvents
+          const mockTickets = mockEvents.map((event, index) => ({
+            ticketID: `TKT-${index + 1}`,
+            eventID: event.eventID,
+            ticketDesc: 'General Admission',
+            price: 50 + index * 10,
+            kind: { '#Seatless': null },
+            owner: 'mock-principal-' + index,
+            valid: true,
           }));
-          setAllMarketplaceTickets(parsed);
+          setAllMarketplaceTickets(mockTickets);
         } else {
           setIsVerified(false);
         }
@@ -77,8 +93,8 @@ export default function MarketplacePage() {
     if (searchTerm) {
       const lowercasedTerm = searchTerm.toLowerCase();
       tickets = tickets.filter(ticket => {
-        const event = eventsMap.get(ticket.eventID);
-        return event?.name.toLowerCase().includes(lowercasedTerm);
+        const event = eventsMap.get(ticket.eventID) || mockEvents.find(e => e.eventID === ticket.eventID);
+        return event?.eventName.toLowerCase().includes(lowercasedTerm);
       });
     }
     if (maxPrice < 250) {
@@ -86,8 +102,9 @@ export default function MarketplacePage() {
     }
     if (filterDate) {
       tickets = tickets.filter(ticket => {
-        const event = mockEvents.find(e => e.eventID === ticket.eventID);
-        return event?.eventDate.toISOString().split('T')[0] === filterDate;
+        const event = eventsMap.get(ticket.eventID) || mockEvents.find(e => e.eventID === ticket.eventID);
+        const eventDate = event ? new Date(Number(event.date) / 1000000 || event.eventDate).toISOString().split('T')[0] : '';
+        return eventDate === filterDate;
       });
     }
     if (seatType === 'seated') tickets = tickets.filter(t => t.kind['#Seated']);
@@ -105,6 +122,11 @@ export default function MarketplacePage() {
     setMaxPrice(250);
     setFilterDate('');
     setSeatType('all');
+  };
+
+  const handleBuyTicket = (ticket) => {
+    setPurchasedTicket(ticket);
+    setBuyModalOpen(true);
   };
 
   if (isLoading) {
@@ -158,19 +180,52 @@ export default function MarketplacePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
             <div className="lg:col-span-2 space-y-2">
               <Label htmlFor="search">Search Event</Label>
-              <Input id="search" placeholder="e.g., Web3 Summit" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="bg-black/20 border-purple-400/30" />
+              <Input
+                id="search"
+                placeholder="e.g., Web3 Summit"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="bg-black/20 border-purple-400/30"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="price">Max Price ({maxPrice} ICP)</Label>
-              <Input id="price" type="range" min="0" max="250" step="5" value={maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value))} className="w-full h-2 bg-purple-900/50 rounded-lg appearance-none cursor-pointer" />
+              <Input
+                id="price"
+                type="range"
+                min="0"
+                max="250"
+                step="5"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(Number(e.target.value))}
+                className="w-full h-2 bg-purple-900/50 rounded-lg appearance-none cursor-pointer"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="date">Event Date</Label>
-              <Input id="date" type="date" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} className="bg-black/20 border-purple-400/30" />
+              <Input
+                id="date"
+                type="date"
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+                className="bg-black/20 border-purple-400/30"
+              />
             </div>
             <div className="flex gap-2">
-              <Button variant={seatType === 'seated' ? 'secondary' : 'outline'} onClick={() => setSeatType('seated')} className="flex-1">Seated</Button>
-              <Button variant={seatType === 'seatless' ? 'secondary' : 'outline'} onClick={() => setSeatType('seatless')} className="flex-1">Seatless</Button>
+              <Button
+                variant={seatType === 'seated' ? 'secondary' : 'outline'}
+                onClick={() => setSeatType('seated')}
+                className="flex-1"
+              >
+                Seated
+              </Button>
+              <Button
+                variant={seatType === 'seatless' ? 'secondary' : 'outline'}
+                onClick={() => setSeatType('seatless')}
+                className="flex-1"
+              >
+                Seatless
+              </Button>
             </div>
           </div>
           <div className="text-center mt-4">
@@ -183,53 +238,100 @@ export default function MarketplacePage() {
         <main>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {currentTickets.map(ticket => {
-              const event = eventsMap.get(ticket.eventID);
+              const event = eventsMap.get(ticket.eventID) || mockEvents.find(e => e.eventID === ticket.eventID);
               if (!event) return null;
               return (
-                <Link key={ticket.ticketID} to={`/events/${ticket.eventID}?from=marketplace&ticketID=${ticket.ticketID}`}>
-                  <Card className="bg-white/5 border border-purple-400/20 flex flex-col group h-full">
-                    <CardHeader>
-                      <CardTitle>{event.name}</CardTitle>
-                      <CardDescription className="flex items-center gap-2 pt-1">
-                        <Calendar className="h-4 w-4" /> {new Date(Number(event.date) / 1000000).toLocaleDateString()}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex-grow space-y-3">
-                      <div className="flex items-center gap-2 text-xl font-bold">
-                        <Tag className="h-5 w-5" /> {ticket.price} ICP
+                <Card
+                  key={ticket.ticketID}
+                  className="bg-white/5 border border-purple-400/20 flex flex-col group h-full"
+                >
+                  <CardHeader>
+                    <CardTitle>{event.name || event.eventName}</CardTitle>
+                    <CardDescription className="flex items-center gap-2 pt-1">
+                      <Calendar className="h-4 w-4" />
+                      {new Date(Number(event.date) / 1000000 || event.eventDate).toLocaleDateString()}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-grow space-y-3">
+                    <div className="flex items-center gap-2 text-xl font-bold">
+                      <Tag className="h-5 w-5" /> {ticket.price} ICP
+                    </div>
+                    <div className="flex items-center gap-2 text-xs truncate">
+                      <User className="h-4 w-4" /> Owner: {ticket.owner || 'N/A'}
+                    </div>
+                    {ticket.kind['#Seated'] && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Armchair className="h-4 w-4" /> {ticket.kind['#Seated'].seatInfo || 'Seated'}
                       </div>
-                      <div className="flex items-center gap-2 text-xs truncate">
-                        <User className="h-4 w-4" /> Owner: {ticket.owner ? ticket.owner.toText() : 'N/A'}
-                      </div>
-                      {ticket.kind['#Seated'] && (
-                        <div className="flex items-center gap-2 text-sm">
-                          <Armchair className="h-4 w-4" /> {ticket.kind['#Seated'].seatInfo || 'Seated'}
-                        </div>
-                      )}
-                    </CardContent>
-                    <CardFooter>
-                      <Button className="w-full">View Details</Button>
-                    </CardFooter>
-                  </Card>
-                </Link>
+                    )}
+                  </CardContent>
+                  <CardFooter className="flex flex-col sm:flex-row gap-2">
+                    <Button
+                      className="w-full sm:flex-1"
+                      variant="outline"
+                      asChild
+                    >
+                      <Link to={`/tickets/${ticket.ticketID}`}>
+                        View Details
+                      </Link>
+                    </Button>
+                    <Button
+                      className="w-full sm:flex-1 bg-purple-600 hover:bg-purple-700"
+                      onClick={() => handleBuyTicket(ticket)}
+                    >
+                      Buy Now
+                    </Button>
+                  </CardFooter>
+                </Card>
               );
             })}
           </div>
 
           {filteredTickets.length > TICKETS_PER_PAGE && (
             <div className="flex items-center justify-center mt-8 space-x-4">
-              <Button variant="outline" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>
+              <Button
+                variant="outline"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
                 <ArrowLeft className="mr-2 h-4 w-4" /> Previous
               </Button>
               <span className="font-semibold">
                 Page {currentPage} of {totalPages}
               </span>
-              <Button variant="outline" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+              <Button
+                variant="outline"
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
                 Next <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           )}
         </main>
+
+        {/* Purchase Success Modal */}
+        <Dialog open={buyModalOpen} onOpenChange={setBuyModalOpen}>
+          <DialogContent className="bg-[#11071F] text-white border-purple-400/20">
+            <DialogHeader>
+              <DialogTitle className="text-purple-300 text-2xl">
+                Ticket Purchased Successfully!
+              </DialogTitle>
+              <DialogDescription className="text-purple-300/70">
+                You have successfully purchased the "{purchasedTicket?.ticketDesc}" ticket for "
+                {(eventsMap.get(purchasedTicket?.eventID) || mockEvents.find(e => e.eventID === purchasedTicket?.eventID))?.name || 'Event'}".
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="flex flex-col sm:flex-row gap-4">
+              <Button
+                onClick={() => setBuyModalOpen(false)}
+                className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700"
+              >
+                <CheckCircle2 className="mr-2 h-5 w-5" /> Back to Marketplace
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

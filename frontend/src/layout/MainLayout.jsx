@@ -17,6 +17,7 @@ export default function MainLayout() {
     '/events',
     '/create-event',
     '/sell-ticket',
+    '/tickets',
   ];
 
   const isTicketAppPage = ticketAppPaths.some(path => location.pathname.startsWith(path));
