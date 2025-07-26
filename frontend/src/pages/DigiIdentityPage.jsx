@@ -20,7 +20,7 @@ export default function DigiIdentity() {
         passportImageName: '',
         isVerified: false,
     });
-
+    const [showModal, setShowModal] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [passportImage, setPassportImage] = useState(null);
     const [imagePreview, setImagePreview] = useState('');
@@ -35,14 +35,10 @@ export default function DigiIdentity() {
             const existingIdentityOpt = await Identity_backend.getIdentity(principal);
             if (existingIdentityOpt.length > 0) {
                 const identityData = existingIdentityOpt[0];
-
-                // PERBAIKAN: Gabungkan state sebelumnya dengan data dari backend
-                // Ini mencegah error "controlled to uncontrolled"
                 setFormData(prevState => ({
                     ...prevState,
                     ...identityData,
                 }));
-
                 if (identityData.passportImageName) {
                     await loadFile(identityData.passportImageName);
                 }
@@ -56,32 +52,20 @@ export default function DigiIdentity() {
 
     const loadFile = async (fileName) => {
         try {
-            if (!fileName) return; // Jangan lakukan apa-apa jika tidak ada nama file
-
-            // 1. Dapatkan jumlah total potongan file
+            if (!fileName) return;
             const totalChunks = await File_manager.getTotalChunks(fileName);
             if (totalChunks === 0) return;
-
-            // 2. Siapkan semua promise untuk mengambil setiap potongan
             const chunkPromises = [];
             for (let i = 0; i < totalChunks; i++) {
                 chunkPromises.push(File_manager.getFileChunk(fileName, i));
             }
-
-            // 3. Ambil semua potongan secara paralel
             const chunkResults = await Promise.all(chunkPromises);
             const fileTypeOpt = await File_manager.getFileType(fileName);
-
-            // 4. Proses dan gabungkan semua potongan menjadi satu file
             const chunks = chunkResults
                 .map(chunkOpt => chunkOpt.length > 0 ? new Uint8Array(chunkOpt[0]) : null)
                 .filter(Boolean);
-
             const fileBlob = new Blob(chunks, { type: fileTypeOpt[0] || 'image/jpeg' });
-
-            // 5. Buat URL dari file tersebut dan tampilkan
             setImagePreview(URL.createObjectURL(fileBlob));
-
         } catch (error) {
             console.error("Failed to load image:", error);
         }
@@ -114,14 +98,11 @@ export default function DigiIdentity() {
     const uploadFile = async (file, fileName) => {
         const chunkSize = 1024 * 1024; // 1MB
         const totalChunks = Math.ceil(file.size / chunkSize);
-
         const buffer = await file.arrayBuffer();
-
         for (let i = 0; i < totalChunks; i++) {
             const start = i * chunkSize;
             const end = Math.min(start + chunkSize, file.size);
             const chunk = new Uint8Array(buffer.slice(start, end));
-
             await File_manager.uploadFileChunk(fileName, Array.from(chunk), i, file.type);
         }
     };
@@ -135,19 +116,13 @@ export default function DigiIdentity() {
             alert('Insert Passport Image.');
             return;
         }
-
         setIsScanning(true);
-
         let worker;
         try {
             worker = await createWorker('eng');
-
             const { data: { text } } = await worker.recognize(passportImage);
-
             console.log("OCR Result:", text);
-
             parseOcrResultAndFillForm(text);
-
         } catch (error) {
             console.error("OCR Error:", error);
             alert("Failed To Scan Image.");
@@ -162,48 +137,37 @@ export default function DigiIdentity() {
     const parseOcrResultAndFillForm = (text) => {
         const mrzRegex = /[A-Z0-9<]{44}/g;
         const mrzLines = text.match(mrzRegex);
-
         if (!mrzLines || mrzLines.length < 2) {
             alert("Unable to detect two complete MRZ lines.");
             return;
         }
-
         const potentialLines = mrzLines.slice(-2);
         let line1 = potentialLines.find(line => line.startsWith('P<'));
         let line2 = potentialLines.find(line => line !== line1);
-
-        if (!line1 || !line2) { /* ... logika fallback ... */ }
         if (!line1 || !line2) {
             alert("Failed to differentiate MRZ lines.");
             return;
         }
-
         const nameField = line1.substring(5).split('<<');
         const surname = nameField[0].replace(/</g, ' ').trim();
         const givenName = (nameField[1] || '').replace(/</g, ' ').trim();
         const fullName = `${givenName} ${surname}`.trim();
-
         const passportNumber = line2.substring(0, 9).replace(/</g, '');
         const nationality = line2.substring(10, 13).replace(/</g, '');
         const dobRaw = line2.substring(13, 19);
         const gender = line2.substring(20, 21);
-        const expiryDateRaw = line2.substring(21, 27); 
-
-
+        const expiryDateRaw = line2.substring(21, 27);
         const formatYYMMDD = (yymmdd) => {
             if (!yymmdd || yymmdd.length !== 6) return '';
             let year = parseInt(yymmdd.substring(0, 2), 10);
             const month = yymmdd.substring(2, 4);
             const day = yymmdd.substring(4, 6);
-            // Logika tahun ini sudah tepat
             year = (year < 50) ? 2000 + year : 1900 + year;
             return `${year}-${month}-${day}`;
         };
-
         const formattedDob = formatYYMMDD(dobRaw);
         const formattedExpiry = formatYYMMDD(expiryDateRaw);
         const finalGender = gender === 'M' ? 'Male' : (gender === 'F' ? 'Female' : 'Other');
-
         setFormData(prev => ({
             ...prev,
             name: fullName,
@@ -232,7 +196,6 @@ export default function DigiIdentity() {
                 finalImageName = `passport_${principal.toText()}_${Date.now()}`;
                 await uploadFile(passportImage, finalImageName);
             }
-
             const dataToSave = {
                 name: formData.name,
                 passportNumber: formData.passportNumber,
@@ -243,11 +206,9 @@ export default function DigiIdentity() {
                 isVerified: true,
                 dateOfExpiry: formData.dateOfExpiry,
             };
-
-            // PERBAIKAN: Kirim 'principal' sebagai argumen pertama
             await Identity_backend.saveIdentity(principal, dataToSave);
-            alert('Identity information saved successfully!');
-            setFormData(dataToSave); // Update state lokal
+            setFormData(dataToSave);
+            setShowModal(true);
         } catch (error) {
             console.error("Failed to save identity:", error);
             alert('An error occurred while saving.');
@@ -287,7 +248,6 @@ export default function DigiIdentity() {
                     )}
                 </div>
 
-                {/* PERBAIKAN FINAL: Gunakan 'formData.isVerified' untuk kondisi dan nama field yang benar untuk data */}
                 {formData.isVerified ? (
                     <div className="max-w-4xl mx-auto bg-white/5 p-8 rounded-lg border border-purple-300/30 space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
@@ -311,7 +271,6 @@ export default function DigiIdentity() {
                         </div>
                     </div>
                 ) : (
-                    // Jika tidak terverifikasi, tampilkan form
                     <form onSubmit={handleSubmit} className="max-w-6xl mx-auto">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
@@ -372,8 +331,22 @@ export default function DigiIdentity() {
                         </div>
                     </form>
                 )}
+
+                {showModal && (
+                    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+                        <div className="bg-[#1e1033] p-8 rounded-lg shadow-2xl shadow-purple-900/50 border border-purple-400/30 text-center max-w-sm w-full">
+                            <h2 className="text-2xl font-bold text-white mb-4">Identity Verified Successfully!</h2>
+                            <p className="text-purple-200/80 mb-6">Your DigiIdentity profile has been created and verified.</p>
+                            <Button
+                                className="w-full bg-purple-600 hover:bg-purple-700"
+                                onClick={() => setShowModal(false)}
+                            >
+                                Close
+                            </Button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
-
 }
