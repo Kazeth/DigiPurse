@@ -6,7 +6,7 @@ import { Menu, X, LogOut } from 'lucide-react';
 import logo from '../assets/logo.png';
 
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/seperator';
+import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 // import { AuthClient } from '@dfinity/auth-client';

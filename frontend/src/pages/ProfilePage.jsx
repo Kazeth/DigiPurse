@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/seperator';
+import { Separator } from '@/components/ui/separator';
 import { User, Shield, History, Edit, Save, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -22,6 +22,7 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
   const { authClient, isLoggedIn } = useAuth();
   const identity = authClient.getIdentity();
@@ -29,7 +30,32 @@ export default function ProfilePage() {
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    console.log(id, value);
+    // Directly map the input ID to the state property
+    setUserProfile(prev => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const handleSave = async () => {
+    if (!isEditing || !userProfile) return;
+    setIsSaving(true);
+    try {
+      const actor = createActor(canisterId, { agentOptions: { identity } });
+      // Construct the payload for the backend, ensuring all fields are present
+      const profileToSave = {
+        id: principal, // Assuming id is the principal
+        name: userProfile.name,
+        address: userProfile.address,
+        joinDate: userProfile.joinDate, // Preserve existing joinDate
+      };
+      await actor.updateCustomerProfile(principal, profileToSave);
+      setIsEditing(false); // Turn off editing mode on successful save
+    } catch (err) {
+      console.error("Error saving profile:", err);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   useEffect(() => {
@@ -37,13 +63,16 @@ export default function ProfilePage() {
           if (!authClient || !identity || !principal || !isLoggedIn) return;
           const actor = createActor(canisterId, { agentOptions: { identity } });
           try {
-            // console.log("Trying this principal : ", principal.toText());
-            const profArr = await actor.getCustomerProfile(principal);
-            setUserProfile(profArr ? profArr[0] : null);
-            // console.log("User profile fetched:", profArr);
+              const profArr = await actor.getCustomerProfile(principal);
+              if (profArr && profArr.length > 0) {
+                setUserProfile(profArr[0]);
+              } else {
+                // If no profile exists, create a default one to avoid errors
+                setUserProfile({ name: 'New User', address: '', joinDate: BigInt(Date.now() * 1000000) });
+              }
           } catch (err) {
-            console.error("Error fetching user profile:", err);
-            setUserProfile(null);
+              console.error("Error fetching user profile:", err);
+              setUserProfile(null);
           }
           setIsLoading(false);
       }
@@ -68,9 +97,9 @@ export default function ProfilePage() {
             <AvatarFallback className="text-4xl bg-purple-800/50">{userProfile ? userProfile.name.substring(0,2).toUpperCase() : principal.toText().substring(0,2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-center sm:text-left">{userProfile.name}</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold text-center sm:text-left">{userProfile ? userProfile.name : 'N/A'}</h1>
             <p className="text-sm text-purple-300/70 text-center sm:text-left mt-1 truncate max-w-xs sm:max-w-md">Principal ID: {principal.toText()}</p>
-            {/* <p className="text-sm text-purple-300/70 text-center sm:text-left">Joined: {userProfile.joinDate}</p> */}
+            {userProfile && <p className="text-sm text-purple-300/70 text-center sm:text-left">Joined: {new Date(Number(userProfile.joinDate) / 1000000).toLocaleDateString()}</p>}
           </div>
         </header>
 
@@ -90,19 +119,25 @@ export default function ProfilePage() {
                     <CardTitle>Personal Information</CardTitle>
                     <CardDescription>View and edit your profile details.</CardDescription>
                 </div>
-                <Button variant="outline" onClick={() => setIsEditing(!isEditing)}>
-                    {isEditing ? <><Save className="mr-2 h-4 w-4" /> Save</> : <><Edit className="mr-2 h-4 w-4" /> Edit</>}
+                <Button variant="outline" onClick={() => isEditing ? handleSave() : setIsEditing(true)} disabled={isSaving}>
+                    {isSaving ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : isEditing ? (
+                      <><Save className="mr-2 h-4 w-4" /> Save Changes</>
+                    ) : (
+                      <><Edit className="mr-2 h-4 w-4" /> Edit Profile</>
+                    )}
                 </Button>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                        <Label htmlFor="username">Username</Label>
-                        <Input id="username" value={userProfile.name} onChange={handleInputChange} disabled={!isEditing} className="bg-black/20 border-purple-400/30" />
+                        <Label htmlFor="name">Username</Label>
+                        <Input id="name" value={userProfile?.name || ''} onChange={handleInputChange} disabled={!isEditing} className="bg-black/20 border-purple-400/30" />
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="userAddress">Address</Label>
-                        <Input id="userAddress" value={userProfile.address} onChange={handleInputChange} disabled={!isEditing} className="bg-black/20 border-purple-400/30" />
+                        <Label htmlFor="address">Address</Label>
+                        <Input id="address" value={userProfile?.address || ''} onChange={handleInputChange} disabled={!isEditing} className="bg-black/20 border-purple-400/30" />
                     </div>
                 </div>
               </CardContent>

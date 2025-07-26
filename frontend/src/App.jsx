@@ -48,7 +48,7 @@ function App() {
 
               {/* --- PostLogin Routes --- */}
               <Route element={<PostLoginRoute />}>
-                <Route path="post-login" element={<PostLoginPage />} />
+                <Route path="postlogin" element={<PostLoginPage />} />
               </Route>
 
               {/* --- Protected User Routes --- */}
