@@ -10,13 +10,6 @@ module {
     address : Text;
   };
 
-  public type Organizer = {
-    id : Principal;
-    name : Text;
-    joinDate : Time.Time;
-    address : Text;
-  };
-
   public type Admin = {
     id : Principal;
     name : Text;
@@ -24,7 +17,7 @@ module {
 
   public type Event = {
     id : Text;
-    organizerId : Text;
+    organizer : Principal;
     name : Text;
     description : Text;
     date : Time.Time;
@@ -47,6 +40,7 @@ module {
     price : Nat;
     kind : TicketKind;
     valid : Bool;
+    isOnMarketplace : Bool;
   };
 
   public type MasterTicket = {
@@ -54,6 +48,7 @@ module {
     ticketDesc : Text;
     price : Nat;
     kind : TicketKind;
+    ticketSupply : Nat;
     valid : Bool;
   };
 

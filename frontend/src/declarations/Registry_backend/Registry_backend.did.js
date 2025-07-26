@@ -25,14 +25,9 @@ export const idlFactory = ({ IDL }) => {
     'valid' : IDL.Bool,
     'owner' : IDL.Principal,
     'kind' : TicketKind,
+    'isOnMarketplace' : IDL.Bool,
     'ticketID' : IDL.Text,
     'price' : IDL.Nat,
-  });
-  const Organizer = IDL.Record({
-    'id' : IDL.Principal,
-    'joinDate' : Time,
-    'name' : IDL.Text,
-    'address' : IDL.Text,
   });
   return IDL.Service({
     'addTransaction' : IDL.Func([Transaction], [], []),
@@ -50,7 +45,6 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'registerCustomer' : IDL.Func([IDL.Principal, Customer], [], []),
-    'registerOrganizer' : IDL.Func([IDL.Principal, Organizer], [], []),
     'updateCustomerProfile' : IDL.Func([IDL.Principal, Customer], [], []),
   });
 };

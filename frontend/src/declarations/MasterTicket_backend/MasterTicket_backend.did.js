@@ -7,12 +7,13 @@ export const idlFactory = ({ IDL }) => {
     'eventID' : IDL.Text,
     'valid' : IDL.Bool,
     'kind' : TicketKind,
+    'ticketSupply' : IDL.Nat,
     'ticketDesc' : IDL.Text,
     'price' : IDL.Nat,
   });
   const MasterTicketActor = IDL.Service({
     'createMasterTicket' : IDL.Func(
-        [IDL.Text, IDL.Text, IDL.Nat, TicketKind],
+        [IDL.Text, IDL.Text, IDL.Nat, TicketKind, IDL.Nat],
         [MasterTicket],
         [],
       ),
@@ -25,6 +26,11 @@ export const idlFactory = ({ IDL }) => {
     'getMasterTicketByEventId' : IDL.Func(
         [IDL.Text],
         [IDL.Opt(IDL.Vec(MasterTicket))],
+        ['query'],
+      ),
+    'getMasterTicketsByEvent' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(MasterTicket)],
         ['query'],
       ),
     'updateTicketPrice' : IDL.Func([MasterTicket, IDL.Nat], [MasterTicket], []),

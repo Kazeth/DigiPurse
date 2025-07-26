@@ -17,6 +17,15 @@ persistent actor class MasterTicketActor() {
     masterTickets := TrieMap.fromEntries<Text, [Type.MasterTicket]>(Iter.fromArray(stableMasterTickets), Text.equal, Text.hash);
   };
 
+  public query func getMasterTicketsByEvent(eventId : Text) : async [Type.MasterTicket] {
+    switch (masterTickets.get(eventId)) {
+      case (?tickets) {
+        tickets;
+      };
+      case (null) { [] };
+    };
+  };
+
   public query func getAllMasterTicket() : async [(Text, [Type.MasterTicket])] {
     Iter.toArray(masterTickets.entries());
   };
@@ -27,12 +36,13 @@ persistent actor class MasterTicketActor() {
     return res;
   };
 
-  public func createMasterTicket(eventId : Text, ticketDesc : Text, price : Nat, kind : Type.TicketKind) : async Type.MasterTicket {
+  public func createMasterTicket(eventId : Text, ticketDesc : Text, price : Nat, kind : Type.TicketKind, ticketSupply : Nat) : async Type.MasterTicket {
     let tempTicket : Type.MasterTicket = {
       eventID = eventId;
       ticketDesc = ticketDesc;
       price = price;
       kind = kind;
+      ticketSupply = ticketSupply;
       valid = true;
     };
 
@@ -59,6 +69,7 @@ persistent actor class MasterTicketActor() {
       ticketDesc = "";
       price = 0;
       kind = #Seatless;
+      ticketSupply = 0;
       valid = false;
     };
   };

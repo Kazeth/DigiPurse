@@ -6,12 +6,13 @@ export interface MasterTicket {
   'eventID' : string,
   'valid' : boolean,
   'kind' : TicketKind,
+  'ticketSupply' : bigint,
   'ticketDesc' : string,
   'price' : bigint,
 }
 export interface MasterTicketActor {
   'createMasterTicket' : ActorMethod<
-    [string, string, bigint, TicketKind],
+    [string, string, bigint, TicketKind, bigint],
     MasterTicket
   >,
   'emptyTicket' : ActorMethod<[], MasterTicket>,
@@ -20,6 +21,7 @@ export interface MasterTicketActor {
     [string],
     [] | [Array<MasterTicket>]
   >,
+  'getMasterTicketsByEvent' : ActorMethod<[string], Array<MasterTicket>>,
   'updateTicketPrice' : ActorMethod<[MasterTicket, bigint], MasterTicket>,
 }
 export type TicketKind = { 'Seated' : { 'seatInfo' : string } } |

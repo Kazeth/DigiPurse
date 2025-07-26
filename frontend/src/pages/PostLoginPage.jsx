@@ -46,7 +46,8 @@ export default function PostLoginPage() {
       id: principal,
       name: username,
       joinDate: BigInt(new Date(dob).getTime()) * 1_000_000n,
-      address: address
+      address: address,
+      organizerId: "null"
     });
     const exist = await actor.checkUserExist(principal);
     if (exist) {

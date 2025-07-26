@@ -3,6 +3,7 @@ import Text "mo:base/Text";
 import Nat "mo:base/Nat";
 import Int "mo:base/Int";
 import Iter "mo:base/Iter";
+import Principal "mo:base/Principal";
 import Type "../types";
 import Event "canister:Event_backend";
 
@@ -17,7 +18,10 @@ persistent actor {
             "Global Blockchain Forum",
         ];
 
-        let organizers : [Text] = ["OR-099", "OR-098"];
+        let organizers : [Principal] = [
+            Principal.fromText("2vxsx-fae"),
+            Principal.fromText("2vxsx-fae"),
+        ];
         let now = Time.now();
 
         let total = 10;
@@ -29,7 +33,7 @@ persistent actor {
             let duration = 60 + (i * 10) % 180;
             let ticketSupply = 50 + (i * 37) % 500;
             let price = 10 + (i * 100) % 200;
-            let organizerId = organizers[i % organizers.size()];
+            let organizer = organizers[i % organizers.size()];
 
             let kind : Type.TicketKind = if (i % 2 == 0) {
                 #Seated({
@@ -42,12 +46,12 @@ persistent actor {
             let prices = [
                 price,
                 price + 20,
-                price + 30
+                price + 30,
             ];
 
             ignore await Event.createEvent(
                 name,
-                organizerId,
+                organizer,
                 desc,
                 timestamp,
                 duration,

@@ -6,12 +6,12 @@ export const idlFactory = ({ IDL }) => {
   });
   const Event = IDL.Record({
     'id' : IDL.Text,
+    'organizer' : IDL.Principal,
     'valid' : IDL.Bool,
     'date' : Time,
     'kind' : TicketKind,
     'name' : IDL.Text,
     'description' : IDL.Text,
-    'organizerId' : IDL.Text,
     'ticketSupply' : IDL.Nat,
     'durationMinutes' : IDL.Nat,
     'prices' : IDL.Vec(IDL.Nat),
@@ -20,7 +20,7 @@ export const idlFactory = ({ IDL }) => {
     'createEvent' : IDL.Func(
         [
           IDL.Text,
-          IDL.Text,
+          IDL.Principal,
           IDL.Text,
           Time,
           IDL.Nat,

@@ -20,6 +20,14 @@ persistent actor class TicketActor() {
     tickets := TrieMap.fromEntries<Text, Type.Ticket>(Iter.fromArray(stableTickets), Text.equal, Text.hash);
   };
 
+  public query func sellTicket(ticketId : Text) : async ?Type.Ticket{
+    return tickets.get(ticketId);
+  }; 
+
+  public query func getAllTicket() : async [(Text, Type.Ticket)] {
+    return Iter.toArray(tickets.entries());
+  };
+
   public query func getAllUserTicket(user : Principal) : async [(Text, Type.Ticket)] {
     let filtered = Iter.filter<(Text, Type.Ticket)>(
       tickets.entries(),
@@ -55,6 +63,7 @@ persistent actor class TicketActor() {
       price = price;
       kind = kind;
       valid = true;
+      isOnMarketplace = false;
     };
     tickets.put(ticketId, tempTicket);
 

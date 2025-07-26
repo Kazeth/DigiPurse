@@ -13,6 +13,7 @@ export interface Ticket {
   'valid' : boolean,
   'owner' : Principal,
   'kind' : TicketKind,
+  'isOnMarketplace' : boolean,
   'ticketID' : string,
   'price' : bigint,
 }

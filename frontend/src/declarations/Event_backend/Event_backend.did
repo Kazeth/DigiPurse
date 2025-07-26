@@ -6,9 +6,9 @@ type TicketKind =
  };
 type EventActor = 
  service {
-   createEvent: (name: text, organizerId: text, desc: text, date: Time,
-    duration: nat, supply: nat, prices: vec nat, kind: TicketKind, valid:
-    bool) -> (Event);
+   createEvent: (name: text, organizer: principal, desc: text, date: 
+    Time, duration: nat, supply: nat, prices: vec nat, kind: TicketKind,
+    valid: bool) -> (Event);
    getAllEvents: () -> (vec record {
                               text;
                               Event;
@@ -23,7 +23,7 @@ type Event =
    id: text;
    kind: TicketKind;
    name: text;
-   organizerId: text;
+   organizer: principal;
    prices: vec nat;
    ticketSupply: nat;
    valid: bool;

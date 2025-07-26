@@ -4,12 +4,12 @@ import type { IDL } from '@dfinity/candid';
 
 export interface Event {
   'id' : string,
+  'organizer' : Principal,
   'valid' : boolean,
   'date' : Time,
   'kind' : TicketKind,
   'name' : string,
   'description' : string,
-  'organizerId' : string,
   'ticketSupply' : bigint,
   'durationMinutes' : bigint,
   'prices' : Array<bigint>,
@@ -18,7 +18,7 @@ export interface EventActor {
   'createEvent' : ActorMethod<
     [
       string,
-      string,
+      Principal,
       string,
       Time,
       bigint,

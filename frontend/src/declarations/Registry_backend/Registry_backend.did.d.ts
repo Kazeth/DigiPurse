@@ -8,17 +8,12 @@ export interface Customer {
   'name' : string,
   'address' : string,
 }
-export interface Organizer {
-  'id' : Principal,
-  'joinDate' : Time,
-  'name' : string,
-  'address' : string,
-}
 export interface Ticket {
   'eventID' : string,
   'valid' : boolean,
   'owner' : Principal,
   'kind' : TicketKind,
+  'isOnMarketplace' : boolean,
   'ticketID' : string,
   'price' : bigint,
 }
@@ -43,7 +38,6 @@ export interface _SERVICE {
   'getCustomerProfile' : ActorMethod<[Principal], [] | [Customer]>,
   'getCustomerTickets' : ActorMethod<[Principal], [] | [Array<Ticket>]>,
   'registerCustomer' : ActorMethod<[Principal, Customer], undefined>,
-  'registerOrganizer' : ActorMethod<[Principal, Organizer], undefined>,
   'updateCustomerProfile' : ActorMethod<[Principal, Customer], undefined>,
 }
 export declare const idlFactory: IDL.InterfaceFactory;

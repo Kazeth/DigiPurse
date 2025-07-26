@@ -38,9 +38,9 @@ persistent actor User{
   public func getMyTransactionHistory() : async [Types.Transaction] {
     var allTransactions : [Types.Transaction] = [];
     for (tx in myTransactions.vals()) {
-      if(tx.buyer == profile.id or tx.seller == profile.id) {
+      if (tx.buyer == profile.id or tx.seller == profile.id) {
         allTransactions := Array.append(allTransactions, [tx]);
-      }
+      };
     };
     return allTransactions;
   };

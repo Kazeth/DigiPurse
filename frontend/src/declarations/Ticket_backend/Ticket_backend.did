@@ -7,15 +7,21 @@ type TicketActor =
  service {
    createTicket: (eventId: text, owner: principal, price: nat, kind:
     TicketKind) -> (Ticket);
+   getAllTicket: () -> (vec record {
+                              text;
+                              Ticket;
+                            }) query;
    getAllUserTicket: (user: principal) -> (vec record {
                                                  text;
                                                  Ticket;
                                                }) query;
+   sellTicket: (ticketId: text) -> (opt Ticket) query;
    transferTicket: (ticket: Ticket, newOwner: principal) -> (Ticket);
  };
 type Ticket = 
  record {
    eventID: text;
+   isOnMarketplace: bool;
    kind: TicketKind;
    owner: principal;
    price: nat;

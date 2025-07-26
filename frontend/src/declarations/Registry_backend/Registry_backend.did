@@ -18,18 +18,12 @@ type TicketKind =
 type Ticket = 
  record {
    eventID: text;
+   isOnMarketplace: bool;
    kind: TicketKind;
    owner: principal;
    price: nat;
    ticketID: text;
    valid: bool;
- };
-type Organizer = 
- record {
-   address: text;
-   id: principal;
-   joinDate: Time;
-   name: text;
  };
 type Customer = 
  record {
@@ -46,6 +40,5 @@ service : {
   getCustomerProfile: (p: principal) -> (opt Customer) query;
   getCustomerTickets: (p: principal) -> (opt vec Ticket) query;
   registerCustomer: ("principal": principal, profile: Customer) -> ();
-  registerOrganizer: ("principal": principal, profile: Organizer) -> ();
   updateCustomerProfile: ("principal": principal, profile: Customer) -> ();
 }

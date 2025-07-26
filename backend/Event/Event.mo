@@ -3,6 +3,7 @@ import Text "mo:base/Text";
 import Nat "mo:base/Nat";
 import Iter "mo:base/Iter";
 import TrieMap "mo:base/TrieMap";
+import Principal "mo:base/Principal";
 import Type "../types";
 
 persistent actor class EventActor() {
@@ -30,7 +31,7 @@ persistent actor class EventActor() {
 
   public func createEvent(
     name : Text,
-    organizerId : Text,
+    organizer : Principal,
     desc : Text,
     date : Time.Time,
     duration : Nat,
@@ -53,7 +54,7 @@ persistent actor class EventActor() {
 
     let tempEvent : Type.Event = {
       id = id;
-      organizerId = organizerId;
+      organizer = organizer;
       name = name;
       description = desc;
       date = date;

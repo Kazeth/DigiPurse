@@ -18,6 +18,7 @@ type TicketKind =
 type Ticket = 
  record {
    eventID: text;
+   isOnMarketplace: bool;
    kind: TicketKind;
    owner: principal;
    price: nat;

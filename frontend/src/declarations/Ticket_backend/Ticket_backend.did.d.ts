@@ -7,12 +7,15 @@ export interface Ticket {
   'valid' : boolean,
   'owner' : Principal,
   'kind' : TicketKind,
+  'isOnMarketplace' : boolean,
   'ticketID' : string,
   'price' : bigint,
 }
 export interface TicketActor {
   'createTicket' : ActorMethod<[string, Principal, bigint, TicketKind], Ticket>,
+  'getAllTicket' : ActorMethod<[], Array<[string, Ticket]>>,
   'getAllUserTicket' : ActorMethod<[Principal], Array<[string, Ticket]>>,
+  'sellTicket' : ActorMethod<[string], [] | [Ticket]>,
   'transferTicket' : ActorMethod<[Ticket, Principal], Ticket>,
 }
 export type TicketKind = { 'Seated' : { 'seatInfo' : string } } |

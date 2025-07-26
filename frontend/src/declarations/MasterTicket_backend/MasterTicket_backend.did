@@ -6,13 +6,14 @@ type TicketKind =
 type MasterTicketActor = 
  service {
    createMasterTicket: (eventId: text, ticketDesc: text, price: nat, kind:
-    TicketKind) -> (MasterTicket);
+    TicketKind, ticketSupply: nat) -> (MasterTicket);
    emptyTicket: () -> (MasterTicket);
    getAllMasterTicket: () -> (vec record {
                                     text;
                                     vec MasterTicket;
                                   }) query;
    getMasterTicketByEventId: (eventId: text) -> (opt vec MasterTicket) query;
+   getMasterTicketsByEvent: (eventId: text) -> (vec MasterTicket) query;
    updateTicketPrice: (ticket: MasterTicket, price: nat) -> (MasterTicket);
  };
 type MasterTicket = 
@@ -21,6 +22,7 @@ type MasterTicket =
    kind: TicketKind;
    price: nat;
    ticketDesc: text;
+   ticketSupply: nat;
    valid: bool;
  };
 service : () -> MasterTicketActor

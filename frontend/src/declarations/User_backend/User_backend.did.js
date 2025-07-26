@@ -15,6 +15,7 @@ export const idlFactory = ({ IDL }) => {
     'valid' : IDL.Bool,
     'owner' : IDL.Principal,
     'kind' : TicketKind,
+    'isOnMarketplace' : IDL.Bool,
     'ticketID' : IDL.Text,
     'price' : IDL.Nat,
   });
