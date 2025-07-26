@@ -37,6 +37,7 @@ module {
     ticketID : Text;
     eventID : Text;
     owner : Principal;
+    ticketDesc: Text;
     price : Nat;
     kind : TicketKind;
     valid : Bool;

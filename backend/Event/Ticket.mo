@@ -20,12 +20,14 @@ persistent actor class TicketActor() {
     tickets := TrieMap.fromEntries<Text, Type.Ticket>(Iter.fromArray(stableTickets), Text.equal, Text.hash);
   };
 
-  public query func sellTicket(ticketId : Text) : async ?Type.Ticket{
-    return tickets.get(ticketId);
-  }; 
-
-  public query func getAllTicket() : async [(Text, Type.Ticket)] {
-    return Iter.toArray(tickets.entries());
+  public query func getAllOnSaleTicket() : async [(Text, Type.Ticket)] {
+    let filtered = Iter.filter<(Text, Type.Ticket)>(
+      tickets.entries(),
+      func((_, ticket)) {
+        ticket.isOnMarketplace;
+      },
+    );
+    return Iter.toArray(filtered);
   };
 
   public query func getAllUserTicket(user : Principal) : async [(Text, Type.Ticket)] {
@@ -38,9 +40,23 @@ persistent actor class TicketActor() {
     return Iter.toArray(filtered);
   };
 
+  public func sellTicket(ticketId : Text) : async ?Type.Ticket {
+    switch (tickets.get(ticketId)) {
+      case (?ticket) {
+        let updatedTicket = { ticket with isOnMarketplace = true };
+        tickets.put(ticketId, updatedTicket);
+        return ?updatedTicket;
+      };
+      case (null) {
+        return null;
+      };
+    };
+  };
+
   public func createTicket(
     eventId : Text,
     owner : Principal,
+    ticketDesc : Text,
     price : Nat,
     kind : Type.TicketKind,
   ) : async Type.Ticket {
@@ -60,6 +76,7 @@ persistent actor class TicketActor() {
       ticketID = ticketId;
       eventID = eventId;
       owner = owner;
+      ticketDesc = ticketDesc;
       price = price;
       kind = kind;
       valid = true;

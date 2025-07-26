@@ -6,6 +6,7 @@ import { Calendar, Tag, Users, User, ArrowLeft, Loader2 } from 'lucide-react';
 // Impor yang diperlukan
 import { createActor as createMasterTicketActor, canisterId as masterTicketCanisterId } from '@/declarations/MasterTicket_backend';
 import { useAuth } from '@/lib/AuthContext';
+import { Principal } from '@dfinity/principal';
 
 export default function EventDetailPage() {
     const { eventID } = useParams();
@@ -38,7 +39,9 @@ export default function EventDetailPage() {
                     price: Number(masterTicket.price),
                     kind: masterTicket.kind,
                     valid: masterTicket.valid,
+                    supply: masterTicket.ticketSupply
                 }));
+                
                 console.log("Fetched master tickets:", relevantMasterTickets);
                 console.log("Relevant tickets:", relevantTickets);
 
@@ -50,7 +53,7 @@ export default function EventDetailPage() {
                 setIsLoading(false);
             }
         };
-
+        console.log()
         fetchMasterTickets();
     }, [eventID, authClient]);
 
@@ -103,7 +106,7 @@ export default function EventDetailPage() {
                             <CardContent className="space-y-4 text-purple-300/80">
                                 <p>{event.eventDesc}</p>
                                 <div className="flex items-center gap-3"><Calendar className="h-5 w-5 text-purple-400" /><span>{event.eventDate.toLocaleString()}</span></div>
-                                <div className="flex items-center gap-3"><User className="h-5 w-5 text-purple-400" /><span>OrganizerID: {event.organizerID}</span></div>
+                                <div className="flex items-center gap-3"><User className="h-5 w-5 text-purple-400" /><span>Organizer: {Principal.from(event.organizer).toText()}</span></div>
                                 <div className="flex items-center gap-3"><Users className="h-5 w-5 text-purple-400" /><span>{Number(event.ticketCount)} Tickets Left</span></div>
                             </CardContent>
                         </Card>
@@ -120,7 +123,7 @@ export default function EventDetailPage() {
                                 {officialTicketTypes.map((ticket, index) => (
                                     <Card key={index} className="bg-white/10 border-purple-400/30">
                                         <CardHeader>
-                                            <CardTitle className="text-xl">{ticket.desc}</CardTitle>
+                                            <CardTitle className="text-xl">{ticket.desc} ({Number(ticket.supply)} left)</CardTitle>
                                         </CardHeader>
                                         <CardContent className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                                             <div className="text-2xl font-bold flex items-center gap-3 mb-4 sm:mb-0">

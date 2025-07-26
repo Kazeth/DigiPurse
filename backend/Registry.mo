@@ -43,7 +43,7 @@ persistent actor Registry {
     // Debug.print("Checking if user exists...");
     return Option.isSome(customers.get(p));
   };
-  
+
   public query func getAllCustomers() : async [Types.Customer] {
     var res : [Types.Customer] = [];
     for (value in customers.vals()) {

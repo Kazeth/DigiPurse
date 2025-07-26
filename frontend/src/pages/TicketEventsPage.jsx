@@ -40,7 +40,7 @@ export default function EventsPage() {
           const prices = event.prices.map(p => Number(p));
           return {
             eventID: event.id,
-            organizerID: event.organizerId,
+            organizer: event.organizer,
             eventName: event.name,
             eventDesc: event.description,
             eventDate: new Date(Number(event.date) / 1_000_000),

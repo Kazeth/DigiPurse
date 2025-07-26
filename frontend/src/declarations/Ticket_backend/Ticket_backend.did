@@ -5,17 +5,17 @@ type TicketKind =
  };
 type TicketActor = 
  service {
-   createTicket: (eventId: text, owner: principal, price: nat, kind:
-    TicketKind) -> (Ticket);
-   getAllTicket: () -> (vec record {
-                              text;
-                              Ticket;
-                            }) query;
+   createTicket: (eventId: text, owner: principal, ticketDesc: text, price:
+    nat, kind: TicketKind) -> (Ticket);
+   getAllOnSaleTicket: () -> (vec record {
+                                    text;
+                                    Ticket;
+                                  }) query;
    getAllUserTicket: (user: principal) -> (vec record {
                                                  text;
                                                  Ticket;
                                                }) query;
-   sellTicket: (ticketId: text) -> (opt Ticket) query;
+   sellTicket: (ticketId: text) -> (opt Ticket);
    transferTicket: (ticket: Ticket, newOwner: principal) -> (Ticket);
  };
 type Ticket = 
@@ -25,6 +25,7 @@ type Ticket =
    kind: TicketKind;
    owner: principal;
    price: nat;
+   ticketDesc: text;
    ticketID: text;
    valid: bool;
  };

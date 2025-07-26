@@ -15,6 +15,7 @@ export interface Ticket {
   'kind' : TicketKind,
   'isOnMarketplace' : boolean,
   'ticketID' : string,
+  'ticketDesc' : string,
   'price' : bigint,
 }
 export type TicketKind = { 'Seated' : { 'seatInfo' : string } } |

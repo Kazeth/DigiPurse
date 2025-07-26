@@ -10,15 +10,16 @@ export const idlFactory = ({ IDL }) => {
     'kind' : TicketKind,
     'isOnMarketplace' : IDL.Bool,
     'ticketID' : IDL.Text,
+    'ticketDesc' : IDL.Text,
     'price' : IDL.Nat,
   });
   const TicketActor = IDL.Service({
     'createTicket' : IDL.Func(
-        [IDL.Text, IDL.Principal, IDL.Nat, TicketKind],
+        [IDL.Text, IDL.Principal, IDL.Text, IDL.Nat, TicketKind],
         [Ticket],
         [],
       ),
-    'getAllTicket' : IDL.Func(
+    'getAllOnSaleTicket' : IDL.Func(
         [],
         [IDL.Vec(IDL.Tuple(IDL.Text, Ticket))],
         ['query'],
@@ -28,7 +29,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Tuple(IDL.Text, Ticket))],
         ['query'],
       ),
-    'sellTicket' : IDL.Func([IDL.Text], [IDL.Opt(Ticket)], ['query']),
+    'sellTicket' : IDL.Func([IDL.Text], [IDL.Opt(Ticket)], []),
     'transferTicket' : IDL.Func([Ticket, IDL.Principal], [Ticket], []),
   });
   return TicketActor;

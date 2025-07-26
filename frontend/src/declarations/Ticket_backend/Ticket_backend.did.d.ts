@@ -9,11 +9,15 @@ export interface Ticket {
   'kind' : TicketKind,
   'isOnMarketplace' : boolean,
   'ticketID' : string,
+  'ticketDesc' : string,
   'price' : bigint,
 }
 export interface TicketActor {
-  'createTicket' : ActorMethod<[string, Principal, bigint, TicketKind], Ticket>,
-  'getAllTicket' : ActorMethod<[], Array<[string, Ticket]>>,
+  'createTicket' : ActorMethod<
+    [string, Principal, string, bigint, TicketKind],
+    Ticket
+  >,
+  'getAllOnSaleTicket' : ActorMethod<[], Array<[string, Ticket]>>,
   'getAllUserTicket' : ActorMethod<[Principal], Array<[string, Ticket]>>,
   'sellTicket' : ActorMethod<[string], [] | [Ticket]>,
   'transferTicket' : ActorMethod<[Ticket, Principal], Ticket>,

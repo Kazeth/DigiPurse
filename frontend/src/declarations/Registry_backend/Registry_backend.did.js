@@ -27,6 +27,7 @@ export const idlFactory = ({ IDL }) => {
     'kind' : TicketKind,
     'isOnMarketplace' : IDL.Bool,
     'ticketID' : IDL.Text,
+    'ticketDesc' : IDL.Text,
     'price' : IDL.Nat,
   });
   return IDL.Service({

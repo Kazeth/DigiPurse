@@ -15,17 +15,9 @@
         "output": "frontend/src/declarations/File_manager"
       }
     },
-    "Ticket_backend": {
-      "main": "backend/Event/Ticket.mo",
-      "type": "motoko",
-      "declarations": {
-        "output": "frontend/src/declarations/Ticket_backend"
-      }
-    },
     "MasterTicket_backend": {
       "main": "backend/Event/MasterTicket.mo",
       "type": "motoko",
-
       "declarations": {
         "output": "frontend/src/declarations/MasterTicket_backend"
       }
@@ -50,7 +42,27 @@
       "type": "motoko",
       "post_install": "dfx canister call MasterTicket_seeder seedMockTickets",
       "dependencies": [
-        "Event_backend", "Event_seeder", "MasterTicket_backend"
+        "Event_backend",
+        "Event_seeder",
+        "MasterTicket_backend"
+      ]
+    },
+    "Ticket_backend": {
+      "main": "backend/Event/Ticket.mo",
+      "type": "motoko",
+      "declarations": {
+        "output": "frontend/src/declarations/Ticket_backend"
+      }
+    },
+    "Ticket_seeder": {
+      "main": "backend/Seeder/TicketSeeder.mo",
+      "type": "motoko",
+      "dependencies": [
+        "Event_backend",
+        "Event_seeder",
+        "MasterTicket_backend",
+        "MasterTicket_seeder",
+        "Ticket_backend"
       ]
     },
     "Registry_backend": {
