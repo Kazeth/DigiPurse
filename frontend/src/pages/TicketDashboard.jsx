@@ -43,6 +43,8 @@ export default function DigiTicketPage() {
           eventActor.getAllEvents()
         ]);
 
+        console.log("Fetched tickets:", userTicketsResult); // Debug backend data
+
         // 3. Transformasi data tiket dari backend
         const formattedTickets = userTicketsResult.map(([id, ticket]) => ({
           id: ticket.ticketID, // Gunakan ticketID dari record
@@ -87,8 +89,13 @@ export default function DigiTicketPage() {
     if (newTicketData) {
       const { eventDetail, ...ticketOnlyData } = newTicketData;
 
-      // Tambahkan tiket baru ke daftar
-      setMyTickets(prev => [ticketOnlyData, ...prev]);
+      // Tambahkan tiket baru hanya jika belum ada
+      setMyTickets(prev => {
+        if (!prev.some(t => t.id === ticketOnlyData.id)) {
+          return [ticketOnlyData, ...prev];
+        }
+        return prev; // Jika sudah ada, jangan tambahkan
+      });
 
       // Tambahkan detail event baru jika belum ada
       if (eventDetail && !events.some(e => e.id === eventDetail.id)) {
