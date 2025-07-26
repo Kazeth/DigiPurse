@@ -25,7 +25,7 @@ const features = [
     icon: FileText,
     title: 'DigiDocument',
     description: 'A decentralized document storage system that allows users to securely upload, view, and manage their files on the blockchain. Ensures data privacy, ownership, and immutability in a trustless environment.',
-  image: 'https://placehold.co/600x400/4C1D95/FFFFFF?text=Documents',
+    image: 'https://placehold.co/600x400/4C1D95/FFFFFF?text=Documents',
   },
 ];
 
@@ -115,13 +115,30 @@ export default function LandingPage() {
           </div>
           <div className="space-y-20">
             {features.map((feature, index) => (
-              <div key={feature.title} className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${index % 2 === 1 ? 'lg:grid-flow-col-dense' : ''}`}>
+              <div
+                key={feature.title}
+                className={`grid grid-cols-1 ${index % 2 === 1
+                  ? 'lg:grid-cols-[55%_45%] lg:grid-flow-col-dense'
+                  : 'lg:grid-cols-[45%_55%]'
+                  } gap-6 items-center`}
+              >
                 {/* Image */}
-                <div className={`flex justify-center ${index % 2 === 1 ? 'lg:col-start-2' : ''}`}>
-                  <img src={feature.image} alt={feature.title} className="rounded-2xl shadow-2xl shadow-purple-900/20 w-full max-w-md" />
+                <div
+                  className={`flex ${index % 2 === 1 ? 'lg:col-start-2 justify-end' : 'justify-start'
+                    }`}
+                >
+                  <img
+                    src={feature.image}
+                    alt={feature.title}
+                    className="rounded-2xl shadow-2xl shadow-purple-900/20 w-96 max-w-lg"
+                  />
                 </div>
+
                 {/* Text */}
-                <div className="flex flex-col items-start">
+                <div
+                  className={`flex flex-col ${index === 1 ? 'text-right items-end' : 'text-left items-start'
+                    }`}
+                >
                   <div className="flex items-center justify-center h-12 w-12 rounded-full bg-white/10 mb-4">
                     <feature.icon className="h-6 w-6 text-purple-300" />
                   </div>
@@ -130,6 +147,7 @@ export default function LandingPage() {
                 </div>
               </div>
             ))}
+
           </div>
         </div>
       </section>

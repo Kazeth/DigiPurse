@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, useSearchParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Calendar, Tag, Users, Ticket, Armchair, User, ArrowLeft } from 'lucide-react';
+import { Calendar, Tag, Users, User, ArrowLeft } from 'lucide-react';
 
 const mockEvents = [
     { id: "ICP2025", name: "ICP Hackathon 2025", date: new Date('2025-08-01T09:00:00'), organizer: 'org-principal-123', description: 'A global hackathon for developers building on the Internet Computer Protocol.', image: 'https://placehold.co/1200x400/1E0A2E/FFFFFF?text=ICP+Hackathon', ticketSupply: 500, ticketsSold: 150 },
@@ -25,17 +25,10 @@ export default function EventDetailPage() {
     const { eventID } = useParams();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const fromMarketplace = searchParams.get('from') === 'marketplace';
-    const marketplaceTicketID = searchParams.get('ticketID');
-
-    const location = useLocation();
     const { event } = location.state || {};
-    console.log(event)
-
-    const marketplaceTicket = fromMarketplace
-        ? mockMarketplaceTickets.find(t => t.id === marketplaceTicketID)
-        : null;
 
     const officialTicketTypes = mockOfficialTickets.filter(t => t.eventID === eventID);
 
@@ -43,9 +36,24 @@ export default function EventDetailPage() {
         return <div className="text-center p-12">Event not found.</div>;
     }
 
-    const handleBuyScroll = () => {
-        document.getElementById('ticket-section').scrollIntoView({ behavior: 'smooth' });
+    const handleBuy = (ticket) => {
+        const newTicket = {
+            id: `${eventID}-${Math.floor(Math.random() * 10000)}`,
+            eventID: eventID,
+            owner: "a4gq6-oaaaa-aaaab-qaa4q-cai",
+            price: ticket.price,
+            kind: ticket.kind,
+            valid: true,
+            forSale: false
+        };
+
+        navigate("/my-tickets", { state: { newTicket } });
     };
+
+    const handleBuyScroll = () => {
+        document.getElementById('ticket-section')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
 
     return (
         <div className="min-h-[calc(100vh-10rem)] bg-[#11071F] text-white">
@@ -98,8 +106,8 @@ export default function EventDetailPage() {
                                 <div className="h-64 md:h-80 bg-cover bg-center relative">
                                     <div className="container mx-auto flex justify-between items-center">
                                         <h1 className="text-4xl md:text-6xl font-bold"></h1>
-                                        <Button size="lg" onClick={handleBuyScroll} className="hidden lg:flex">
-                                            Buy Tickets
+                                        <Button size="lg" className="mt-2" onClick={() => handleBuy(ticket)}>
+                                            Buy Now
                                         </Button>
                                     </div>
                                 </div>

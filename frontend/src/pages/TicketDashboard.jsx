@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, Ticket as TicketIcon, User, Tag, CheckCircle, XCircle, Users, Store, Trash2, PanelLeftClose, PanelLeftOpen, Eye, EyeOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLocation } from 'react-router-dom';
 
-// --- MOCK DATA (Updated to match Motoko types) ---
 const MOCK_USER_PRINCIPAL = "a4gq6-oaaaa-aaaab-qaa4q-cai";
 
 const mockEvents = [
@@ -33,7 +33,7 @@ const mockUserTickets = [
     price: 50,
     kind: { '#Seated': { seatInfo: "Section A, Row 5, Seat 12" } },
     valid: true,
-    forSale: false, // Not on the marketplace
+    forSale: false,
   },
   {
     id: "WEB3-2025-003",
@@ -42,7 +42,7 @@ const mockUserTickets = [
     price: 95,
     kind: { '#Seatless': null },
     valid: true,
-    forSale: true, // This ticket is on the marketplace
+    forSale: true,
   },
   {
     id: "WEB3-2025-004",
@@ -50,11 +50,10 @@ const mockUserTickets = [
     owner: MOCK_USER_PRINCIPAL,
     price: 110,
     kind: { '#Seatless': null },
-    valid: false, // This ticket is invalid/used
+    valid: false,
     forSale: false,
   },
 ];
-// --- END MOCK DATA ---
 
 export default function DigiTicketPage() {
   const navigate = useNavigate();
@@ -62,6 +61,15 @@ export default function DigiTicketPage() {
   const [selectedTicket, setSelectedTicket] = useState(myTickets[0] || null);
   const [isListVisible, setIsListVisible] = useState(true);
   const [isTicketIdVisible, setIsTicketIdVisible] = useState(false);
+
+  const location = useLocation();
+  useEffect(() => {
+    const newTicket = location.state?.newTicket;
+    if (newTicket) {
+      setMyTickets(prev => [...prev, newTicket]);
+      setSelectedTicket(newTicket);
+    }
+  }, [location.state]);
 
   const getEventForTicket = (ticket) => {
     if (!ticket) return null;
@@ -77,8 +85,7 @@ export default function DigiTicketPage() {
     setSelectedTicket(prev => (prev?.id === ticketId ? { ...prev, forSale: false } : prev));
     console.log(`Ticket ${ticketId} removed from marketplace.`);
   };
-  
-  // When a new ticket is selected, hide the ID by default
+
   useEffect(() => {
     setIsTicketIdVisible(false);
   }, [selectedTicket]);
@@ -96,7 +103,6 @@ export default function DigiTicketPage() {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column: Ticket List (Hideable) */}
           {isListVisible && (
             <div className="lg:col-span-1">
               <div className="flex justify-between items-center mb-4">
@@ -109,11 +115,11 @@ export default function DigiTicketPage() {
                 {myTickets.map(ticket => {
                   const event = getEventForTicket(ticket);
                   return (
-                    <Card 
-                      key={ticket.id} 
+                    <Card
+                      key={ticket.id}
                       className={cn(
-                          "cursor-pointer bg-white/5 border border-purple-400/20 hover:border-purple-400/50 transition-all",
-                          selectedTicket?.id === ticket.id && "border-purple-400/80 ring-2 ring-purple-400"
+                        "cursor-pointer bg-white/5 border border-purple-400/20 hover:border-purple-400/50 transition-all",
+                        selectedTicket?.id === ticket.id && "border-purple-400/80 ring-2 ring-purple-400"
                       )}
                       onClick={() => setSelectedTicket(ticket)}
                     >
@@ -135,12 +141,11 @@ export default function DigiTicketPage() {
             </div>
           )}
 
-          {/* Right Column: Ticket Details */}
           <div className={cn("transition-all duration-300", isListVisible ? "lg:col-span-2" : "lg:col-span-3")}>
             {!isListVisible && (
-                <Button variant="ghost" onClick={() => setIsListVisible(true)} className="mb-4 text-purple-300/70 hover:text-white">
-                    <PanelLeftOpen className="mr-2" /> Show Ticket List
-                </Button>
+              <Button variant="ghost" onClick={() => setIsListVisible(true)} className="mb-4 text-purple-300/70 hover:text-white">
+                <PanelLeftOpen className="mr-2" /> Show Ticket List
+              </Button>
             )}
             {selectedTicket && selectedEvent ? (
               <Card className="bg-white/5 border-purple-400/20 h-full">
@@ -165,10 +170,10 @@ export default function DigiTicketPage() {
                     <div className="flex items-center gap-3"><Users className="h-5 w-5 text-purple-400" /><span>Owner: You</span></div>
                     <div className="flex items-center gap-3"><Tag className="h-5 w-5 text-purple-400" /><span>Original Price: {selectedTicket.price} ICP</span></div>
                     {'#Seated' in selectedTicket.kind && (
-                        <div className="flex items-center gap-3">
-                            <TicketIcon className="h-5 w-5 text-purple-400" />
-                            <span>Seat: {selectedTicket.kind['#Seated'].seatInfo}</span>
-                        </div>
+                      <div className="flex items-center gap-3">
+                        <TicketIcon className="h-5 w-5 text-purple-400" />
+                        <span>Seat: {selectedTicket.kind['#Seated'].seatInfo}</span>
+                      </div>
                     )}
                     <div className="pt-4 border-t border-purple-400/20 space-y-2">
                       {selectedTicket.forSale ? (
@@ -177,7 +182,7 @@ export default function DigiTicketPage() {
                         </Button>
                       ) : (
                         selectedTicket.valid ? (
-                           <Button className="w-full" onClick={() => navigate('/sell-ticket')}>
+                          <Button className="w-full" onClick={() => navigate('/sell-ticket')}>
                             <Store className="mr-2 h-4 w-4" /> Sell on Marketplace
                           </Button>
                         ) : (
@@ -186,7 +191,7 @@ export default function DigiTicketPage() {
                       )}
                       <Button className="w-full" variant="outline" disabled={!selectedTicket.valid}>Transfer Ownership</Button>
                       <Link to={`/events/${selectedTicket.eventID}`}>
-                         <Button className="w-full" variant="ghost">View Event Details</Button>
+                        <Button className="w-full" variant="ghost">View Event Details</Button>
                       </Link>
                     </div>
                   </div>
