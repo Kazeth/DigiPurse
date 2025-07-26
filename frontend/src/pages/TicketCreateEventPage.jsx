@@ -122,8 +122,8 @@ export default function CreateEventPage() {
     setError('');
 
     try {
-      // Step 1: Create the main Event
-      const eventActor = createEventActor(eventCanisterId, { agentOptions: { identity: authClient.getIdentity() } });
+      const identity = authClient.getIdentity();
+      const eventActor = createEventActor(eventCanisterId, { agentOptions: { identity } });
       const date = new Date(`${eventDate}T${eventTime}`);
       if (isNaN(date.getTime())) {
         const errMsg = 'Invalid date or time.';
@@ -131,7 +131,7 @@ export default function CreateEventPage() {
         throw new Error(errMsg);
       }
       const dateInNanoseconds = BigInt(date.getTime()) * 1_000_000n;
-      const organizerId = principal.toText();
+      const organizerId = principal;
 
       console.log('Creating event with inputs:', {
         eventName,
@@ -164,7 +164,7 @@ export default function CreateEventPage() {
 
       // Step 2: Create a Master Ticket for EACH tier
       const masterTicketActor = createMasterTicketActor(masterTicketCanisterId, {
-        agentOptions: { identity: authClient.getIdentity() },
+        agentOptions: { identity },
       });
       for (const tier of ticketTiers) {
         console.log('Creating master ticket with inputs:', {
@@ -177,7 +177,8 @@ export default function CreateEventPage() {
           createdEvent.id,
           tier.desc,
           BigInt(tier.price),
-          convertTicketKind(tier.kind)
+          convertTicketKind(tier.kind),
+          BigInt(tier.supply)
         );
         console.log(`Master ticket "${tier.desc}" created for Event ID: ${createdEvent.id}`);
       }
@@ -384,9 +385,9 @@ export default function CreateEventPage() {
                     <span className="font-medium">
                       {eventDate && eventTime
                         ? new Date(`${eventDate}T${eventTime}`).toLocaleString('en-US', {
-                            dateStyle: 'medium',
-                            timeStyle: 'short',
-                          })
+                          dateStyle: 'medium',
+                          timeStyle: 'short',
+                        })
                         : 'Not set'}
                     </span>
                   </div>

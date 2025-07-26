@@ -20,7 +20,6 @@ persistent actor Registry {
   transient var tickets = Hashmap.HashMap<Principal, [Types.Ticket]>(0, Principal.equal, Principal.hash);
 
   transient var customers = Hashmap.HashMap<Principal, Types.Customer>(0, Principal.equal, Principal.hash);
-  transient var organizers = Hashmap.HashMap<Principal, Types.Organizer>(0, Principal.equal, Principal.hash);
   // var admins = Hashmap.HashMap<Principal, Types.Admin>(0, Principal.equal, Principal.hash);
 
   // Customer Regions
@@ -44,12 +43,7 @@ persistent actor Registry {
     // Debug.print("Checking if user exists...");
     return Option.isSome(customers.get(p));
   };
-
-  // Event Organizers
-  public func registerOrganizer(principal : Principal, profile : Types.Organizer) : async () {
-    organizers.put(principal, profile);
-  };
-
+  
   public query func getAllCustomers() : async [Types.Customer] {
     var res : [Types.Customer] = [];
     for (value in customers.vals()) {

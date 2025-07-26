@@ -59,9 +59,25 @@ export default function EventDetailPage() {
         return <div className="text-center p-12 text-white">Loading event data or event not found...</div>;
     }
 
-    const handleBuy = (ticket) => {
-        console.log("Buying ticket:", ticket);
-        navigate("/my-tickets", { state: { newTicket: ticket } });
+    const handleBuy = (ticketType) => {
+        const newTicket = {
+            id: `${ticketType.eventID}-${Date.now()}`,
+            eventID: ticketType.eventID,
+            price: ticketType.price,
+            kind: ticketType.kind,
+
+            owner: "a4gq6-oaaaa-aaaab-qaa4q-cai", 
+            valid: true,
+            forSale: false,
+
+            eventDetail: {
+                id: event.eventID,
+                name: event.eventName,
+                description: event.eventDesc,
+                date: event.eventDate,
+            }
+        };
+        navigate("/digiticket", { state: { newTicket: newTicket } });
     };
 
     return (

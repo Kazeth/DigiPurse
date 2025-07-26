@@ -1,79 +1,112 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar, Ticket as TicketIcon, User, Tag, CheckCircle, XCircle, Users, Store, Trash2, PanelLeftClose, PanelLeftOpen, Eye, EyeOff } from 'lucide-react';
+import { Calendar, Ticket as TicketIcon, Users, Tag, CheckCircle, XCircle, Store, Trash2, PanelLeftClose, PanelLeftOpen, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useLocation } from 'react-router-dom';
-
-const MOCK_USER_PRINCIPAL = "a4gq6-oaaaa-aaaab-qaa4q-cai";
-
-const mockEvents = [
-  {
-    id: "ICP2025",
-    organizer: "another-principal-id",
-    name: "ICP Hackathon 2025",
-    description: "A global hackathon for developers building on the Internet Computer Protocol. Join us for a week of innovation, collaboration, and building the future of the decentralized web.",
-    date: new Date('2025-08-01T09:00:00'),
-  },
-  {
-    id: "WEB3SUMMIT",
-    organizer: MOCK_USER_PRINCIPAL,
-    name: "Web3 Summit",
-    description: "The premier conference for Web3 and blockchain enthusiasts. Featuring talks from industry leaders, hands-on workshops, and networking opportunities.",
-    date: new Date('2025-09-15T10:00:00'),
-  },
-];
-
-const mockUserTickets = [
-  {
-    id: "ICP2025-001",
-    eventID: "ICP2025",
-    owner: MOCK_USER_PRINCIPAL,
-    price: 50,
-    kind: { '#Seated': { seatInfo: "Section A, Row 5, Seat 12" } },
-    valid: true,
-    forSale: false,
-  },
-  {
-    id: "WEB3-2025-003",
-    eventID: "WEB3SUMMIT",
-    owner: MOCK_USER_PRINCIPAL,
-    price: 95,
-    kind: { '#Seatless': null },
-    valid: true,
-    forSale: true,
-  },
-  {
-    id: "WEB3-2025-004",
-    eventID: "WEB3SUMMIT",
-    owner: MOCK_USER_PRINCIPAL,
-    price: 110,
-    kind: { '#Seatless': null },
-    valid: false,
-    forSale: false,
-  },
-];
+import { useAuth } from '@/lib/AuthContext';
+import { createActor as createTicketActor, canisterId as ticketCanisterId } from '@/declarations/Ticket_backend';
+import { createActor as createEventActor, canisterId as eventCanisterId } from '@/declarations/Event_backend';
 
 export default function DigiTicketPage() {
   const navigate = useNavigate();
-  const [myTickets, setMyTickets] = useState(mockUserTickets);
-  const [selectedTicket, setSelectedTicket] = useState(myTickets[0] || null);
+  const location = useLocation();
+  const { authClient } = useAuth();
+
+  // 1. Siapkan state untuk data asli dan status loading
+  const [myTickets, setMyTickets] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // State untuk UI
   const [isListVisible, setIsListVisible] = useState(true);
   const [isTicketIdVisible, setIsTicketIdVisible] = useState(false);
 
-  const location = useLocation();
+  // 2. useEffect utama untuk mengambil data dari backend saat komponen dimuat
   useEffect(() => {
-    const newTicket = location.state?.newTicket;
-    if (newTicket) {
-      setMyTickets(prev => [...prev, newTicket]);
-      setSelectedTicket(newTicket);
-    }
-  }, [location.state]);
+    const fetchDashboardData = async () => {
+      if (!authClient) return;
 
+      setIsLoading(true);
+      try {
+        const identity = authClient.getIdentity();
+        const principal = identity.getPrincipal();
+
+        // Buat actor untuk ticket dan event
+        const ticketActor = createTicketActor(ticketCanisterId, { agentOptions: { identity } });
+        const eventActor = createEventActor(eventCanisterId, { agentOptions: { identity } });
+
+        // Ambil semua tiket milik pengguna dan semua event
+        const [userTicketsResult, allEventsResult] = await Promise.all([
+          ticketActor.getAllUserTicket(principal),
+          eventActor.getAllEvents()
+        ]);
+
+        // 3. Transformasi data tiket dari backend
+        const formattedTickets = userTicketsResult.map(([id, ticket]) => ({
+          id: ticket.ticketID, // Gunakan ticketID dari record
+          eventID: ticket.eventID,
+          owner: ticket.owner.toText(),
+          price: Number(ticket.price), // Konversi BigInt ke Number
+          kind: ticket.kind,
+          valid: ticket.valid,
+          forSale: false, // Asumsi default, bisa ditambahkan di backend nanti
+        }));
+
+        // 4. Transformasi data event dari backend
+        const formattedEvents = allEventsResult.map(([id, event]) => ({
+          id: event.id,
+          name: event.name,
+          description: event.description,
+          // Konversi nanoseconds (BigInt) ke milliseconds untuk JS Date
+          date: new Date(Number(event.date / 1000000n)),
+        }));
+
+        setMyTickets(formattedTickets);
+        setEvents(formattedEvents);
+
+        // Pilih tiket pertama sebagai default jika ada
+        if (formattedTickets.length > 0) {
+          setSelectedTicket(formattedTickets[0]);
+        }
+
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [authClient]);
+
+  // 5. useEffect untuk menangani tiket baru dari halaman pembelian
+  useEffect(() => {
+    const newTicketData = location.state?.newTicket;
+    if (newTicketData) {
+      const { eventDetail, ...ticketOnlyData } = newTicketData;
+
+      // Tambahkan tiket baru ke daftar
+      setMyTickets(prev => [ticketOnlyData, ...prev]);
+
+      // Tambahkan detail event baru jika belum ada
+      if (eventDetail && !events.some(e => e.id === eventDetail.id)) {
+        setEvents(prev => [...prev, eventDetail]);
+      }
+
+      // Langsung pilih tiket yang baru
+      setSelectedTicket(ticketOnlyData);
+
+      // Hapus state dari URL untuk mencegah duplikasi saat refresh
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location.state, navigate, events]);
+
+  // Fungsi untuk mencari detail event dari state 'events'
   const getEventForTicket = (ticket) => {
     if (!ticket) return null;
-    return mockEvents.find(e => e.id === ticket.eventID);
+    return events.find(e => e.id === ticket.eventID);
   };
 
   const handleCancelListing = (ticketId) => {
@@ -83,7 +116,6 @@ export default function DigiTicketPage() {
       )
     );
     setSelectedTicket(prev => (prev?.id === ticketId ? { ...prev, forSale: false } : prev));
-    console.log(`Ticket ${ticketId} removed from marketplace.`);
   };
 
   useEffect(() => {
