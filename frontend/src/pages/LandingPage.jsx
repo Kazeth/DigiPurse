@@ -211,7 +211,7 @@ export default function LandingPage() {
             </div>
             {/* Fallback content for debugging */}
             <p className="mt-4 text-sm text-purple-200/50">
-              If logos are not visible, check the console for image loading errors.
+              Motoko
             </p>
           </motion.div>
         </div>
