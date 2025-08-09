@@ -1,80 +1,80 @@
-// import Event "canister:Event_backend";
-// import MasterTicket "canister:MasterTicket_backend";
-// import Type "../types";
-// import Nat "mo:base/Nat";
-// import Text "mo:base/Text";
-// import Iter "mo:base/Iter";
-// import Principal "mo:base/Principal";
-// import Ticket "canister:Ticket_backend";
+import MasterTicket "canister:MasterTicket_backend";
+import Principal "mo:base/Principal";
+import Ticket "canister:Ticket_backend";
 
-// persistent actor {
+persistent actor {
 
-//     public func seedMockUserTickets(owner : Principal) : async () {
-//         let masterTickets = await MasterTicket.getAllMasterTicket();
+  public func seedMockUserTickets(owner : Principal) : async () {
+    let data = await MasterTicket.getAllMasterTicket();
 
-//         var index = 0;
-//         for (pair in masterTickets.vals()) {
-//             let masterTicketList = pair.1; 
+    var index = 1;
+    let total = 5;
 
-//             for (master in masterTicketList.vals()) {
-//                 if (index >= 5) {
-//                     break;
-//                 };
+    label outer for (pair in data.vals()) {
+      let masterTickets = pair.1;
+      for (masterTicket in masterTickets.vals()) {
+        let eventId = masterTicket.eventID;
+        let desc = masterTicket.ticketDesc;
+        let price = masterTicket.price;
+        let kind = masterTicket.kind;
 
-//                 ignore await Ticket.createTicket(
-//                     master.eventID,
-//                     owner,
-//                     master.ticketDesc,
-//                     master.price,
-//                     master.kind,
-//                 );
+        ignore await Ticket.createTicket(
+          eventId,
+          owner,
+          desc,
+          price,
+          kind,
+        );
+        index += 1;
+        if (index >= total) break outer;
+      };
+    };
+  };
 
-//                 index += 1;
-//             };
+  public func seedMockOnSaleTickets() : async () {
+    let data = await MasterTicket.getAllMasterTicket();
 
-//             if (index >= 5) {
-//                 break;
-//             };
-//         };
-//     };
+    let seller = Principal.fromText("2vxsx-fae");
 
-//     public func seedMockOnSaleTickets() : async () {
-//         let masterTickets = await MasterTicket.getAllMasterTicket();
+    // create seller's tickets
+    var index = 1;
+    let total = 20;
 
-//         var index = 0;
-//         for (pair in masterTickets.vals()) {
-//             let masterTicketList = pair.1;
+    label outer for (pair in data.vals()) {
+      let masterTickets = pair.1;
+      for (masterTicket in masterTickets.vals()) {
+        let eventId = masterTicket.eventID;
+        let desc = masterTicket.ticketDesc;
+        let price = masterTicket.price;
+        let kind = masterTicket.kind;
 
-//             for (master in masterTicketList.vals()) {
-//                 if (index >= 3) {
-//                     break;
-//                 };
+        ignore await Ticket.createTicket(
+          eventId,
+          seller,
+          desc,
+          price,
+          kind,
+        );
+        index += 1;
+        if (index >= total) break outer;
+      };
+    };
 
-//                 let ticketOpt = await Ticket.createTicket(
-//                     master.eventID,
-//                     Principal.fromText("2vxsx-fae"), 
-//                     master.ticketDesc,
-//                     master.price,
-//                     master.kind,
-//                 );
+    // sell seller's tickets
+    let data2 = await Ticket.getAllUserTicket(seller);
 
-//                 switch (ticketOpt) {
-//                     case (?ticket) {
-//                         ignore await Ticket.sellTicket(ticket.ticketID);
-//                         index += 1;
-//                     };
-//                     case (_) {};
-//                 };
-//             };
+    for (pair in data2.vals()) {
+      let tickets = pair.1;
+      for (ticket in tickets.vals()) {
+        let ticketId = ticket.ticketID;
+        ignore await Ticket.sellTicket(ticketId);
+      };
+    };
 
-//             if (index >= 3) {
-//                 break;
-//             };
-//         };
-//     };
+  };
 
-//     public func seedAllTickets(owner : Principal) : async () {
-//         await seedMockUserTickets(owner);
-//         await seedMockOnSaleTickets();
-//     };
-// };
+  public func seedAllTickets(owner : Principal) : async () {
+    await seedMockOnSaleTickets();
+    await seedMockUserTickets(owner);
+  };
+};

@@ -4,53 +4,84 @@ import TrieMap "mo:base/TrieMap";
 import Iter "mo:base/Iter";
 import Text "mo:base/Text";
 import Nat "mo:base/Nat";
+import Array "mo:base/Array";
 
 persistent actor class TicketActor() {
 
   var ticketIdCounter : Nat = 0;
 
-  var stableTickets : [(Text, Type.Ticket)] = [];
-  private transient var tickets = TrieMap.TrieMap<Text, Type.Ticket>(Text.equal, Text.hash);
+  var stableTickets : [(Text, [Type.Ticket])] = [];
+  private transient var tickets = TrieMap.TrieMap<Text, [Type.Ticket]>(Text.equal, Text.hash);
 
   system func preupgrade() {
     stableTickets := Iter.toArray(tickets.entries());
   };
 
   system func postupgrade() {
-    tickets := TrieMap.fromEntries<Text, Type.Ticket>(Iter.fromArray(stableTickets), Text.equal, Text.hash);
+    tickets := TrieMap.fromEntries<Text, [Type.Ticket]>(Iter.fromArray(stableTickets), Text.equal, Text.hash);
   };
 
-  public query func getAllOnSaleTicket() : async [(Text, Type.Ticket)] {
-    let filtered = Iter.filter<(Text, Type.Ticket)>(
-      tickets.entries(),
-      func((_, ticket)) {
-        ticket.isOnMarketplace;
-      },
+  public query func getAllOnSaleTicket() : async [(Text, [Type.Ticket])] {
+    let filtered = Iter.filter<(Text, [Type.Ticket])>(
+      Iter.map<(Text, [Type.Ticket]), (Text, [Type.Ticket])>(
+        tickets.entries(),
+        func((eventId, ticketArr)) {
+          let onSaleTickets = Iter.toArray(
+            Iter.filter<Type.Ticket>(
+              ticketArr.vals(),
+              func(t) { t.isOnMarketplace },
+            )
+          );
+          (eventId, onSaleTickets);
+        },
+      ),
+      func((_, onSaleTickets)) { onSaleTickets.size() > 0 },
     );
-    return Iter.toArray(filtered);
+
+    Iter.toArray(filtered);
   };
 
-  public query func getAllUserTicket(user : Principal) : async [(Text, Type.Ticket)] {
-    let filtered = Iter.filter<(Text, Type.Ticket)>(
+  public query func getAllUserTicket(user : Principal) : async [(Text, [Type.Ticket])] {
+    let mapped = Iter.map<(Text, [Type.Ticket]), (Text, [Type.Ticket])>(
       tickets.entries(),
-      func((_, ticket)) {
-        ticket.owner == user;
+      func((eventId, ticketArr)) {
+        let userTickets = Iter.toArray(
+          Iter.filter<Type.Ticket>(
+            ticketArr.vals(),
+            func(t) { t.owner == user },
+          )
+        );
+        (eventId, userTickets);
       },
     );
-    return Iter.toArray(filtered);
+    Iter.toArray(mapped);
   };
 
   public func sellTicket(ticketId : Text) : async ?Type.Ticket {
-    switch (tickets.get(ticketId)) {
-      case (?ticket) {
-        let updatedTicket = { ticket with isOnMarketplace = true };
-        tickets.put(ticketId, updatedTicket);
-        return ?updatedTicket;
-      };
-      case (null) {
-        return null;
+
+    for ((eventId, ticketArr) in tickets.entries()) {
+      var found = false;
+
+      let updatedArr = Array.map<Type.Ticket, Type.Ticket>(
+        ticketArr,
+        func(t) {
+          if (t.ticketID == ticketId) {
+            found := true;
+            { t with isOnMarketplace = true };
+          } else {
+            t;
+          };
+        },
+      );
+
+      if (found) {
+        tickets.put(eventId, updatedArr);
+        
+        return Array.find<Type.Ticket>(updatedArr, func(t) { t.ticketID == ticketId });
       };
     };
+
+    return null;
   };
 
   public func createTicket(
@@ -82,7 +113,14 @@ persistent actor class TicketActor() {
       valid = true;
       isOnMarketplace = false;
     };
-    tickets.put(ticketId, tempTicket);
+
+    let existingTickets = switch (tickets.get(eventId)) {
+      case (?arr) { arr };
+      case (null) { [] };
+    };
+
+    let updatedTickets = Array.append(existingTickets, [tempTicket]);
+    tickets.put(eventId, updatedTickets);
 
     return tempTicket;
   };

@@ -54,6 +54,17 @@
         "output": "frontend/src/declarations/Ticket_backend"
       }
     },
+    "Ticket_seeder": {
+      "main": "backend/Seeder/TicketSeeder.mo",
+      "type": "motoko",
+      "dependencies": [
+        "Event_backend",
+        "Event_seeder",
+        "MasterTicket_backend",
+        "MasterTicket_seeder",
+        "Ticket_backend"
+      ]
+    },
     "Registry_backend": {
       "main": "backend/Registry.mo",
       "type": "motoko",

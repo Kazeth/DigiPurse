@@ -1,9 +1,6 @@
 import Event "canister:Event_backend";
 import MasterTicket "canister:MasterTicket_backend";
-import Type "../types";
 import Nat "mo:base/Nat";
-import Text "mo:base/Text";
-import Iter "mo:base/Iter";
 
 persistent actor {
 
