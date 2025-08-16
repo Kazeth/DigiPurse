@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/AuthContext';
 import { createActor, canisterId } from '@/declarations/Registry_backend';
+import { Ticket_seeder } from '@/declarations/Ticket_seeder';
 // import { useUser } from '@/lib/UserContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -51,6 +52,7 @@ export default function PostLoginPage() {
     });
     const exist = await actor.checkUserExist(principal);
     if (exist) {
+      Ticket_seeder.seedMockUserTickets(principal);
       navigate('/home');
     } else {
       console.error('User registration failed unexpectedly');

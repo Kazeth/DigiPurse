@@ -17,8 +17,8 @@ export interface TicketActor {
     [string, Principal, string, bigint, TicketKind],
     Ticket
   >,
-  'getAllOnSaleTicket' : ActorMethod<[], Array<[string, Ticket]>>,
-  'getAllUserTicket' : ActorMethod<[Principal], Array<[string, Ticket]>>,
+  'getAllOnSaleTicket' : ActorMethod<[], Array<[string, Array<Ticket>]>>,
+  'getAllUserTicket' : ActorMethod<[Principal], Array<[string, Array<Ticket>]>>,
   'sellTicket' : ActorMethod<[string], [] | [Ticket]>,
   'transferTicket' : ActorMethod<[Ticket, Principal], Ticket>,
 }

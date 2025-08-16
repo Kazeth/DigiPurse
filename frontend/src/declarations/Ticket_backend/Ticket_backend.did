@@ -9,12 +9,13 @@ type TicketActor =
     nat, kind: TicketKind) -> (Ticket);
    getAllOnSaleTicket: () -> (vec record {
                                     text;
-                                    Ticket;
+                                    vec Ticket;
                                   }) query;
-   getAllUserTicket: (user: principal) -> (vec record {
-                                                 text;
-                                                 Ticket;
-                                               }) query;
+   getAllUserTicket: (user: principal) ->
+    (vec record {
+           text;
+           vec Ticket;
+         }) query;
    sellTicket: (ticketId: text) -> (opt Ticket);
    transferTicket: (ticket: Ticket, newOwner: principal) -> (Ticket);
  };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Event_backend } from 'declarations/Event_backend';
-import { Link, useNavigate } from 'react-router-dom';
+import { Ticket_backend } from '@/declarations/Ticket_backend';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, Tag, Search, FilterX, ArrowLeft, ArrowRight, Armchair, User, PlusCircle, Loader2, ShieldAlert, CheckCircle2 } from 'lucide-react';
@@ -35,6 +36,9 @@ export default function MarketplacePage() {
   const [buyModalOpen, setBuyModalOpen] = useState(false);
   const [purchasedTicket, setPurchasedTicket] = useState(null);
 
+  const { eventID } = useParams();
+  const { authClient } = useAuth();
+
   useEffect(() => {
     const checkAndFetchData = async () => {
       if (!isAuthenticated || !principal) {
@@ -50,31 +54,7 @@ export default function MarketplacePage() {
           const eventResponse = await Event_backend.getAllEvents();
           const events = new Map(eventResponse.map(([id, event]) => [id, event]));
           setEventsMap(events);
-
-          // Placeholder for Ticket_backend.getAllTickets()
-          // const ticketResponse = await Ticket_backend.getAllTickets();
-          // const parsed = ticketResponse.map(([id, ticket]) => ({
-          //   ticketID: id,
-          //   eventID: ticket.eventID,
-          //   ticketDesc: ticket.ticketDesc,
-          //   price: Number(ticket.price),
-          //   kind: ticket.kind,
-          //   owner: ticket.owner.toText(),
-          //   valid: ticket.valid,
-          // }));
-          // setAllMarketplaceTickets(parsed);
-
-          // Temporary: Use mock ticket data based on mockEvents
-          const mockTickets = mockEvents.map((event, index) => ({
-            ticketID: `TKT-${index + 1}`,
-            eventID: event.eventID,
-            ticketDesc: 'General Admission',
-            price: 50 + index * 10,
-            kind: { '#Seatless': null },
-            owner: 'mock-principal-' + index,
-            valid: true,
-          }));
-          setAllMarketplaceTickets(mockTickets);
+          console.log(events);
         } else {
           setIsVerified(false);
         }
@@ -85,7 +65,40 @@ export default function MarketplacePage() {
         setIsLoading(false);
       }
     };
+    const fetchTickets = async () => {
+      if (!isAuthenticated || !principal) return;
+      setIsLoading(true);
+      try {
+        const identityOpt = await Identity_backend.getIdentity(principal);
+        if (identityOpt.length > 0 && identityOpt[0].isVerified) {
+          setIsVerified(true);
+          // Fetch tickets
+          const ticketResponse = await Ticket_backend.getAllOnSaleTicket();
+          console.log(ticketResponse);
+          const parsed = ticketResponse.flatMap(([eventId, tickets]) =>
+            tickets.map(ticket => ({
+              ticketID: ticket.ticketID,
+              eventID: eventId,
+              ticketDesc: ticket.ticketDesc,
+              price: Number(ticket.price),
+              kind: ticket.kind,
+              owner: ticket.owner.toText(),
+              valid: ticket.valid,
+            }))
+          );
+          console.log(parsed);
+          setAllMarketplaceTickets(parsed);
+        } else {
+          setIsVerified(false);
+        }
+      } catch (err) {
+        console.error("Failed to fetch tickets:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     checkAndFetchData();
+    fetchTickets();
   }, [isAuthenticated, principal]);
 
   useMemo(() => {
@@ -126,6 +139,10 @@ export default function MarketplacePage() {
 
   const handleBuyTicket = (ticket) => {
     setPurchasedTicket(ticket);
+    // const identity = authClient ? authClient.getIdentity() : null;
+    // const principal = identity ? identity.getPrincipal() : null;
+    // console.log(principal);
+    // Ticket_backend.transferTicket(ticket, principal);
     setBuyModalOpen(true);
   };
 

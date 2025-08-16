@@ -46,15 +46,18 @@ export default function DigiTicketPage() {
         console.log("Fetched tickets:", userTicketsResult); // Debug backend data
 
         // 3. Transformasi data tiket dari backend
-        const formattedTickets = userTicketsResult.map(([id, ticket]) => ({
-          id: ticket.ticketID, // Gunakan ticketID dari record
-          eventID: ticket.eventID,
-          owner: ticket.owner.toText(),
-          price: Number(ticket.price), // Konversi BigInt ke Number
-          kind: ticket.kind,
-          valid: ticket.valid,
-          forSale: false, // Asumsi default, bisa ditambahkan di backend nanti
-        }));
+        const formattedTickets = userTicketsResult.flatMap(([eventId, tickets]) =>
+          tickets.map(ticket => ({
+            ticketID: ticket.ticketID,
+            eventID: eventId,
+            ticketDesc: ticket.ticketDesc,
+            price: Number(ticket.price),
+            kind: ticket.kind,
+            owner: ticket.owner.toText(),
+            valid: ticket.valid,
+          }))
+        );
+        console.log(formattedTickets);
 
         // 4. Transformasi data event dari backend
         const formattedEvents = allEventsResult.map(([id, event]) => ({
@@ -201,7 +204,7 @@ export default function DigiTicketPage() {
                       </Button>
                     </div>
                     <p className="text-2xl font-bold tracking-widest text-center break-all">
-                      {isTicketIdVisible ? selectedTicket.id : '••••••••••••••••'}
+                      {isTicketIdVisible ? selectedTicket.ticketID : '••••••••••••••••'}
                     </p>
                   </div>
                   <div className="space-y-4">

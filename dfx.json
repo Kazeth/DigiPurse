@@ -50,6 +50,7 @@
     "Ticket_backend": {
       "main": "backend/Event/Ticket.mo",
       "type": "motoko",
+      "post_install": "dfx canister call Ticket_seeder seedMockOnSaleTickets",
       "declarations": {
         "output": "frontend/src/declarations/Ticket_backend"
       }
@@ -70,7 +71,10 @@
         "MasterTicket_backend",
         "MasterTicket_seeder",
         "Ticket_backend"
-      ]
+      ],
+      "declarations": {
+        "output": "frontend/src/declarations/Ticket_seeder"
+      }
     },
     "Registry_backend": {
       "main": "backend/Registry.mo",

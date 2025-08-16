@@ -21,12 +21,12 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getAllOnSaleTicket' : IDL.Func(
         [],
-        [IDL.Vec(IDL.Tuple(IDL.Text, Ticket))],
+        [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Vec(Ticket)))],
         ['query'],
       ),
     'getAllUserTicket' : IDL.Func(
         [IDL.Principal],
-        [IDL.Vec(IDL.Tuple(IDL.Text, Ticket))],
+        [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Vec(Ticket)))],
         ['query'],
       ),
     'sellTicket' : IDL.Func([IDL.Text], [IDL.Opt(Ticket)], []),

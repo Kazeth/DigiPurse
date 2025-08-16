@@ -1,0 +1,4 @@
+service : {
+  seedMockOnSaleTickets: () -> ();
+  seedMockUserTickets: (owner: principal) -> ();
+}

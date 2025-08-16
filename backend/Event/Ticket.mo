@@ -76,7 +76,7 @@ persistent actor class TicketActor() {
 
       if (found) {
         tickets.put(eventId, updatedArr);
-        
+
         return Array.find<Type.Ticket>(updatedArr, func(t) { t.ticketID == ticketId });
       };
     };
@@ -126,7 +126,11 @@ persistent actor class TicketActor() {
   };
 
   public func transferTicket(ticket : Type.Ticket, newOwner : Principal) : async Type.Ticket {
-    { ticket with owner = newOwner };
-  };
+    let updatedTicket = {
+        ticket with owner = newOwner;
+        isOnMarketplace = false;
+    };
+    return updatedTicket;
+}
 
 };

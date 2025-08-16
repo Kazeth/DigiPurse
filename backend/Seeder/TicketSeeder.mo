@@ -72,9 +72,4 @@ persistent actor {
     };
 
   };
-
-  public func seedAllTickets(owner : Principal) : async () {
-    await seedMockOnSaleTickets();
-    await seedMockUserTickets(owner);
-  };
 };
