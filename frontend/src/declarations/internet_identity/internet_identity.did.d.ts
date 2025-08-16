@@ -54,7 +54,11 @@ export interface AuthnMethodConfirmationCode {
   'confirmation_code' : string,
   'expiration' : Timestamp,
 }
-export type AuthnMethodConfirmationError = { 'RegistrationModeOff' : null } |
+export type AuthnMethodConfirmationError = {
+    'InternalCanisterError' : string
+  } |
+  { 'RegistrationModeOff' : null } |
+  { 'Unauthorized' : Principal } |
   { 'NoAuthnMethodToConfirm' : null } |
   { 'WrongCode' : { 'retries_left' : number } };
 export interface AuthnMethodData {
@@ -74,14 +78,21 @@ export type AuthnMethodRegisterError = { 'RegistrationModeOff' : null } |
   { 'InvalidMetadata' : string };
 export interface AuthnMethodRegistrationInfo {
   'expiration' : Timestamp,
+  'session' : [] | [Principal],
   'authn_method' : [] | [AuthnMethodData],
 }
 export type AuthnMethodRegistrationModeEnterError = {
     'InvalidRegistrationId' : string
   } |
+  { 'InternalCanisterError' : string } |
   { 'AlreadyInProgress' : null } |
+  { 'Unauthorized' : Principal };
+export type AuthnMethodRegistrationModeExitError = {
+    'InternalCanisterError' : string
+  } |
+  { 'RegistrationModeOff' : null } |
   { 'Unauthorized' : Principal } |
-  { 'InternalError' : string };
+  { 'InvalidMetadata' : string };
 export type AuthnMethodReplaceError = { 'AuthnMethodNotFound' : null } |
   { 'InvalidMetadata' : string };
 export interface AuthnMethodSecuritySettings {
@@ -91,6 +102,7 @@ export interface AuthnMethodSecuritySettings {
 export type AuthnMethodSecuritySettingsReplaceError = {
     'AuthnMethodNotFound' : null
   };
+export interface AuthnMethodSessionInfo { 'name' : [] | [string] }
 export interface BufferedArchiveEntry {
   'sequence_number' : bigint,
   'entry' : Uint8Array | number[],
@@ -152,6 +164,7 @@ export type DeviceProtection = { 'unprotected' : null } |
 export interface DeviceRegistrationInfo {
   'tentative_device' : [] | [DeviceData],
   'expiration' : Timestamp,
+  'tentative_session' : [] | [Principal],
 }
 export interface DeviceWithUsage {
   'alias' : string,
@@ -266,6 +279,7 @@ export interface InternetIdentityInit {
   'canister_creation_cycles_cost' : [] | [bigint],
   'analytics_config' : [] | [[] | [AnalyticsConfig]],
   'related_origins' : [] | [Array<string>],
+  'feature_flag_continue_from_another_device' : [] | [boolean],
   'captcha_config' : [] | [CaptchaConfig],
   'dummy_auth' : [] | [[] | [DummyAuthConfig]],
   'register_rate_limit' : [] | [RateLimitConfig],
@@ -437,9 +451,9 @@ export interface _SERVICE {
       { 'Err' : AuthnMethodRegistrationModeEnterError }
   >,
   'authn_method_registration_mode_exit' : ActorMethod<
-    [IdentityNumber],
+    [IdentityNumber, [] | [AuthnMethodData]],
     { 'Ok' : null } |
-      { 'Err' : null }
+      { 'Err' : AuthnMethodRegistrationModeExitError }
   >,
   'authn_method_remove' : ActorMethod<
     [IdentityNumber, PublicKey],
@@ -455,6 +469,15 @@ export interface _SERVICE {
     [IdentityNumber, PublicKey, AuthnMethodSecuritySettings],
     { 'Ok' : null } |
       { 'Err' : AuthnMethodSecuritySettingsReplaceError }
+  >,
+  'authn_method_session_info' : ActorMethod<
+    [IdentityNumber],
+    [] | [AuthnMethodSessionInfo]
+  >,
+  'authn_method_session_register' : ActorMethod<
+    [IdentityNumber],
+    { 'Ok' : AuthnMethodConfirmationCode } |
+      { 'Err' : AuthnMethodRegisterError }
   >,
   'check_captcha' : ActorMethod<
     [CheckCaptchaArg],
