@@ -54,6 +54,13 @@
         "output": "frontend/src/declarations/Ticket_backend"
       }
     },
+    "Payment_backend": {
+      "main": "backend/Payment.mo",
+      "type": "motoko",
+      "declarations": {
+        "output": "frontend/src/declarations/Payment_backend"
+      }
+    },
     "Ticket_seeder": {
       "main": "backend/Seeder/TicketSeeder.mo",
       "type": "motoko",
