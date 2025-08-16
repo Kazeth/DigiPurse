@@ -1,32 +1,27 @@
 import Principal "mo:base/Principal";
-import Blob "mo:base/Blob";
 import Text "mo:base/Text";
 import Nat "mo:base/Nat";
 import Nat8 "mo:base/Nat8";
 import Nat64 "mo:base/Nat64";
 import Error "mo:base/Error";
 import Result "mo:base/Result";
+import Blob "mo:base/Blob";
 import Types "./types";
 
-// Management canister interface for cycle operations
-type ManagementCanister = actor {
-    deposit_cycles : shared { canister_id : Principal } -> async ();
-};
-
-// Define the ICRC1_Ledger interface
-type ICRC1_Ledger = actor {
-    icrc1_transfer : shared (args : {
-        to : { owner : Principal; subaccount : ?[Nat8] };
-        fee : ?Nat;
-        memo : ?[Nat8];
-        from_subaccount : ?[Nat8];
-        created_at_time : ?Nat64;
-        amount : Nat
-    }) -> async Result.Result<Nat, Text>;
-    icrc1_balance_of : shared query (account : { owner : Principal; subaccount : ?[Nat8] }) -> async Nat;
-};
-
 persistent actor class PaymentManager() {
+    // Define the ICRC1_Ledger interface
+    type ICRC1_Ledger = actor {
+        icrc1_transfer : shared (args : {
+            to : { owner : Principal; subaccount : ?[Nat8] };
+            fee : ?Nat;
+            memo : ?[Nat8];
+            from_subaccount : ?[Nat8];
+            created_at_time : ?Nat64;
+            amount : Nat
+        }) -> async Result.Result<Nat, Text>;
+        icrc1_balance_of : shared query (account : { owner : Principal; subaccount : ?[Nat8] }) -> async Nat;
+    };
+
     // --- STATE ---
     stable var transaction_history : [Types.Transaction] = [];
 
@@ -51,19 +46,23 @@ persistent actor class PaymentManager() {
     ) : async Result.Result<Nat, Text> {
         try {
             let ledger_canister : ICRC1_Ledger = actor(canisterIdText);
-            let args = {
-                to = { owner = to_principal; subaccount = null };
-                amount = amount;
-                fee = null;
-                memo = null;
-                from_subaccount = null;
-                created_at_time = null;
-            };
+            try {
+                let args = {
+                    to = { owner = to_principal; subaccount = null };
+                    amount = amount;
+                    fee = null;
+                    memo = null;
+                    from_subaccount = null;
+                    created_at_time = null;
+                };
 
-            let result = await ledger_canister.icrc1_transfer(args);
-            return result;
+                let result = await ledger_canister.icrc1_transfer(args);
+                return result;
+            } catch (e) {
+                return #err("Transfer failed: " # Error.message(e));
+            };
         } catch (e) {
-            return #err("Transfer failed: " # Error.message(e));
+            return #err("Ledger canister initialization failed: " # Error.message(e));
         };
     };
 
@@ -83,7 +82,7 @@ persistent actor class PaymentManager() {
 
     /*
     * TOP UP CANISTER CYCLES
-    * Placeholder for cycles top-up functionality
+    * Converts ICP tokens to cycles and deposits them into the target canister
     */
     public shared ({caller}) func topUpCanister(targetCanisterId: Principal, icpAmount: Nat) : async Result.Result<Text, Text> {
         // The ICMC principal (aaaaa-aa is the management canister ID)
@@ -111,12 +110,9 @@ persistent actor class PaymentManager() {
             switch (transfer_result) {
                 case (#ok(block_index)) {
                     // Step 2: Notify ICMC to convert ICP to cycles and deposit to target canister
-                    // Original line:
-                    let management_canister : ManagementCanister = actor(Principal.toText(icmc_principal));
-                    // Workaround if error persists:
-                    // let management_canister = actor(Principal.toText(icmc_principal)) : actor {
-                    //     deposit_cycles : shared { canister_id : Principal } -> async ();
-                    // };
+                    let management_canister = actor(Principal.toText(icmc_principal)) : actor {
+                        deposit_cycles : shared { canister_id : Principal } -> async ();
+                    };
                     await management_canister.deposit_cycles({ canister_id = targetCanisterId });
                     return #ok("Successfully topped up canister with cycles");
                 };
