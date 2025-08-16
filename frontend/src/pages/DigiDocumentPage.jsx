@@ -1,4 +1,4 @@
-import { createActor, canisterId } from 'declarations/File_Manager';
+import { createActor, canisterId } from 'declarations/File_manager';
 import { useAuth } from '../lib/AuthContext';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';

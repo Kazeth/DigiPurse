@@ -17,6 +17,7 @@ import Types "types";
 persistent actor Registry {
 
   var transactions : [Types.Transaction] = [];
+  var activityLogs : [Types.ActivityLog] = [];
   transient var tickets = Hashmap.HashMap<Principal, [Types.Ticket]>(0, Principal.equal, Principal.hash);
 
   transient var customers = Hashmap.HashMap<Principal, Types.Customer>(0, Principal.equal, Principal.hash);
@@ -24,7 +25,15 @@ persistent actor Registry {
 
   // Customer Regions
   public func registerCustomer(principal : Principal, profile : Types.Customer) : async () {
-    return customers.put(principal, profile);
+    customers.put(principal, profile);
+    // Catat aktivitas pembuatan akun
+    let newLog : Types.ActivityLog = {
+      principal = principal;
+      timestamp = Time.now();
+      activityType = #AccountCreated;
+      description = "Akun berhasil dibuat dengan nama: " # profile.name;
+    };
+    activityLogs := Array.append(activityLogs, [newLog]);
   };
 
   public func updateCustomerProfile(principal : Principal, profile : Types.Customer) : async () {
@@ -104,6 +113,49 @@ persistent actor Registry {
   // };
   public func addTransaction(tx : Types.Transaction) : async () {
     transactions := Array.append(transactions, [tx]);
+
+    // Catat aktivitas untuk pembeli
+    let buyerLog : Types.ActivityLog = {
+      principal = tx.buyer;
+      timestamp = tx.timestamp;
+      activityType = #TicketPurchased;
+      description = "Membeli tiket #" # tx.ticketID;
+    };
+    activityLogs := Array.append(activityLogs, [buyerLog]);
+
+    // Catat aktivitas untuk penjual
+    let sellerLog : Types.ActivityLog = {
+      principal = tx.seller;
+      timestamp = tx.timestamp;
+      activityType = #TicketSold;
+      description = "Menjual tiket #" # tx.ticketID;
+    };
+    activityLogs := Array.append(activityLogs, [sellerLog]);
+  };
+
+  // BARU: Fungsi untuk mencatat aktivitas secara manual (misal: verifikasi identitas dari frontend)
+  public func recordActivity(principal : Principal, activityType : Types.ActivityType, description : Text) : async () {
+    let newLog : Types.ActivityLog = {
+      principal = principal;
+      timestamp = Time.now();
+      activityType = activityType;
+      description = description;
+    };
+    activityLogs := Array.append(activityLogs, [newLog]);
+  };
+
+  // BARU: Fungsi query untuk mendapatkan riwayat aktivitas user
+  public query func getUserActivity(p : Principal) : async [Types.ActivityLog] {
+    var userLogs : [Types.ActivityLog] = [];
+    for (log in activityLogs.vals()) {
+      // Bandingkan principal dengan aman
+      if (Principal.equal(log.principal, p)) {
+        userLogs := Array.append(userLogs, [log]);
+      };
+    };
+    // Urutkan dari yang terbaru
+    // Catatan: Fungsi sort di Motoko bisa kompleks, pengurutan di frontend lebih mudah.
+    return userLogs;
   };
 
   public query func getAllTransactions() : async [Types.Transaction] {

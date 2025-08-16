@@ -84,4 +84,17 @@ module {
     passportImageName: Text;
     isVerified: Bool;
   };
+  public type ActivityType = {
+    #AccountCreated;
+    #IdentityVerified;
+    #TicketPurchased;
+    #TicketSold;
+  };
+
+  public type ActivityLog = {
+    principal: Principal;
+    timestamp: Time.Time;
+    activityType: ActivityType;
+    description: Text;
+  };
 };

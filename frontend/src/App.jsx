@@ -28,6 +28,7 @@ import TicketDetailsPage from './pages/TicketDetailsPage';
 import { UserRoute } from './routes/UserRoute';
 import { PostLoginRoute } from './routes/PostLoginRoute';
 import { AuthProvider } from './lib/AuthContext';
+import HistoryPage from './pages/HistoryPage';
 
 // Document Upload/Download Progress
 import TransferProgress from './components/TransferProgress';
@@ -65,6 +66,7 @@ function App() {
                 <Route path="events" element={<TicketEventsPage />} />
                 <Route path="events/:eventID" element={<TicketEventDetailPage />} />
                 <Route path="tickets/:ticketID" element={<TicketDetailsPage />} />
+                <Route path="history" element={<HistoryPage />} />
               </Route>
             </Route>
           </Routes>

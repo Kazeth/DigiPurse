@@ -9,7 +9,7 @@ import { Identity_backend } from 'declarations/Identity_backend';
 import { useAuth } from '../lib/AuthContext';
 
 export default function DigiIdentity() {
-    const { isAuthenticated, principal } = useAuth();
+    const { isAuthenticated, principal, authClient } = useAuth();
     const [formData, setFormData] = useState({
         name: '',
         passportNumber: '',
@@ -181,6 +181,7 @@ export default function DigiIdentity() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const identity = authClient?.getIdentity();
         if (!principal) {
             alert("User principal not found. Cannot save.");
             return;
@@ -207,6 +208,15 @@ export default function DigiIdentity() {
                 dateOfExpiry: formData.dateOfExpiry,
             };
             await Identity_backend.saveIdentity(principal, dataToSave);
+            const registryActor = createRegistryActor(registryCanisterId, {
+                agentOptions: { identity },
+            });
+            await registryActor.recordActivity(
+                principal,
+                { 'IdentityVerified': null },
+                "Profil identitas telah berhasil diverifikasi."
+            );
+
             setFormData(dataToSave);
             setShowModal(true);
         } catch (error) {

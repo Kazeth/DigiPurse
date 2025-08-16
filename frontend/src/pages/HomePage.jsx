@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Shield, Ticket, Wallet, Loader2, FilePlus, ShoppingCart, Repeat, Fingerprint } from 'lucide-react';
+import { Shield, Ticket, Wallet, Loader2, FilePlus, ShoppingCart, Repeat, Fingerprint, History } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { createActor, canisterId } from '@/declarations/Registry_backend';
 
@@ -58,6 +58,13 @@ export default function HomePage() {
             icon: Wallet,
             path: '/digipayment',
             color: 'text-yellow-400',
+        },
+        {
+            title: 'My History',
+            description: 'View your account activity and transaction logs.',
+            icon: History,
+            path: '/history',
+            color: 'text-pink-400',
         },
     ];
 
@@ -119,6 +126,7 @@ export default function HomePage() {
 
                 <div className="mb-8">
                     <h2 className="text-2xl font-semibold text-white mb-4">Manage Your Assets</h2>
+                    {/* Grid sekarang akan menyesuaikan jumlah item */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {mainActions.map((action) => (
                             <Card 
@@ -163,4 +171,4 @@ export default function HomePage() {
             </div>
         </div>
     );
-}
+};
