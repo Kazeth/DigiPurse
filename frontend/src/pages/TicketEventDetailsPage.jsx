@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Calendar, Tag, Users, User, ArrowLeft, Loader2 } from 'lucide-react';
 // Impor yang diperlukan
 import { createActor as createMasterTicketActor, canisterId as masterTicketCanisterId } from '@/declarations/MasterTicket_backend';
+import { createActor as createTicketActor ,canisterId as ticketCanisterId } from '@/declarations/Ticket_backend';
 import { useAuth } from '@/lib/AuthContext';
 import { Principal } from '@dfinity/principal';
 
@@ -31,7 +32,7 @@ export default function EventDetailPage() {
                     agentOptions: { identity }
                 });
                 
-                console.log(eventID);
+                // console.log(eventID);
                 const relevantMasterTickets = await masterTicketActor.getMasterTicketByEventId(eventID);
                 const relevantTickets = relevantMasterTickets[0].map((masterTicket) => ({
                     eventID: masterTicket.eventID,
@@ -62,14 +63,18 @@ export default function EventDetailPage() {
         return <div className="text-center p-12 text-white">Loading event data or event not found...</div>;
     }
 
-    const handleBuy = (ticketType) => {
+    const handleBuy = async (ticketType) => {
+        const ticketActor = createTicketActor(ticketCanisterId, {
+            agentOptions: { identity: authClient.getIdentity() }
+        });
+
         const newTicket = {
             id: `${ticketType.eventID}-${Date.now()}`,
             eventID: ticketType.eventID,
             price: ticketType.price,
             kind: ticketType.kind,
 
-            owner: "a4gq6-oaaaa-aaaab-qaa4q-cai", 
+            owner: authClient.getIdentity().getPrincipal(), 
             valid: true,
             forSale: false,
 
@@ -80,6 +85,14 @@ export default function EventDetailPage() {
                 date: event.eventDate,
             }
         };
+
+        await ticketActor.createTicket(
+            ticketType.eventID,
+            authClient.getIdentity().getPrincipal(),
+            ticketType.desc,
+            ticketType.price,
+            ticketType.kind
+        );
         navigate("/digiticket", { state: { newTicket: newTicket } });
     };
 

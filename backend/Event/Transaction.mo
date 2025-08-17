@@ -1,7 +1,7 @@
 import Time "mo:base/Time";
 import Principal "mo:base/Principal";
 
-actor class TransactionActor() {
+persistent actor class TransactionActor() {
   public type Transaction = {
     txId: Nat;
     ticketId: Nat;

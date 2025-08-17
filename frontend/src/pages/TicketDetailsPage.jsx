@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, Tag, User, Armchair, MapPin, ShieldAlert, Loader2, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
-import { Event_backend } from 'declarations/Event_backend';
 import { Identity_backend } from 'declarations/Identity_backend';
+import { createActor as createTicketActor, canisterId as ticketCanisterId } from '@/declarations/Ticket_backend';
+import { createActor as createEventActor, canisterId as eventCanisterId } from '@/declarations/Event_backend';
 // Assuming you will have a Ticket_backend declaration
 // import { Ticket_backend } from 'declarations/Ticket_backend';
 
@@ -26,7 +27,7 @@ const mockEvents = [
 export default function TicketDetailsPage() {
   const { ticketID } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated, principal } = useAuth();
+  const { authClient, isAuthenticated, principal } = useAuth();
   const [isVerified, setIsVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [ticket, setTicket] = useState(null);
@@ -40,20 +41,24 @@ export default function TicketDetailsPage() {
         navigate('/login');
         return;
       }
-
       setIsLoading(true);
       try {
         const identityOpt = await Identity_backend.getIdentity(principal);
         if (identityOpt.length > 0 && identityOpt[0].isVerified) {
           setIsVerified(true);
-
           // In a real app, you would fetch the ticket from your Ticket_backend
-          const ticketData = mockTickets.find(t => t.ticketID === ticketID);
-          if (!ticketData) throw new Error('Ticket not found.');
-          setTicket(ticketData);
-
+          const ticketData = await getTicketData();
+          if (ticketData) {
+            setTicket(ticketData);
+          }
+          if (!ticketData) {
+            throw new Error('Ticket not found.');
+          }
           // In a real app, you would fetch the event from your Event_backend
-          const eventData = mockEvents.find(e => e.eventID === ticketData.eventID);
+          const eventActor = createEventActor(eventCanisterId, {
+            agentOptions: { identity: authClient.getIdentity() }
+          });
+          const eventData = await eventActor.getEvent(ticketData.eventID);
           if (!eventData) throw new Error('Event for this ticket not found.');
           setEvent(eventData);
 
@@ -70,6 +75,19 @@ export default function TicketDetailsPage() {
     fetchData();
   }, [ticketID, isAuthenticated, principal, navigate]);
 
+  const getTicketData = async () => {
+    const ticketActor = createTicketActor(ticketCanisterId, {
+      agentOptions: { identity: authClient.getIdentity() }
+    });
+    const allUserTicket = await ticketActor.getAllUserTicket(principal);
+    for (const ticket of allUserTicket) {
+      console.log(ticket);
+      if (ticket[1].ticketID === ticketID) {
+        const tData = ticket;
+        return tData;
+      }
+    }
+  }
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] bg-[#11071F]">

@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { useAuth } from '../lib/AuthContext';
 import { Identity_backend } from 'declarations/Identity_backend';
 import { cn } from '@/lib/utils';
+import { createActor, canisterId } from '@/declarations/Ticket_backend';
 
 const mockEvents = [
   { eventID: "EVT-001", eventName: "ICP Hackathon 2025", eventDate: new Date('2025-08-01T09:00:00') },
@@ -137,8 +138,21 @@ export default function MarketplacePage() {
     setSeatType('all');
   };
 
-  const handleBuyTicket = (ticket) => {
+  const handleBuyTicket = async (ticket) => {
     setPurchasedTicket(ticket);
+    const ticketActor = createActor(canisterId, {
+      agentOptions: { identity: authClient.getIdentity() }
+    });
+    try{
+      setIsLoading(true);
+      await ticketActor.transferTicket(ticket, authClient.getIdentity().getPrincipal());
+    }
+    catch (error) {
+      console.error("Failed to transfer ticket:", error);
+    }
+    finally{
+      setIsLoading(false);
+    }
     // const identity = authClient ? authClient.getIdentity() : null;
     // const principal = identity ? identity.getPrincipal() : null;
     // console.log(principal);

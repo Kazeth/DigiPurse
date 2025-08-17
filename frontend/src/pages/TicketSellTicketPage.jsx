@@ -8,6 +8,8 @@ import { ArrowLeft, Tag, CheckCircle, Info, Loader2, ShieldAlert } from 'lucide-
 import { cn } from '@/lib/utils';
 import { useAuth } from '../lib/AuthContext';
 import { Identity_backend } from 'declarations/Identity_backend';
+import { createActor as createTicketActor, canisterId as ticketCanisterId } from '@/declarations/Ticket_backend';
+import { createActor as createEventActor, canisterId as eventCanisterId } from '@/declarations/Event_backend';
 
 const MOCK_USER_PRINCIPAL = "a4gq6-oaaaa-aaaab-qaa4q-cai";
 const mockEvents = [
@@ -22,7 +24,7 @@ const allUserTickets = [
 
 export default function SellTicketPage() {
   const navigate = useNavigate();
-  const { isAuthenticated, principal } = useAuth();
+  const { authClient, isAuthenticated, principal } = useAuth();
 
   const [isVerified, setIsVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,6 +32,7 @@ export default function SellTicketPage() {
   const [sellableTickets, setSellableTickets] = useState([]);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [listingPrice, setListingPrice] = useState('');
+  const [events, setEvents] = useState([]); // Add this state for real events
 
   useEffect(() => {
     const checkAndFetchData = async () => {
@@ -43,10 +46,40 @@ export default function SellTicketPage() {
         const identityOpt = await Identity_backend.getIdentity(principal);
         if (identityOpt.length > 0 && identityOpt[0].isVerified) {
           setIsVerified(true);
-
-          const userTickets = allUserTickets;
-          const ticketsNotForSale = userTickets.filter(t => !t.forSale && t.owner === principal.toText());
+          
+          // Fetch both user tickets AND events
+          const [userTickets, allEvents] = await Promise.all([
+            getUserTicket(),
+            getAllEvents() // Add this function call
+          ]);
+          
+          console.log("processed user tickets:", userTickets);
+          console.log("processed events:", allEvents);
+          
+          // Set events state
+          setEvents(allEvents);
+          
+          // Filter tickets that are not for sale and owned by current user
+          const ticketsNotForSale = userTickets.filter(ticket => {
+            const ownerMatches = ticket.owner === principal.toText() || ticket.owner === principal;
+            const notForSale = !ticket.forSale && !ticket.isOnMarketplace;
+            
+            console.log("Ticket filter check:", {
+              ticketId: ticket.ticketID,
+              owner: ticket.owner,
+              currentPrincipal: principal.toText(),
+              ownerMatches,
+              forSale: ticket.forSale,
+              isOnMarketplace: ticket.isOnMarketplace,
+              notForSale
+            });
+            
+            return ownerMatches && notForSale;
+          });
+          
+          console.log("tickets not for sale:", ticketsNotForSale);
           setSellableTickets(ticketsNotForSale);
+          
           if (ticketsNotForSale.length > 0) {
             setSelectedTicket(ticketsNotForSale[0]);
           }
@@ -65,8 +98,67 @@ export default function SellTicketPage() {
     checkAndFetchData();
   }, [isAuthenticated, principal]);
 
+  // Add this function to fetch events
+  const getAllEvents = async () => {
+    try {
+      const eventActor = createEventActor(eventCanisterId, {
+        agentOptions: { identity: authClient.getIdentity() }
+      });
+      
+      const allEvents = await eventActor.getAllEvents();
+      console.log("Raw events from backend:", allEvents);
+      
+      // Transform events data structure
+      const formattedEvents = allEvents.map(([eventId, event]) => ({
+        eventID: eventId,
+        eventName: event.name || event.eventName,
+        eventDesc: event.description || event.eventDesc,
+        eventDate: event.date || event.eventDate,
+        // Add other event properties as needed
+      }));
+      
+      return formattedEvents;
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      return [];
+    }
+  };
+
+  const getUserTicket = async () => {
+    try {
+      const ticketActor = createTicketActor(ticketCanisterId, {
+        agentOptions: { identity: authClient.getIdentity() }
+      });
+      
+      const allUserTickets = await ticketActor.getAllUserTicket(principal);
+      console.log("Raw user tickets from backend:", allUserTickets);
+      
+      let tickets = [];
+      
+      for (const [eventId, ticketArray] of allUserTickets) {
+        if (Array.isArray(ticketArray) && ticketArray.length > 0) {
+          for (const ticket of ticketArray) {
+            tickets.push({
+              ...ticket,
+              eventID: eventId,
+              price: typeof ticket.price === 'bigint' ? Number(ticket.price) : ticket.price,
+              owner: typeof ticket.owner === 'object' ? ticket.owner.toText() : ticket.owner,
+            });
+          }
+        }
+      }
+      
+      console.log("Processed tickets:", tickets);
+      return tickets;
+    } catch (error) {
+      console.error("Error fetching user tickets:", error);
+      return [];
+    }
+  };
+
+  // Update this function to use real events instead of mock data
   const getEventForTicket = (ticket) => {
-    return mockEvents.find(e => e.eventID === ticket.eventID);
+    return events.find(e => e.eventID === ticket.eventID);
   };
 
   const handleListTicket = () => {

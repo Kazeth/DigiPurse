@@ -21,12 +21,12 @@ export default function MainLayout() {
   ];
 
   const isTicketAppPage = ticketAppPaths.some(path => location.pathname.startsWith(path));
-  
+  const isNoHeaderPage = location.pathname === '/postlogin';
   const isSupportPage = location.pathname === '/support';
 
   return (
     <div className="flex min-h-screen flex-col bg-[#11071F] text-white">
-      {isTicketAppPage ? <TicketAppHeader /> : <MainHeader />}
+      {!isNoHeaderPage && (isTicketAppPage ? <TicketAppHeader /> : <MainHeader />)}
 
       <main className="flex-grow">
         <Outlet />
