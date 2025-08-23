@@ -58,7 +58,7 @@ export default function TicketDetailsPage() {
           const eventActor = createEventActor(eventCanisterId, {
             agentOptions: { identity: authClient.getIdentity() }
           });
-          const eventData = await eventActor.getEvent(ticketData.eventID);
+          const eventData = await eventActor.getEventByEventId(ticketData.eventID);
           if (!eventData) throw new Error('Event for this ticket not found.');
           setEvent(eventData);
 
@@ -80,14 +80,25 @@ export default function TicketDetailsPage() {
       agentOptions: { identity: authClient.getIdentity() }
     });
     const allUserTicket = await ticketActor.getAllUserTicket(principal);
+    const allOnSaleTicket = await ticketActor.getAllOnSaleTicket();
     for (const ticket of allUserTicket) {
-      console.log(ticket);
-      if (ticket[1].ticketID === ticketID) {
-        const tData = ticket;
+      // console.log(ticket[1][0].ticketID);
+      if (ticket[1][0].ticketID == ticketID) {
+        const tData = ticket[1][0];
+        console.log(tData);
+        return tData;
+      }
+    }
+    for (const ticket of allOnSaleTicket) {
+      // console.log(ticket[1][0].ticketID);
+      if (ticket[1][0].ticketID == ticketID) {
+        const tData = ticket[1][0];
+        console.log(tData);
         return tData;
       }
     }
   }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] bg-[#11071F]">
@@ -162,7 +173,7 @@ export default function TicketDetailsPage() {
                         <CardDescription className="text-purple-300/70">Ticket ID: {ticket.ticketID}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="flex items-center gap-3"><User className="h-5 w-5 text-purple-400" /><span><strong>Seller:</strong> <span className="truncate">{ticket.owner}</span></span></div>
+                        <div className="flex items-center gap-3"><User className="h-5 w-5 text-purple-400" /><span><strong>Seller:</strong> <span className="truncate">{ticket.owner.toString()}</span></span></div>
                         <div className="flex items-center gap-3"><Tag className="h-5 w-5 text-purple-400" /><span><strong>Price:</strong> {ticket.price} ICP</span></div>
                         {ticket.kind['#Seated'] && (
                             <div className="flex items-center gap-3"><Armchair className="h-5 w-5 text-purple-400" /><span><strong>Seat:</strong> {ticket.kind['#Seated'].seatInfo}</span></div>

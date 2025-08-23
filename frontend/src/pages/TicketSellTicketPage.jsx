@@ -11,17 +11,6 @@ import { Identity_backend } from 'declarations/Identity_backend';
 import { createActor as createTicketActor, canisterId as ticketCanisterId } from '@/declarations/Ticket_backend';
 import { createActor as createEventActor, canisterId as eventCanisterId } from '@/declarations/Event_backend';
 
-const MOCK_USER_PRINCIPAL = "a4gq6-oaaaa-aaaab-qaa4q-cai";
-const mockEvents = [
-  { eventID: "ICP2025", eventName: "ICP Hackathon 2025" },
-  { eventID: "WEB3SUMMIT", eventName: "Web3 Summit" },
-];
-const allUserTickets = [
-  { ticketID: "ICP2025-001", eventID: "ICP2025", owner: MOCK_USER_PRINCIPAL, price: 50, forSale: false, kind: { '#Seated': { seatInfo: "A5" } } },
-  { ticketID: "WEB3-2025-003", eventID: "WEB3SUMMIT", owner: MOCK_USER_PRINCIPAL, price: 95, forSale: false, kind: { '#Seatless': null } },
-  { ticketID: "WEB3-2025-005", eventID: "WEB3SUMMIT", owner: MOCK_USER_PRINCIPAL, price: 150, forSale: true, kind: { '#Seatless': null } },
-];
-
 export default function SellTicketPage() {
   const navigate = useNavigate();
   const { authClient, isAuthenticated, principal } = useAuth();
@@ -161,11 +150,23 @@ export default function SellTicketPage() {
     return events.find(e => e.eventID === ticket.eventID);
   };
 
-  const handleListTicket = () => {
+  const handleListTicket = async () => {
     if (!selectedTicket || !listingPrice) return;
-    console.log(`Listing ticket ${selectedTicket.ticketID} for ${listingPrice} ICP.`);
-    alert('Ticket listed successfully!');
-    navigate('/marketplace');
+    const ticketActor = createTicketActor(ticketCanisterId, {
+      agentOptions: { identity: authClient.getIdentity() }
+    });
+
+    // You need to pass the price to the backend, and likely update the ticket object
+    // Assuming sellTicket expects (ticketID, price)
+    try {
+      const newTicket = { ...selectedTicket, price: Number(listingPrice) };
+      await ticketActor.sellTicket(newTicket.ticketID);
+      alert('Ticket listed successfully!');
+      navigate('/marketplace');
+    } catch (error) {
+      console.error("Failed to list ticket:", error);
+      alert('Failed to list ticket. Please try again.');
+    }
   };
 
   if (isLoading) {
