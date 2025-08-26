@@ -30,8 +30,9 @@ export default function DigiTicketPage() {
 
       setIsLoading(true);
       try {
-        const identity = authClient.getIdentity();
-        const principal = identity.getPrincipal();
+        // Wait for authClient to be ready and identity to be available
+        const identity = await authClient.getIdentity();
+        const principal = await identity.getPrincipal();
 
         // Buat actor untuk ticket dan event
         const ticketActor = createTicketActor(ticketCanisterId, { agentOptions: { identity } });
@@ -39,32 +40,33 @@ export default function DigiTicketPage() {
 
         // Ambil semua tiket milik pengguna dan semua event
         const [userTicketsResult, allEventsResult] = await Promise.all([
-          ticketActor.getAllUserTicket(principal),
-          eventActor.getAllEvents()
+          await ticketActor.getAllUserTicket(principal),
+          await eventActor.getAllEvents()
         ]);
-
-        console.log("Fetched tickets:", userTicketsResult); // Debug backend data
 
         // 3. Transformasi data tiket dari backend
         const formattedTickets = userTicketsResult.flatMap(([eventId, tickets]) =>
-          tickets.map(ticket => ({
-            ticketID: ticket.ticketID,
-            eventID: eventId,
-            ticketDesc: ticket.ticketDesc,
-            price: Number(ticket.price),
-            kind: ticket.kind,
-            owner: ticket.owner.toText(),
-            valid: ticket.valid,
-          }))
+          tickets
+            .filter(ticket => ticket.isOnMarketplace === false)
+            .map(ticket => ({
+              ticketID: ticket.ticketID,
+              eventID: eventId,
+              ticketDesc: ticket.ticketDesc,
+              price: Number(ticket.price),
+              kind: ticket.kind,
+              owner: ticket.owner.toText(),
+              valid: ticket.valid,
+              isOnMarketplace: ticket.isOnMarketplace,
+              id: ticket.id ?? ticket.ticketID, // fallback if id not present
+              forSale: ticket.forSale ?? ticket.isOnMarketplace, // fallback for compatibility
+            }))
         );
-        console.log(formattedTickets);
 
         // 4. Transformasi data event dari backend
         const formattedEvents = allEventsResult.map(([id, event]) => ({
           id: event.id,
           name: event.name,
           description: event.description,
-          // Konversi nanoseconds (BigInt) ke milliseconds untuk JS Date
           date: new Date(Number(event.date / 1000000n)),
         }));
 

@@ -76,7 +76,7 @@ export default function EventDetailPage() {
 
             owner: authClient.getIdentity().getPrincipal(), 
             valid: true,
-            forSale: false,
+            isOnMarketplace: false,
 
             eventDetail: {
                 id: event.eventID,

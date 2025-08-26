@@ -13,11 +13,11 @@ import { Identity_backend } from 'declarations/Identity_backend';
 import { cn } from '@/lib/utils';
 import { createActor, canisterId } from '@/declarations/Ticket_backend';
 
-const mockEvents = [
-  { eventID: "EVT-001", eventName: "ICP Hackathon 2025", eventDate: new Date('2025-08-01T09:00:00') },
-  { eventID: "WEB3SUMMIT", eventName: "Web3 Summit", eventDate: new Date('2025-09-15T10:00:00') },
-  { eventID: "DEVFEST", eventName: "DevFest Global", eventDate: new Date('2025-10-20T11:00:00') },
-];
+// const mockEvents = [
+//   { eventID: "EVT-001", eventName: "ICP Hackathon 2025", eventDate: new Date('2025-08-01T09:00:00') },
+//   { eventID: "WEB3SUMMIT", eventName: "Web3 Summit", eventDate: new Date('2025-09-15T10:00:00') },
+//   { eventID: "DEVFEST", eventName: "DevFest Global", eventDate: new Date('2025-10-20T11:00:00') },
+// ];
 
 const TICKETS_PER_PAGE = 9;
 
@@ -41,73 +41,75 @@ export default function MarketplacePage() {
   const { authClient } = useAuth();
 
   useEffect(() => {
-    const checkAndFetchData = async () => {
-      if (!isAuthenticated || !principal) {
-        setIsLoading(false);
-        return;
-      }
-      setIsLoading(true);
-      try {
-        const identityOpt = await Identity_backend.getIdentity(principal);
-        if (identityOpt.length > 0 && identityOpt[0].isVerified) {
-          setIsVerified(true);
-          // Fetch events
-          const eventResponse = await Event_backend.getAllEvents();
-          const events = new Map(eventResponse.map(([id, event]) => [id, event]));
-          setEventsMap(events);
-          console.log(events);
-        } else {
-          setIsVerified(false);
-        }
-      } catch (error) {
-        console.error("Failed to check identity or fetch data:", error);
-        setIsVerified(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    const fetchTickets = async () => {
-      if (!isAuthenticated || !principal) return;
-      setIsLoading(true);
-      try {
-        const identityOpt = await Identity_backend.getIdentity(principal);
-        if (identityOpt.length > 0 && identityOpt[0].isVerified) {
-          setIsVerified(true);
-          // Fetch tickets
-          const ticketResponse = await Ticket_backend.getAllOnSaleTicket();
-          console.log(ticketResponse);
-          const parsed = ticketResponse.flatMap(([eventId, tickets]) =>
-            tickets.map(ticket => ({
-              ticketID: ticket.ticketID,
-              eventID: eventId,
-              ticketDesc: ticket.ticketDesc,
-              price: Number(ticket.price),
-              kind: ticket.kind,
-              owner: ticket.owner.toText(),
-              valid: ticket.valid,
-            }))
-          );
-          console.log(parsed);
-          setAllMarketplaceTickets(parsed);
-        } else {
-          setIsVerified(false);
-        }
-      } catch (err) {
-        console.error("Failed to fetch tickets:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     checkAndFetchData();
     fetchTickets();
   }, [isAuthenticated, principal]);
+
+  const checkAndFetchData = async () => {
+    if (!isAuthenticated || !principal) {
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const identityOpt = await Identity_backend.getIdentity(principal);
+      if (identityOpt.length > 0 && identityOpt[0].isVerified) {
+        setIsVerified(true);
+        // Fetch events
+        const eventResponse = await Event_backend.getAllEvents();
+        const events = new Map(eventResponse.map(([id, event]) => [id, event]));
+        setEventsMap(events);
+        console.log(events);
+      } else {
+        setIsVerified(false);
+      }
+    } catch (error) {
+      console.error("Failed to check identity or fetch data:", error);
+      setIsVerified(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const fetchTickets = async () => {
+    if (!isAuthenticated || !principal) return;
+    setIsLoading(true);
+    try {
+      const identityOpt = await Identity_backend.getIdentity(principal);
+      if (identityOpt.length > 0 && identityOpt[0].isVerified) {
+        setIsVerified(true);
+        // Fetch tickets
+        const ticketResponse = await Ticket_backend.getAllOnSaleTicket();
+        console.log("ticket fetched : ", ticketResponse);
+        const parsed = ticketResponse.flatMap(([eventId, tickets]) =>
+          tickets.map(ticket => ({
+            ticketID: ticket.ticketID,
+            eventID: eventId,
+            ticketDesc: ticket.ticketDesc,
+            price: Number(ticket.price),
+            kind: ticket.kind,
+            owner: ticket.owner,
+            valid: ticket.valid,
+            isOnMarketplace: ticket.isOnMarketplace,
+          }))
+        );
+        console.log(parsed);
+        setAllMarketplaceTickets(parsed);
+      } else {
+        setIsVerified(false);
+      }
+    } catch (err) {
+      console.error("Failed to fetch tickets:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useMemo(() => {
     let tickets = allMarketplaceTickets;
     if (searchTerm) {
       const lowercasedTerm = searchTerm.toLowerCase();
       tickets = tickets.filter(ticket => {
-        const event = eventsMap.get(ticket.eventID) || mockEvents.find(e => e.eventID === ticket.eventID);
+        const event = eventsMap.get(ticket.eventID) /*|| mockEvents.find(e => e.eventID === ticket.eventID)*/;
         return event?.eventName.toLowerCase().includes(lowercasedTerm);
       });
     }
@@ -116,7 +118,7 @@ export default function MarketplacePage() {
     }
     if (filterDate) {
       tickets = tickets.filter(ticket => {
-        const event = eventsMap.get(ticket.eventID) || mockEvents.find(e => e.eventID === ticket.eventID);
+        const event = eventsMap.get(ticket.eventID) /*|| mockEvents.find(e => e.eventID === ticket.eventID)*/;
         const eventDate = event ? new Date(Number(event.date) / 1000000 || event.eventDate).toISOString().split('T')[0] : '';
         return eventDate === filterDate;
       });
@@ -143,20 +145,15 @@ export default function MarketplacePage() {
     const ticketActor = createActor(canisterId, {
       agentOptions: { identity: authClient.getIdentity() }
     });
-    try{
+    try {
       setIsLoading(true);
       await ticketActor.transferTicket(ticket, authClient.getIdentity().getPrincipal());
-    }
-    catch (error) {
+      await fetchTickets();
+    } catch (error) {
       console.error("Failed to transfer ticket:", error);
-    }
-    finally{
+    } finally {
       setIsLoading(false);
     }
-    // const identity = authClient ? authClient.getIdentity() : null;
-    // const principal = identity ? identity.getPrincipal() : null;
-    // console.log(principal);
-    // Ticket_backend.transferTicket(ticket, principal);
     setBuyModalOpen(true);
   };
 
@@ -269,7 +266,7 @@ export default function MarketplacePage() {
         <main>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {currentTickets.map(ticket => {
-              const event = eventsMap.get(ticket.eventID) || mockEvents.find(e => e.eventID === ticket.eventID);
+              const event = eventsMap.get(ticket.eventID) /*|| mockEvents.find(e => e.eventID === ticket.eventID)*/;
               if (!event) return null;
               return (
                 <Card
@@ -288,7 +285,7 @@ export default function MarketplacePage() {
                       <Tag className="h-5 w-5" /> {ticket.price} ICP
                     </div>
                     <div className="flex items-center gap-2 text-xs truncate">
-                      <User className="h-4 w-4" /> Owner: {ticket.owner || 'N/A'}
+                      <User className="h-4 w-4" /> Owner: {ticket.owner.toText() || 'N/A'}
                     </div>
                     {ticket.kind['#Seated'] && (
                       <div className="flex items-center gap-2 text-sm">
@@ -350,7 +347,7 @@ export default function MarketplacePage() {
               </DialogTitle>
               <DialogDescription className="text-purple-300/70">
                 You have successfully purchased the "{purchasedTicket?.ticketDesc}" ticket for "
-                {(eventsMap.get(purchasedTicket?.eventID) || mockEvents.find(e => e.eventID === purchasedTicket?.eventID))?.name || 'Event'}".
+                {(eventsMap.get(purchasedTicket?.eventID) /*|| mockEvents.find(e => e.eventID === ticket.eventID)*/)?.name || 'Event'}".
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="flex flex-col sm:flex-row gap-4">

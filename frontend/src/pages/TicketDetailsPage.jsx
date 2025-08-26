@@ -99,6 +99,21 @@ export default function TicketDetailsPage() {
     }
   }
 
+  const handleBuyTicket = async (ticket) => {
+    const ticketActor = createTicketActor(ticketCanisterId, {
+      agentOptions: { identity: authClient.getIdentity() }
+    });
+    try {
+      setIsLoading(true);
+      await ticketActor.transferTicket(ticket, authClient.getIdentity().getPrincipal());
+      navigate("/digiticket", { state: { newTicket: ticket } });
+    } catch (error) {
+      console.error("Failed to buy ticket:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] bg-[#11071F]">
@@ -183,7 +198,7 @@ export default function TicketDetailsPage() {
                             <span><strong>Status:</strong> <span className={ticket.valid ? "text-green-400" : "text-red-400"}>{ticket.valid ? 'Valid for Entry' : 'Used / Invalid'}</span></span>
                         </div>
                         <div className="pt-4 border-t border-purple-400/20">
-                            <Button size="lg" className="w-full" disabled={!ticket.valid}>Buy Ticket</Button>
+                            <Button size="lg" className="w-full" disabled={!ticket.valid} onClick={() => handleBuyTicket(ticket)}>Buy Ticket</Button>
                         </div>
                     </CardContent>
                 </Card>

@@ -33,6 +33,20 @@ type Customer =
    joinDate: Time;
    name: text;
  };
+type ActivityType = 
+ variant {
+   AccountCreated;
+   IdentityVerified;
+   TicketPurchased;
+   TicketSold;
+ };
+type ActivityLog = 
+ record {
+   activityType: ActivityType;
+   description: text;
+   "principal": principal;
+   timestamp: Time;
+ };
 service : {
   addTransaction: (tx: Transaction) -> ();
   checkUserExist: (p: principal) -> (bool);
@@ -40,6 +54,9 @@ service : {
   getAllTransactions: () -> (vec Transaction) query;
   getCustomerProfile: (p: principal) -> (opt Customer) query;
   getCustomerTickets: (p: principal) -> (opt vec Ticket) query;
+  getUserActivity: (p: principal) -> (vec ActivityLog) query;
+  recordActivity: ("principal": principal, activityType: ActivityType,
+   description: text) -> ();
   registerCustomer: ("principal": principal, profile: Customer) -> ();
   updateCustomerProfile: ("principal": principal, profile: Customer) -> ();
 }

@@ -2,6 +2,16 @@ import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 import type { IDL } from '@dfinity/candid';
 
+export interface ActivityLog {
+  'principal' : Principal,
+  'activityType' : ActivityType,
+  'description' : string,
+  'timestamp' : Time,
+}
+export type ActivityType = { 'AccountCreated' : null } |
+  { 'IdentityVerified' : null } |
+  { 'TicketPurchased' : null } |
+  { 'TicketSold' : null };
 export interface Customer {
   'id' : Principal,
   'joinDate' : Time,
@@ -38,6 +48,8 @@ export interface _SERVICE {
   'getAllTransactions' : ActorMethod<[], Array<Transaction>>,
   'getCustomerProfile' : ActorMethod<[Principal], [] | [Customer]>,
   'getCustomerTickets' : ActorMethod<[Principal], [] | [Array<Ticket>]>,
+  'getUserActivity' : ActorMethod<[Principal], Array<ActivityLog>>,
+  'recordActivity' : ActorMethod<[Principal, ActivityType, string], undefined>,
   'registerCustomer' : ActorMethod<[Principal, Customer], undefined>,
   'updateCustomerProfile' : ActorMethod<[Principal, Customer], undefined>,
 }

@@ -30,6 +30,18 @@ export const idlFactory = ({ IDL }) => {
     'ticketDesc' : IDL.Text,
     'price' : IDL.Nat,
   });
+  const ActivityType = IDL.Variant({
+    'AccountCreated' : IDL.Null,
+    'IdentityVerified' : IDL.Null,
+    'TicketPurchased' : IDL.Null,
+    'TicketSold' : IDL.Null,
+  });
+  const ActivityLog = IDL.Record({
+    'principal' : IDL.Principal,
+    'activityType' : ActivityType,
+    'description' : IDL.Text,
+    'timestamp' : Time,
+  });
   return IDL.Service({
     'addTransaction' : IDL.Func([Transaction], [], []),
     'checkUserExist' : IDL.Func([IDL.Principal], [IDL.Bool], []),
@@ -44,6 +56,16 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Principal],
         [IDL.Opt(IDL.Vec(Ticket))],
         ['query'],
+      ),
+    'getUserActivity' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Vec(ActivityLog)],
+        ['query'],
+      ),
+    'recordActivity' : IDL.Func(
+        [IDL.Principal, ActivityType, IDL.Text],
+        [],
+        [],
       ),
     'registerCustomer' : IDL.Func([IDL.Principal, Customer], [], []),
     'updateCustomerProfile' : IDL.Func([IDL.Principal, Customer], [], []),

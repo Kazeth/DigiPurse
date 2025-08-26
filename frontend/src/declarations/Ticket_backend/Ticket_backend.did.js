@@ -30,7 +30,7 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'sellTicket' : IDL.Func([IDL.Text], [IDL.Opt(Ticket)], []),
-    'transferTicket' : IDL.Func([Ticket, IDL.Principal], [Ticket], []),
+    'transferTicket' : IDL.Func([Ticket, IDL.Principal], [IDL.Opt(Ticket)], []),
   });
   return TicketActor;
 };

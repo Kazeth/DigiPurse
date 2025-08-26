@@ -125,12 +125,32 @@ persistent actor class TicketActor() {
     return tempTicket;
   };
 
-  public func transferTicket(ticket : Type.Ticket, newOwner : Principal) : async Type.Ticket {
-    let updatedTicket = {
-        ticket with owner = newOwner;
-        isOnMarketplace = false;
-    };
-    return updatedTicket;
-}
-
+  public func transferTicket(ticket : Type.Ticket, newOwner : Principal) : async ?Type.Ticket {
+    // Find the event's ticket array
+    let eventId = ticket.eventID;
+    switch (tickets.get(eventId)) {
+      case (?arr) {
+        // Find and update the ticket in the array
+        var found = false;
+        let updatedArr = Array.map<Type.Ticket, Type.Ticket>(
+          arr,
+          func(t) {
+            if (t.ticketID == ticket.ticketID) {
+              found := true;
+              { t with owner = newOwner; isOnMarketplace = false };
+            } else {
+              t;
+            }
+          }
+        );
+        if (found) {
+          tickets.put(eventId, updatedArr);
+          return Array.find<Type.Ticket>(updatedArr, func(t) { t.ticketID == ticket.ticketID });
+        } else {
+          return null;
+        }
+      };
+      case (null) { return null };
+    }
+  }
 };

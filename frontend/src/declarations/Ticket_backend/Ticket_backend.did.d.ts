@@ -20,7 +20,7 @@ export interface TicketActor {
   'getAllOnSaleTicket' : ActorMethod<[], Array<[string, Array<Ticket>]>>,
   'getAllUserTicket' : ActorMethod<[Principal], Array<[string, Array<Ticket>]>>,
   'sellTicket' : ActorMethod<[string], [] | [Ticket]>,
-  'transferTicket' : ActorMethod<[Ticket, Principal], Ticket>,
+  'transferTicket' : ActorMethod<[Ticket, Principal], [] | [Ticket]>,
 }
 export type TicketKind = { 'Seated' : { 'seatInfo' : string } } |
   { 'Seatless' : null };
