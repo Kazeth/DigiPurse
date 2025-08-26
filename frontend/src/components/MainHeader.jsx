@@ -9,10 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-// import { AuthClient } from '@dfinity/auth-client';
 import { useAuth } from '@/lib/AuthContext';
 import { createActor, canisterId } from '@/declarations/Registry_backend';
-// import { useUser } from '@/lib/UserContext';
 
 export default function MainHeader() {
   const navigate = useNavigate();
