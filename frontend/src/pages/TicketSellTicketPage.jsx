@@ -155,12 +155,8 @@ export default function SellTicketPage() {
     const ticketActor = createTicketActor(ticketCanisterId, {
       agentOptions: { identity: authClient.getIdentity() }
     });
-
-    // You need to pass the price to the backend, and likely update the ticket object
-    // Assuming sellTicket expects (ticketID, price)
     try {
-      const newTicket = { ...selectedTicket, price: Number(listingPrice) };
-      await ticketActor.sellTicket(newTicket.ticketID);
+      await ticketActor.sellTicket(selectedTicket.ticketID, Number(listingPrice));
       alert('Ticket listed successfully!');
       navigate('/marketplace');
     } catch (error) {

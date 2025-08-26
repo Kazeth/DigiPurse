@@ -67,7 +67,7 @@ persistent actor {
       let tickets = pair.1;
       for (ticket in tickets.vals()) {
         let ticketId = ticket.ticketID;
-        ignore await Ticket.sellTicket(ticketId);
+        ignore await Ticket.sellTicket(ticketId, ticket.price);
       };
     };
 

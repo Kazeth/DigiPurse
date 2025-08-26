@@ -16,7 +16,7 @@ type TicketActor =
            text;
            vec Ticket;
          }) query;
-   sellTicket: (ticketId: text) -> (opt Ticket);
+   sellTicket: (ticketId: text, newPrice: nat) -> (opt Ticket);
    transferTicket: (ticket: Ticket, newOwner: principal) -> (opt Ticket);
  };
 type Ticket = 

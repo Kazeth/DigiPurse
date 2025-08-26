@@ -29,7 +29,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Vec(Ticket)))],
         ['query'],
       ),
-    'sellTicket' : IDL.Func([IDL.Text], [IDL.Opt(Ticket)], []),
+    'sellTicket' : IDL.Func([IDL.Text, IDL.Nat], [IDL.Opt(Ticket)], []),
     'transferTicket' : IDL.Func([Ticket, IDL.Principal], [IDL.Opt(Ticket)], []),
   });
   return TicketActor;

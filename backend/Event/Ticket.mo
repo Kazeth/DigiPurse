@@ -57,7 +57,7 @@ persistent actor class TicketActor() {
     Iter.toArray(mapped);
   };
 
-  public func sellTicket(ticketId : Text) : async ?Type.Ticket {
+  public func sellTicket(ticketId : Text, newPrice : Nat) : async ?Type.Ticket {
 
     for ((eventId, ticketArr) in tickets.entries()) {
       var found = false;
@@ -67,7 +67,7 @@ persistent actor class TicketActor() {
         func(t) {
           if (t.ticketID == ticketId) {
             found := true;
-            { t with isOnMarketplace = true };
+            { t with isOnMarketplace = true; price = newPrice };
           } else {
             t;
           };
