@@ -21,7 +21,7 @@ export default function SellTicketPage() {
   const [sellableTickets, setSellableTickets] = useState([]);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [listingPrice, setListingPrice] = useState('');
-  const [events, setEvents] = useState([]); // Add this state for real events
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
     const checkAndFetchData = async () => {
@@ -36,19 +36,16 @@ export default function SellTicketPage() {
         if (identityOpt.length > 0 && identityOpt[0].isVerified) {
           setIsVerified(true);
           
-          // Fetch both user tickets AND events
           const [userTickets, allEvents] = await Promise.all([
             getUserTicket(),
-            getAllEvents() // Add this function call
+            getAllEvents()
           ]);
           
           console.log("processed user tickets:", userTickets);
           console.log("processed events:", allEvents);
           
-          // Set events state
           setEvents(allEvents);
           
-          // Filter tickets that are not for sale and owned by current user
           const ticketsNotForSale = userTickets.filter(ticket => {
             const ownerMatches = ticket.owner === principal.toText() || ticket.owner === principal;
             const notForSale = !ticket.forSale && !ticket.isOnMarketplace;
@@ -87,7 +84,6 @@ export default function SellTicketPage() {
     checkAndFetchData();
   }, [isAuthenticated, principal]);
 
-  // Add this function to fetch events
   const getAllEvents = async () => {
     try {
       const eventActor = createEventActor(eventCanisterId, {
@@ -97,13 +93,11 @@ export default function SellTicketPage() {
       const allEvents = await eventActor.getAllEvents();
       console.log("Raw events from backend:", allEvents);
       
-      // Transform events data structure
       const formattedEvents = allEvents.map(([eventId, event]) => ({
         eventID: eventId,
         eventName: event.name || event.eventName,
         eventDesc: event.description || event.eventDesc,
         eventDate: event.date || event.eventDate,
-        // Add other event properties as needed
       }));
       
       return formattedEvents;
@@ -145,7 +139,6 @@ export default function SellTicketPage() {
     }
   };
 
-  // Update this function to use real events instead of mock data
   const getEventForTicket = (ticket) => {
     return events.find(e => e.eventID === ticket.eventID);
   };
@@ -169,7 +162,12 @@ export default function SellTicketPage() {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] bg-[#11071F]">
         <Loader2 className="h-12 w-12 text-white animate-spin" />
-        <p className="ml-4 text-white text-lg">Checking your identity...</p>
+        <p
+          className="ml-4 text-white text-lg"
+          style={{ fontFamily: 'AeonikLight, sans-serif' }}
+        >
+          Checking your identity...
+        </p>
       </div>
     );
   }
@@ -179,14 +177,23 @@ export default function SellTicketPage() {
       <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
         <div className="bg-[#1e1033] p-8 rounded-lg shadow-2xl shadow-purple-900/50 border border-purple-400/30 text-center max-w-sm w-full">
           <ShieldAlert className="mx-auto h-16 w-16 text-yellow-400 mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Verification Required</h2>
-          <p className="text-purple-200/80 mb-6">
+          <h2
+            className="text-2xl font-bold text-white mb-2"
+            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+          >
+            Verification Required
+          </h2>
+          <p
+            className="text-purple-200/80 mb-6"
+            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+          >
             You must verify your identity before you can sell a ticket.
           </p>
           <Button
             size="lg"
             className="w-full bg-purple-600 hover:bg-purple-500"
             onClick={() => navigate('/digiIdentity')}
+            style={{ fontFamily: 'AeonikBold, sans-serif' }}
           >
             Go to Verification
           </Button>
@@ -198,18 +205,37 @@ export default function SellTicketPage() {
   return (
     <div className="min-h-[calc(100vh-10rem)] bg-[#11071F] text-white p-4 sm:p-6 lg:p-8">
       <div className="container mx-auto">
-        <Link to="/digiticket" className="flex items-center gap-2 text-purple-300 hover:text-white transition-colors mb-6">
+        <Link
+          to="/digiticket"
+          className="flex items-center gap-2 text-purple-300 hover:text-white transition-colors mb-6"
+          style={{ fontFamily: 'AeonikLight, sans-serif' }}
+        >
           <ArrowLeft className="h-4 w-4" />
           Back to My Tickets
         </Link>
         <header className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold">Sell Your Ticket</h1>
-          <p className="text-lg text-purple-300/80 mt-1">Select a ticket you own and set a price to list it on the marketplace.</p>
+          <h1
+            className="text-3xl sm:text-4xl font-bold"
+            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+          >
+            Sell Your Ticket
+          </h1>
+          <p
+            className="text-lg text-purple-300/80 mt-1"
+            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+          >
+            Select a ticket you own and set a price to list it on the marketplace.
+          </p>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1">
-            <h2 className="text-xl font-semibold mb-4">Select a Ticket to Sell</h2>
+            <h2
+              className="text-xl font-semibold mb-4"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
+              Select a Ticket to Sell
+            </h2>
             <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
               {sellableTickets.length > 0 ? (
                 sellableTickets.map(ticket => {
@@ -228,31 +254,67 @@ export default function SellTicketPage() {
                       }}
                     >
                       <CardContent className="p-4">
-                        <p className="font-bold text-lg">{event.eventName}</p>
-                        <p className="text-sm text-purple-300/80">{'#Seated' in ticket.kind ? `Seat: ${ticket.kind['#Seated'].seatInfo}` : 'General Admission'}</p>
+                        <p
+                          className="font-bold text-lg"
+                          style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                        >
+                          {event.eventName}
+                        </p>
+                        <p
+                          className="text-sm text-purple-300/80"
+                          style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                        >
+                          {'#Seated' in ticket.kind ? `Seat: ${ticket.kind['#Seated'].seatInfo}` : 'General Admission'}
+                        </p>
                       </CardContent>
                     </Card>
                   );
                 })
               ) : (
                 <div className="flex items-center justify-center h-48 bg-white/5 border-2 border-dashed border-purple-400/20 rounded-lg">
-                  <p className="text-purple-300/70 text-center">You have no tickets available to sell.</p>
+                  <p
+                    className="text-purple-300/70 text-center"
+                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                  >
+                    You have no tickets available to sell.
+                  </p>
                 </div>
               )}
             </div>
           </div>
 
           <div className="lg:col-span-2">
-            <h2 className="text-xl font-semibold mb-4">Set Your Price</h2>
+            <h2
+              className="text-xl font-semibold mb-4"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
+              Set Your Price
+            </h2>
             {selectedTicket ? (
               <Card className="bg-white/5 border-purple-400/20">
                 <CardHeader>
-                  <CardTitle className="text-2xl">{getEventForTicket(selectedTicket)?.eventName}</CardTitle>
-                  <CardDescription className="text-purple-300/80">{selectedTicket.ticketID}</CardDescription>
+                  <CardTitle
+                    className="text-2xl"
+                    style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                  >
+                    {getEventForTicket(selectedTicket)?.eventName}
+                  </CardTitle>
+                  <CardDescription
+                    className="text-purple-300/80"
+                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                  >
+                    {selectedTicket.ticketID}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label htmlFor="price" className="text-lg">Listing Price (in ICP)</Label>
+                    <Label
+                      htmlFor="price"
+                      className="text-lg"
+                      style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                    >
+                      Listing Price (in ICP)
+                    </Label>
                     <div className="relative mt-2">
                       <Input
                         id="price"
@@ -261,13 +323,17 @@ export default function SellTicketPage() {
                         value={listingPrice}
                         onChange={(e) => setListingPrice(e.target.value)}
                         className="bg-black/20 border-purple-400/30 text-2xl font-bold pl-12 h-14"
+                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
                       />
                       <Tag className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-purple-300/60" />
                     </div>
                   </div>
                   <div className="!mt-6 p-4 bg-purple-900/20 border border-purple-400/20 rounded-lg flex items-start gap-3">
                     <Info className="h-5 w-5 text-purple-300 flex-shrink-0 mt-1" />
-                    <p className="text-sm text-purple-300/80">
+                    <p
+                      className="text-sm text-purple-300/80"
+                      style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                    >
                       A small platform fee will be deducted upon successful sale. All listings are final until removed.
                     </p>
                   </div>
@@ -278,6 +344,7 @@ export default function SellTicketPage() {
                     size="lg"
                     onClick={handleListTicket}
                     disabled={!listingPrice || Number(listingPrice) <= 0}
+                    style={{ fontFamily: 'AeonikBold, sans-serif' }}
                   >
                     <CheckCircle className="mr-2 h-5 w-5" />
                     List Ticket for Sale
@@ -286,7 +353,12 @@ export default function SellTicketPage() {
               </Card>
             ) : (
               <div className="flex items-center justify-center h-full bg-white/5 border-2 border-dashed border-purple-400/20 rounded-lg">
-                <p className="text-purple-300/70">Please select a ticket from the left to begin.</p>
+                <p
+                  className="text-purple-300/70"
+                  style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                >
+                  Please select a ticket from the left to begin.
+                </p>
               </div>
             )}
           </div>

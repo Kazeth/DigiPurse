@@ -13,12 +13,6 @@ import { Identity_backend } from 'declarations/Identity_backend';
 import { cn } from '@/lib/utils';
 import { createActor, canisterId } from '@/declarations/Ticket_backend';
 
-// const mockEvents = [
-//   { eventID: "EVT-001", eventName: "ICP Hackathon 2025", eventDate: new Date('2025-08-01T09:00:00') },
-//   { eventID: "WEB3SUMMIT", eventName: "Web3 Summit", eventDate: new Date('2025-09-15T10:00:00') },
-//   { eventID: "DEVFEST", eventName: "DevFest Global", eventDate: new Date('2025-10-20T11:00:00') },
-// ];
-
 const TICKETS_PER_PAGE = 9;
 
 export default function MarketplacePage() {
@@ -55,11 +49,9 @@ export default function MarketplacePage() {
       const identityOpt = await Identity_backend.getIdentity(principal);
       if (identityOpt.length > 0 && identityOpt[0].isVerified) {
         setIsVerified(true);
-        // Fetch events
         const eventResponse = await Event_backend.getAllEvents();
         const events = new Map(eventResponse.map(([id, event]) => [id, event]));
         setEventsMap(events);
-        console.log(events);
       } else {
         setIsVerified(false);
       }
@@ -70,6 +62,7 @@ export default function MarketplacePage() {
       setIsLoading(false);
     }
   };
+
   const fetchTickets = async () => {
     if (!isAuthenticated || !principal) return;
     setIsLoading(true);
@@ -77,9 +70,7 @@ export default function MarketplacePage() {
       const identityOpt = await Identity_backend.getIdentity(principal);
       if (identityOpt.length > 0 && identityOpt[0].isVerified) {
         setIsVerified(true);
-        // Fetch tickets
         const ticketResponse = await Ticket_backend.getAllOnSaleTicket();
-        console.log("ticket fetched : ", ticketResponse);
         const parsed = ticketResponse.flatMap(([eventId, tickets]) =>
           tickets.map(ticket => ({
             ticketID: ticket.ticketID,
@@ -92,7 +83,6 @@ export default function MarketplacePage() {
             isOnMarketplace: ticket.isOnMarketplace,
           }))
         );
-        console.log(parsed);
         setAllMarketplaceTickets(parsed);
       } else {
         setIsVerified(false);
@@ -109,8 +99,8 @@ export default function MarketplacePage() {
     if (searchTerm) {
       const lowercasedTerm = searchTerm.toLowerCase();
       tickets = tickets.filter(ticket => {
-        const event = eventsMap.get(ticket.eventID) /*|| mockEvents.find(e => e.eventID === ticket.eventID)*/;
-        return event?.eventName.toLowerCase().includes(lowercasedTerm);
+        const event = eventsMap.get(ticket.eventID);
+        return event?.name.toLowerCase().includes(lowercasedTerm);
       });
     }
     if (maxPrice < 250) {
@@ -118,8 +108,8 @@ export default function MarketplacePage() {
     }
     if (filterDate) {
       tickets = tickets.filter(ticket => {
-        const event = eventsMap.get(ticket.eventID) /*|| mockEvents.find(e => e.eventID === ticket.eventID)*/;
-        const eventDate = event ? new Date(Number(event.date) / 1000000 || event.eventDate).toISOString().split('T')[0] : '';
+        const event = eventsMap.get(ticket.eventID);
+        const eventDate = event ? new Date(Number(event.date) / 1000000).toISOString().split('T')[0] : '';
         return eventDate === filterDate;
       });
     }
@@ -161,7 +151,12 @@ export default function MarketplacePage() {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] bg-[#11071F]">
         <Loader2 className="h-12 w-12 text-white animate-spin" />
-        <p className="ml-4 text-white text-lg">Checking your identity...</p>
+        <p
+          className="ml-4 text-white text-lg"
+          style={{ fontFamily: 'AeonikLight, sans-serif' }}
+        >
+          Checking your identity...
+        </p>
       </div>
     );
   }
@@ -171,14 +166,23 @@ export default function MarketplacePage() {
       <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
         <div className="bg-[#1e1033] p-8 rounded-lg shadow-2xl shadow-purple-900/50 border border-purple-400/30 text-center max-w-sm w-full">
           <ShieldAlert className="mx-auto h-16 w-16 text-yellow-400 mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Verification Required</h2>
-          <p className="text-purple-200/80 mb-6">
+          <h2
+            className="text-2xl font-bold text-white mb-2"
+            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+          >
+            Verification Required
+          </h2>
+          <p
+            className="text-purple-200/80 mb-6"
+            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+          >
             You must verify your identity before accessing the marketplace.
           </p>
           <Button
             size="lg"
             className="w-full bg-purple-600 hover:bg-purple-500"
             onClick={() => navigate('/digiIdentity')}
+            style={{ fontFamily: 'AeonikBold, sans-serif' }}
           >
             Go to Verification
           </Button>
@@ -192,13 +196,24 @@ export default function MarketplacePage() {
       <div className="container mx-auto">
         <header className="flex flex-col sm:flex-row justify-between items-center mb-8">
           <div className="text-center sm:text-left">
-            <h1 className="text-4xl sm:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
+            <h1
+              className="text-4xl sm:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
               Ticket Marketplace
             </h1>
-            <p className="text-lg text-purple-300/80 mt-2">Discover and purchase verifiable, on-chain tickets.</p>
+            <p
+              className="text-lg text-purple-300/80 mt-2"
+              style={{ fontFamily: 'AeonikLight, sans-serif' }}
+            >
+              Discover and purchase verifiable, on-chain tickets.
+            </p>
           </div>
           <div className="mt-4 sm:mt-0 flex-shrink-0">
-            <Button onClick={() => navigate('/sell-ticket')}>
+            <Button
+              onClick={() => navigate('/sell-ticket')}
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
               <PlusCircle className="mr-2 h-5 w-5" /> Sell a Ticket
             </Button>
           </div>
@@ -207,17 +222,28 @@ export default function MarketplacePage() {
         <Card className="bg-white/5 border-purple-400/20 p-4 mb-8 backdrop-blur-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
             <div className="lg:col-span-2 space-y-2">
-              <Label htmlFor="search">Search Event</Label>
+              <Label
+                htmlFor="search"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+              >
+                Search Event
+              </Label>
               <Input
                 id="search"
                 placeholder="e.g., Web3 Summit"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="bg-black/20 border-purple-400/30"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="price">Max Price ({maxPrice} ICP)</Label>
+              <Label
+                htmlFor="price"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+              >
+                Max Price ({maxPrice} ICP)
+              </Label>
               <Input
                 id="price"
                 type="range"
@@ -227,16 +253,23 @@ export default function MarketplacePage() {
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(Number(e.target.value))}
                 className="w-full h-2 bg-purple-900/50 rounded-lg appearance-none cursor-pointer"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="date">Event Date</Label>
+              <Label
+                htmlFor="date"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+              >
+                Event Date
+              </Label>
               <Input
                 id="date"
                 type="date"
                 value={filterDate}
                 onChange={(e) => setFilterDate(e.target.value)}
                 className="bg-black/20 border-purple-400/30"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
               />
             </div>
             <div className="flex gap-2">
@@ -244,6 +277,7 @@ export default function MarketplacePage() {
                 variant={seatType === 'seated' ? 'secondary' : 'outline'}
                 onClick={() => setSeatType('seated')}
                 className="flex-1"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
               >
                 Seated
               </Button>
@@ -251,13 +285,19 @@ export default function MarketplacePage() {
                 variant={seatType === 'seatless' ? 'secondary' : 'outline'}
                 onClick={() => setSeatType('seatless')}
                 className="flex-1"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
               >
                 Seatless
               </Button>
             </div>
           </div>
           <div className="text-center mt-4">
-            <Button variant="ghost" onClick={handleResetFilters} className="text-purple-300/70 hover:text-white">
+            <Button
+              variant="ghost"
+              onClick={handleResetFilters}
+              className="text-purple-300/70 hover:text-white"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
               <FilterX className="mr-2 h-4 w-4" /> Reset All Filters
             </Button>
           </div>
@@ -266,7 +306,7 @@ export default function MarketplacePage() {
         <main>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {currentTickets.map(ticket => {
-              const event = eventsMap.get(ticket.eventID) /*|| mockEvents.find(e => e.eventID === ticket.eventID)*/;
+              const event = eventsMap.get(ticket.eventID);
               if (!event) return null;
               return (
                 <Card
@@ -274,22 +314,44 @@ export default function MarketplacePage() {
                   className="bg-white/5 border border-purple-400/20 flex flex-col group h-full"
                 >
                   <CardHeader>
-                    <CardTitle>{event.name || event.eventName}</CardTitle>
-                    <CardDescription className="flex items-center gap-2 pt-1">
+                    <CardTitle
+                      style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
+                      {event.name}
+                    </CardTitle>
+                    <CardDescription
+                      className="flex items-center gap-2 pt-1"
+                      style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                    >
                       <Calendar className="h-4 w-4" />
-                      {new Date(Number(event.date) / 1000000 || event.eventDate).toLocaleDateString()}
+                      {new Date(Number(event.date) / 1000000).toLocaleDateString()}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="flex-grow space-y-3">
                     <div className="flex items-center gap-2 text-xl font-bold">
-                      <Tag className="h-5 w-5" /> {ticket.price} ICP
+                      <Tag className="h-5 w-5" />
+                      <span
+                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                      >
+                        {ticket.price} ICP
+                      </span>
                     </div>
                     <div className="flex items-center gap-2 text-xs truncate">
-                      <User className="h-4 w-4" /> Owner: {ticket.owner.toText() || 'N/A'}
+                      <User className="h-4 w-4" />
+                      <span
+                        style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                      >
+                        Owner: {ticket.owner.toText() || 'N/A'}
+                      </span>
                     </div>
                     {ticket.kind['#Seated'] && (
                       <div className="flex items-center gap-2 text-sm">
-                        <Armchair className="h-4 w-4" /> {ticket.kind['#Seated'].seatInfo || 'Seated'}
+                        <Armchair className="h-4 w-4" />
+                        <span
+                          style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                        >
+                          {ticket.kind['#Seated'].seatInfo || 'Seated'}
+                        </span>
                       </div>
                     )}
                   </CardContent>
@@ -298,6 +360,7 @@ export default function MarketplacePage() {
                       className="w-full sm:flex-1"
                       variant="outline"
                       asChild
+                      style={{ fontFamily: 'AeonikBold, sans-serif' }}
                     >
                       <Link to={`/tickets/${ticket.ticketID}`}>
                         View Details
@@ -306,6 +369,7 @@ export default function MarketplacePage() {
                     <Button
                       className="w-full sm:flex-1 bg-purple-600 hover:bg-purple-700"
                       onClick={() => handleBuyTicket(ticket)}
+                      style={{ fontFamily: 'AeonikBold, sans-serif' }}
                     >
                       Buy Now
                     </Button>
@@ -321,16 +385,21 @@ export default function MarketplacePage() {
                 variant="outline"
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
               >
                 <ArrowLeft className="mr-2 h-4 w-4" /> Previous
               </Button>
-              <span className="font-semibold">
+              <span
+                className="font-semibold"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
+              >
                 Page {currentPage} of {totalPages}
               </span>
               <Button
                 variant="outline"
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
               >
                 Next <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -342,18 +411,25 @@ export default function MarketplacePage() {
         <Dialog open={buyModalOpen} onOpenChange={setBuyModalOpen}>
           <DialogContent className="bg-[#11071F] text-white border-purple-400/20">
             <DialogHeader>
-              <DialogTitle className="text-purple-300 text-2xl">
+              <DialogTitle
+                className="text-purple-300 text-2xl"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
+              >
                 Ticket Purchased Successfully!
               </DialogTitle>
-              <DialogDescription className="text-purple-300/70">
+              <DialogDescription
+                className="text-purple-300/70"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+              >
                 You have successfully purchased the "{purchasedTicket?.ticketDesc}" ticket for "
-                {(eventsMap.get(purchasedTicket?.eventID) /*|| mockEvents.find(e => e.eventID === ticket.eventID)*/)?.name || 'Event'}".
+                {(eventsMap.get(purchasedTicket?.eventID))?.name || 'Event'}".
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="flex flex-col sm:flex-row gap-4">
               <Button
                 onClick={() => setBuyModalOpen(false)}
                 className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
               >
                 <CheckCircle2 className="mr-2 h-5 w-5" /> Back to Marketplace
               </Button>

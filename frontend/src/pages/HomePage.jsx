@@ -91,10 +91,18 @@ export default function HomePage() {
                 {/* Welcome Header */}
                 <motion.div variants={itemVariants} className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10">
                     <div>
-                        <h1 className="text-3xl sm:text-4xl font-bold">
+                        <h1
+                            className="text-3xl sm:text-4xl font-bold"
+                            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                        >
                             Welcome Back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">{userProfile?.name || 'User'}!</span>
                         </h1>
-                        <p className="text-lg text-purple-300/80 mt-1">Your secure digital dashboard awaits.</p>
+                        <p
+                            className="text-lg text-purple-300/80 mt-1"
+                            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                        >
+                            Your secure digital dashboard awaits.
+                        </p>
                     </div>
                     <Link to="/profile" className="flex items-center gap-4 mt-4 sm:mt-0 bg-white/5 p-3 rounded-full border border-purple-400/20 hover:bg-white/10 transition-colors duration-300">
                         <Avatar className="h-12 w-12">
@@ -104,27 +112,56 @@ export default function HomePage() {
                             </AvatarFallback>
                         </Avatar>
                         <div className='hidden sm:block'>
-                            <p className='font-semibold'>{userProfile?.name}</p>
-                            <p className='text-xs text-purple-400 truncate w-32'>{principal?.toText()}</p>
+                            <p
+                                className='font-semibold'
+                                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                            >
+                                {userProfile?.name}
+                            </p>
+                            <p
+                                className='text-xs text-purple-400 truncate w-32'
+                                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                            >
+                                {principal?.toText()}
+                            </p>
                         </div>
                     </Link>
                 </motion.div>
 
                 {/* At a Glance Section */}
                 <motion.div variants={itemVariants} className="mb-12">
-                    <h2 className="text-2xl font-semibold mb-4">At a Glance</h2>
+                    <h2
+                        className="text-2xl font-semibold mb-4"
+                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
+                        At a Glance
+                    </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {overviewData.map(item => (
                             <Card key={item.title} className="bg-white/5 border-purple-400/20 backdrop-blur-lg">
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-purple-300/90 font-medium text-base">{item.title}</CardTitle>
+                                    <CardTitle
+                                        className="text-purple-300/90 font-medium text-base"
+                                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                                    >
+                                        {item.title}
+                                    </CardTitle>
                                     <item.icon className="h-5 w-5 text-purple-400" />
                                 </CardHeader>
                                 <CardContent>
-                                    <p className="text-3xl font-bold">{item.value}</p>
+                                    <p
+                                        className="text-3xl font-bold"
+                                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                                    >
+                                        {item.value}
+                                    </p>
                                     <div className="flex items-center text-sm text-green-400 mt-1">
                                        <TrendingUp className="h-4 w-4 mr-1" /> 
-                                       <span>{item.change}</span>
+                                       <span
+                                           style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                       >
+                                           {item.change}
+                                       </span>
                                     </div>
                                 </CardContent>
                             </Card>
@@ -134,7 +171,12 @@ export default function HomePage() {
 
                 {/* Main Actions Section */}
                 <motion.div variants={itemVariants} className="mb-12">
-                    <h2 className="text-2xl font-semibold mb-4">Manage Your Assets</h2>
+                    <h2
+                        className="text-2xl font-semibold mb-4"
+                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
+                        Manage Your Assets
+                    </h2>
                     <motion.div 
                         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                         variants={containerVariants}
@@ -157,8 +199,16 @@ export default function HomePage() {
                                                 <action.icon className={`h-8 w-8 ${action.color}`} />
                                             </div>
                                             <div>
-                                                <CardTitle className="text-xl text-white mb-2">{action.title}</CardTitle>
-                                                <p className="text-purple-300/80">
+                                                <CardTitle
+                                                    className="text-xl text-white mb-2"
+                                                    style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                                                >
+                                                    {action.title}
+                                                </CardTitle>
+                                                <p
+                                                    className="text-purple-300/80"
+                                                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                                >
                                                     {action.description}
                                                 </p>
                                             </div>
@@ -172,7 +222,12 @@ export default function HomePage() {
                 
                 {/* Quick Actions Section */}
                 <motion.div variants={itemVariants}>
-                    <h2 className="text-2xl font-semibold mb-4">Quick Actions</h2>
+                    <h2
+                        className="text-2xl font-semibold mb-4"
+                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
+                        Quick Actions
+                    </h2>
                     <motion.div 
                         className="grid grid-cols-1 md:grid-cols-3 gap-6"
                         variants={containerVariants}
@@ -190,7 +245,12 @@ export default function HomePage() {
                                 >
                                     <CardContent className="pt-6 flex items-center gap-4">
                                         <action.icon className="h-7 w-7 text-purple-400" />
-                                        <p className="font-semibold text-lg">{action.title}</p>
+                                        <p
+                                            className="font-semibold text-lg"
+                                            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                                        >
+                                            {action.title}
+                                        </p>
                                     </CardContent>
                                 </Card>
                              </motion.div>
@@ -201,4 +261,4 @@ export default function HomePage() {
             </motion.div>
         </div>
     );
-};
+}

@@ -31,35 +31,29 @@ export default function MainHeader() {
   }, []);
 
   useEffect(() => {
-    // console.log("logged in ? ", isLoggedIn);
-      async function fetchProfile() {
-          if (!authClient || !identity || !principal || !isLoggedIn) return;
-          const actor = createActor(canisterId, { agentOptions: { identity } });
-          // await actor.agent.fetchRootKey();
-          try {
-              const profArr = await actor.getCustomerProfile(principal);
-              setUserProfile(profArr ? profArr[0] : null);
-          } catch (err) {
-              setUserProfile(null);
-          }
+    async function fetchProfile() {
+      if (!authClient || !identity || !principal || !isLoggedIn) return;
+      const actor = createActor(canisterId, { agentOptions: { identity } });
+      try {
+        const profArr = await actor.getCustomerProfile(principal);
+        setUserProfile(profArr ? profArr[0] : null);
+      } catch (err) {
+        setUserProfile(null);
       }
-      fetchProfile();
+    }
+    fetchProfile();
   }, [isLoggedIn, authClient]);
 
   const handleLogin = async () => {
     if (!authClient) return;
     const status = await login();
     if (status) {
-      console.log("User is authenticated and available");
       const identity = authClient.getIdentity();
       const actor = createActor(canisterId, { agentOptions: { identity } });
       const exist = await actor.checkUserExist(identity.getPrincipal());
       if (exist) {
-        // console.log("User is registered, navigating to home page");
         navigate('/home');
-      }
-      else {
-        // console.log("User is not registered, navigating to post-login page");
+      } else {
         navigate('/postlogin');
       }
     } else {
@@ -90,12 +84,12 @@ export default function MainHeader() {
               <AvatarFallback>{userProfile ? userProfile.name.substring(0, 2).toUpperCase() : principal.toText().substring(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
           </Link>
-          <Button variant="destructive" size="sm" onClick={handleLogout}>
+          <Button variant="destructive" size="sm" onClick={handleLogout} style={{ fontFamily: 'AeonikLight, sans-serif' }}>
             <LogOut className="mr-2 h-4 w-4" /> Logout
           </Button>
         </div>
       ) : (
-        <Button onClick={handleLogin} aria-label="Start Now with DigiPurse">
+        <Button onClick={handleLogin} aria-label="Start Now with DigiPurse" style={{ fontFamily: 'AeonikLight, sans-serif' }}>
           Start Now
         </Button>
       )}
@@ -111,9 +105,12 @@ export default function MainHeader() {
           }`}
       >
         <nav className="container mx-auto flex items-center justify-between p-4 text-white">
-          <Link to="/home" className="flex items-center space-x-3 group">
+          <Link to="/" className="flex items-center space-x-3 group">
             <img src={logo} alt="DigiPurse Logo" className="h-10 w-10 md:h-12 md:w-12 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
-            <span className="text-2xl md:text-3xl font-bold tracking-tight group-hover:text-purple-300 transition-colors duration-300">
+            <span
+              className="text-2xl md:text-3xl font-bold tracking-tight group-hover:text-purple-300 transition-colors duration-300"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
               DigiPurse
             </span>
           </Link>
@@ -125,6 +122,7 @@ export default function MainHeader() {
                   <Link
                     to={item.path}
                     className={navLinkClasses}
+                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
                     onClick={(e) => {
                       if (item.name === 'Dashboard' && !isAuthenticated) {
                         e.preventDefault();
@@ -137,7 +135,9 @@ export default function MainHeader() {
                 </li>
               ))}
             </ul>
-            <AuthButtons />
+            <div className="flex justify-center items-center w-full lg:w-auto">
+              <AuthButtons />
+            </div>
           </div>
 
           <div className="lg:hidden">
@@ -153,7 +153,12 @@ export default function MainHeader() {
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
           <div className="fixed top-0 right-0 h-full w-full max-w-xs bg-[#2B0B3F] p-6 text-white shadow-2xl">
             <div className="flex items-center justify-between">
-              <span className="text-xl font-bold">DigiPurse</span>
+              <span
+                className="text-xl font-bold"
+                style={{ fontFamily: 'FhlecturistBold, sans-serif' }}
+              >
+                DigiPurse
+              </span>
               <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)} aria-label="Close menu" className="text-white hover:bg-purple-800/50 hover:text-white">
                 <X className="h-7 w-7" />
               </Button>
@@ -164,6 +169,7 @@ export default function MainHeader() {
                   <Link
                     to={item.path}
                     className="block text-lg font-medium text-purple-200 hover:text-white p-2 rounded-md"
+                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
                     onClick={(e) => {
                       if (item.name === 'Dashboard' && !isAuthenticated) {
                         e.preventDefault();
@@ -178,7 +184,7 @@ export default function MainHeader() {
               ))}
             </ul>
             <Separator className="my-6 bg-purple-200/20" />
-            <div className="w-full">
+            <div className="w-full flex justify-center">
               <AuthButtons />
             </div>
           </div>

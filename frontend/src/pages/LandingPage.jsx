@@ -80,24 +80,42 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Text Content */}
             <div className="text-center lg:text-left">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-white">
+              <h1
+                className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-white"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
+              >
                 Your Digital Life,
                 <span className="block text-purple-400">Decentralized.</span>
               </h1>
-              <p className="mt-6 max-w-xl mx-auto lg:mx-0 text-lg text-purple-200/80">
+              <p
+                className="mt-6 max-w-xl mx-auto lg:mx-0 text-lg text-purple-200/80"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+              >
                 DigiPurse is a Web3 application designed to streamline digital life by integrating ticketing, identity, and documents into one secure platform, giving you full control.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                 {isAuthenticated ? (
-                  <Button size="lg" onClick={goToHome}>
+                  <Button
+                    size="lg"
+                    onClick={goToHome}
+                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                  >
                     Go to Dashboard
                   </Button>
                 ) : (
-                  <Button size="lg" onClick={handleLogin}>
+                  <Button
+                    size="lg"
+                    onClick={handleLogin}
+                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                  >
                     Start Now
                   </Button>
                 )}
-                <Button size="lg" variant="secondary">
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                >
                   Learn More
                 </Button>
               </div>
@@ -121,10 +139,16 @@ export default function LandingPage() {
       <section id="features" className="py-20 sm:py-28 bg-[#11071F]">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
+            <h2
+              className="text-3xl sm:text-4xl font-bold tracking-tight text-white"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
               Everything You Need in One Purse
             </h2>
-            <p className="mt-4 max-w-2xl mx-auto text-lg text-purple-200/70">
+            <p
+              className="mt-4 max-w-2xl mx-auto text-lg text-purple-200/70"
+              style={{ fontFamily: 'AeonikLight, sans-serif' }}
+            >
               From verifying your identity to accessing events, DigiPurse simplifies your digital interactions.
             </p>
           </div>
@@ -166,8 +190,18 @@ export default function LandingPage() {
                     <div className="flex items-center justify-center h-12 w-12 rounded-full bg-white/10 mb-4">
                       <feature.icon className="h-6 w-6 text-purple-300" />
                     </div>
-                    <h3 className="text-2xl font-bold text-white">{feature.title}</h3>
-                    <p className="mt-2 text-purple-200/80">{feature.description}</p>
+                    <h3
+                      className="text-2xl font-bold text-white"
+                      style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
+                      {feature.title}
+                    </h3>
+                    <p
+                      className="mt-2 text-purple-200/80"
+                      style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                    >
+                      {feature.description}
+                    </p>
                   </div>
                 </motion.div>
               );
@@ -189,10 +223,16 @@ export default function LandingPage() {
             variants={featureVariants}
             className="text-center"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
+            <h2
+              className="text-3xl sm:text-4xl font-bold tracking-tight text-white"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
               Powered by Cutting-Edge Technology
             </h2>
-            <p className="mt-4 max-w-2xl mx-auto text-lg text-purple-200/70">
+            <p
+              className="mt-4 max-w-2xl mx-auto text-lg text-purple-200/70"
+              style={{ fontFamily: 'AeonikLight, sans-serif' }}
+            >
               Built on the Internet Computer for true decentralization, speed, and on-chain data storage.
             </p>
             <div className="mt-10 flex justify-center gap-8">
@@ -210,7 +250,10 @@ export default function LandingPage() {
               />
             </div>
             {/* Fallback content for debugging */}
-            <p className="mt-4 text-sm text-purple-200/50">
+            <p
+              className="mt-4 text-sm text-purple-200/50"
+              style={{ fontFamily: 'AeonikLight, sans-serif' }}
+            >
               Motoko
             </p>
           </motion.div>

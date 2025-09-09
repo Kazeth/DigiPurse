@@ -51,7 +51,7 @@ export default function TicketAppHeader() {
               <AvatarFallback>{principal ? principal.toText().substring(0, 2).toUpperCase() : '...'}</AvatarFallback>
             </Avatar>
           </Link>
-          <Button variant="destructive" size="sm" onClick={handleLogout}>
+          <Button variant="destructive" size="sm" onClick={handleLogout} style={{ fontFamily: 'AeonikLight, sans-serif' }}>
             <LogOut className="mr-2 h-4 w-4" /> Logout
           </Button>
         </div>
@@ -71,7 +71,10 @@ export default function TicketAppHeader() {
           <div className="flex items-center flex-shrink-0">
             <Link to="/home" className="flex items-center space-x-3 group">
               <img src={logo} alt="DigiPurse Logo" className="h-10 w-10 md:h-12 md:w-12 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
-              <span className="text-2xl md:text-3xl font-bold tracking-tight group-hover:text-purple-300 transition-colors duration-300">
+              <span
+                className="text-2xl md:text-3xl font-bold tracking-tight group-hover:text-purple-300 transition-colors duration-300"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
+              >
                 DigiTicket
               </span>
             </Link>
@@ -84,6 +87,7 @@ export default function TicketAppHeader() {
                   <Link
                     to={item.path}
                     className="font-medium text-purple-200 hover:text-white transition-colors duration-300 pb-1 border-b-2 border-transparent hover:border-purple-400"
+                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
                   >
                     {item.name}
                   </Link>
@@ -112,7 +116,12 @@ export default function TicketAppHeader() {
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
           <div className="fixed top-0 right-0 h-full w-full max-w-xs bg-[#1E0A2E] p-6 text-white shadow-2xl border-l border-purple-400/20">
             <div className="flex items-center justify-between">
-              <span className="text-xl font-bold">Menu</span>
+              <span
+                className="text-xl font-bold"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+              >
+                Menu
+              </span>
               <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)} aria-label="Close menu" className="text-white hover:bg-purple-800/50 hover:text-white">
                 <X className="h-7 w-7" />
               </Button>
@@ -124,6 +133,7 @@ export default function TicketAppHeader() {
                   <Link
                     to={item.path}
                     className="block text-lg font-medium text-purple-200 hover:text-white p-3 rounded-md hover:bg-white/5"
+                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.name}

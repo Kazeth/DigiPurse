@@ -83,8 +83,18 @@ export default function SupportPage() {
             </AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-xl font-bold text-white">Support Chat</h1>
-            <p className="text-sm text-green-400">Online</p>
+            <h1
+              className="text-xl font-bold text-white"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
+              Support Chat
+            </h1>
+            <p
+              className="text-sm text-green-400"
+              style={{ fontFamily: 'AeonikLight, sans-serif' }}
+            >
+              Online
+            </p>
           </div>
         </div>
       </header>
@@ -114,21 +124,26 @@ export default function SupportPage() {
                   : 'bg-purple-900/50 rounded-bl-none'
               )}
             >
-              <p className="text-sm">{message.text}</p>
+              <p
+                className="text-sm"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+              >
+                {message.text}
+              </p>
             </div>
           </div>
         ))}
         {isLoading && (
-            <div className="flex items-end gap-3 justify-start">
-                <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-purple-600 text-white">
-                        <Bot />
-                    </AvatarFallback>
-                </Avatar>
-                <div className="max-w-xs md:max-w-md lg:max-w-lg rounded-2xl px-4 py-3 text-white bg-purple-900/50 rounded-bl-none">
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                </div>
+          <div className="flex items-end gap-3 justify-start">
+            <Avatar className="h-8 w-8">
+              <AvatarFallback className="bg-purple-600 text-white">
+                <Bot />
+              </AvatarFallback>
+            </Avatar>
+            <div className="max-w-xs md:max-w-md lg:max-w-lg rounded-2xl px-4 py-3 text-white bg-purple-900/50 rounded-bl-none">
+              <Loader2 className="h-5 w-5 animate-spin" />
             </div>
+          </div>
         )}
         <div ref={messagesEndRef} />
       </div>
@@ -143,8 +158,14 @@ export default function SupportPage() {
             className="flex-1 bg-black/20 border-purple-400/30 text-white placeholder:text-purple-400/50 focus:border-purple-400"
             autoComplete="off"
             disabled={isLoading}
+            style={{ fontFamily: 'AeonikLight, sans-serif' }}
           />
-          <Button type="submit" size="icon" disabled={!inputValue.trim() || isLoading}>
+          <Button
+            type="submit"
+            size="icon"
+            disabled={!inputValue.trim() || isLoading}
+            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+          >
             <Send className="h-5 w-5" />
           </Button>
         </form>

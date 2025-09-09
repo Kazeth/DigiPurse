@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/AuthContext';
 import { createActor, canisterId } from '@/declarations/Registry_backend';
 import { Ticket_seeder } from '@/declarations/Ticket_seeder';
-// import { useUser } from '@/lib/UserContext';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
@@ -12,12 +11,10 @@ import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { UserPlus, Camera } from 'lucide-react';
 
-
 export default function PostLoginPage() {
   const navigate = useNavigate();
   const [actor, setActor] = useState();
   const { authClient, isAuthenticated } = useAuth();
-  // const { uploadProfile } = useUser();
   const [username, setUsername] = useState('');
   const [dob, setDob] = useState('');
   const [address, setAddress] = useState('');
@@ -27,18 +24,14 @@ export default function PostLoginPage() {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       setImagePreview(URL.createObjectURL(file));
-      // In a real app, you would also set the file object to state
-      // e.g., setProfileImageFile(file);
     }
   };
 
   const handleContinue = async () => {
-    // Here you would typically save all the user data to your backend.
     console.log({
       username,
       dob,
       address,
-      // profileImageFile would be uploaded here
     });
     const identity = authClient.getIdentity();
     const principal = identity.getPrincipal();
@@ -72,15 +65,28 @@ export default function PostLoginPage() {
               <UserPlus className="h-8 w-8 text-purple-300" />
             </div>
           </div>
-          <CardTitle className="text-3xl text-white">Welcome to DigiPurse!</CardTitle>
-          <CardDescription className="text-purple-300/80 pt-2">
+          <CardTitle
+            className="text-3xl text-white"
+            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+          >
+            Welcome to DigiPurse!
+          </CardTitle>
+          <CardDescription
+            className="text-purple-300/80 pt-2"
+            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+          >
             Just one more step. Let's set up your profile.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Profile Picture Upload */}
           <div className="flex flex-col items-center space-y-2">
-            <Label htmlFor="profile-picture">Profile Picture</Label>
+            <Label
+              htmlFor="profile-picture"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
+              Profile Picture
+            </Label>
             <div className="relative">
               <Avatar className="h-24 w-24">
                 <AvatarImage src={imagePreview || undefined} alt="Profile preview" />
@@ -101,33 +107,54 @@ export default function PostLoginPage() {
           {/* Form Fields */}
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="username" className="text-purple-300">Username</Label>
+              <Label
+                htmlFor="username"
+                className="text-purple-300"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
+              >
+                Username
+              </Label>
               <Input
                 id="username"
                 placeholder="e.g., vitalik.eth"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="bg-black/20 border-purple-400/30 text-white placeholder:text-purple-400/50 focus:border-purple-400"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
               />
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="dob" className="text-purple-300">Date of Birth</Label>
+              <Label
+                htmlFor="dob"
+                className="text-purple-300"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
+              >
+                Date of Birth
+              </Label>
               <Input
                 id="dob"
                 type="date"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
                 className="bg-black/20 border-purple-400/30 text-white placeholder:text-purple-400/50 focus:border-purple-400"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
               />
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="address" className="text-purple-300">Address</Label>
+              <Label
+                htmlFor="address"
+                className="text-purple-300"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
+              >
+                Address
+              </Label>
               <Input
                 id="address"
                 placeholder="123 Blockchain Ave"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 className="bg-black/20 border-purple-400/30 text-white placeholder:text-purple-400/50 focus:border-purple-400"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
               />
             </div>
           </div>
@@ -137,6 +164,7 @@ export default function PostLoginPage() {
             className="w-full bg-white text-[#4C1D95] hover:bg-gray-200"
             onClick={handleContinue}
             disabled={!areRequiredFieldsFilled()}
+            style={{ fontFamily: 'AeonikBold, sans-serif' }}
           >
             Continue to App
           </Button>

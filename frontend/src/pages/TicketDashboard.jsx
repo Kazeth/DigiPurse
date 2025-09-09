@@ -141,8 +141,18 @@ export default function DigiTicketPage() {
       <div className="container mx-auto">
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-bold">My Tickets</h1>
-            <p className="text-lg text-purple-300/80 mt-1">Manage your event access and ownership.</p>
+            <h1
+              className="text-3xl sm:text-4xl font-bold"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
+              My Tickets
+            </h1>
+            <p
+              className="text-lg text-purple-300/80 mt-1"
+              style={{ fontFamily: 'AeonikLight, sans-serif' }}
+            >
+              Manage your event access and ownership.
+            </p>
           </div>
         </header>
 
@@ -150,8 +160,19 @@ export default function DigiTicketPage() {
           {isListVisible && (
             <div className="lg:col-span-1">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Your Tickets ({myTickets.length})</h2>
-                <Button variant="ghost" size="icon" onClick={() => setIsListVisible(false)} className="text-purple-300/70 hover:text-white">
+                <h2
+                  className="text-xl font-semibold"
+                  style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                >
+                  Your Tickets ({myTickets.length})
+                </h2>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsListVisible(false)}
+                  className="text-purple-300/70 hover:text-white"
+                  style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                >
                   <PanelLeftClose />
                 </Button>
               </div>
@@ -169,8 +190,18 @@ export default function DigiTicketPage() {
                     >
                       <CardContent className="p-4 flex items-center justify-between">
                         <div>
-                          <p className="font-bold text-lg">{event?.name}</p>
-                          <p className="text-sm text-purple-300/80">{event?.date.toLocaleDateString()}</p>
+                          <p
+                            className="font-bold text-lg"
+                            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                          >
+                            {event?.name}
+                          </p>
+                          <p
+                            className="text-sm text-purple-300/80"
+                            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                          >
+                            {event?.date.toLocaleDateString()}
+                          </p>
                         </div>
                         {ticket.forSale ? (
                           <Store className="h-6 w-6 text-yellow-400" />
@@ -187,55 +218,136 @@ export default function DigiTicketPage() {
 
           <div className={cn("transition-all duration-300", isListVisible ? "lg:col-span-2" : "lg:col-span-3")}>
             {!isListVisible && (
-              <Button variant="ghost" onClick={() => setIsListVisible(true)} className="mb-4 text-purple-300/70 hover:text-white">
+              <Button
+                variant="ghost"
+                onClick={() => setIsListVisible(true)}
+                className="mb-4 text-purple-300/70 hover:text-white"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
+              >
                 <PanelLeftOpen className="mr-2" /> Show Ticket List
               </Button>
             )}
             {selectedTicket && selectedEvent ? (
               <Card className="bg-white/5 border-purple-400/20 h-full">
                 <CardHeader>
-                  <CardTitle className="text-3xl">{selectedEvent.name}</CardTitle>
-                  <CardDescription className="text-purple-300/80">{selectedEvent.description}</CardDescription>
+                  <CardTitle
+                    className="text-3xl"
+                    style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                  >
+                    {selectedEvent.name}
+                  </CardTitle>
+                  <CardDescription
+                    className="text-purple-300/80"
+                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                  >
+                    {selectedEvent.description}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col items-center justify-center bg-black/20 p-6 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
-                      <p className="text-sm text-purple-300/70">TICKET ID</p>
-                      <Button variant="ghost" size="icon" className="h-6 w-6 text-purple-300/70 hover:text-white" onClick={() => setIsTicketIdVisible(!isTicketIdVisible)}>
+                      <p
+                        className="text-sm text-purple-300/70"
+                        style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                      >
+                        TICKET ID
+                      </p>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-purple-300/70 hover:text-white"
+                        onClick={() => setIsTicketIdVisible(!isTicketIdVisible)}
+                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                      >
                         {isTicketIdVisible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
                     </div>
-                    <p className="text-2xl font-bold tracking-widest text-center break-all">
+                    <p
+                      className="text-2xl font-bold tracking-widest text-center break-all"
+                      style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
                       {isTicketIdVisible ? selectedTicket.ticketID : '••••••••••••••••'}
                     </p>
                   </div>
                   <div className="space-y-4">
-                    <div className="flex items-center gap-3"><Calendar className="h-5 w-5 text-purple-400" /><span>{selectedEvent.date.toLocaleString()}</span></div>
-                    <div className="flex items-center gap-3"><Users className="h-5 w-5 text-purple-400" /><span>Owner: You</span></div>
-                    <div className="flex items-center gap-3"><Tag className="h-5 w-5 text-purple-400" /><span>Original Price: {selectedTicket.price} ICP</span></div>
+                    <div className="flex items-center gap-3">
+                      <Calendar className="h-5 w-5 text-purple-400" />
+                      <span
+                        style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                      >
+                        {selectedEvent.date.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Users className="h-5 w-5 text-purple-400" />
+                      <span
+                        style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                      >
+                        Owner: You
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Tag className="h-5 w-5 text-purple-400" />
+                      <span
+                        style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                      >
+                        Original Price: {selectedTicket.price} ICP
+                      </span>
+                    </div>
                     {'#Seated' in selectedTicket.kind && (
                       <div className="flex items-center gap-3">
                         <TicketIcon className="h-5 w-5 text-purple-400" />
-                        <span>Seat: {selectedTicket.kind['#Seated'].seatInfo}</span>
+                        <span
+                          style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                        >
+                          Seat: {selectedTicket.kind['#Seated'].seatInfo}
+                        </span>
                       </div>
                     )}
                     <div className="pt-4 border-t border-purple-400/20 space-y-2">
                       {selectedTicket.forSale ? (
-                        <Button className="w-full" variant="destructive" onClick={() => handleCancelListing(selectedTicket.id)}>
+                        <Button
+                          className="w-full"
+                          variant="destructive"
+                          onClick={() => handleCancelListing(selectedTicket.id)}
+                          style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                        >
                           <Trash2 className="mr-2 h-4 w-4" /> Cancel Marketplace Listing
                         </Button>
                       ) : (
                         selectedTicket.valid ? (
-                          <Button className="w-full" onClick={() => navigate('/sell-ticket')}>
+                          <Button
+                            className="w-full"
+                            onClick={() => navigate('/sell-ticket')}
+                            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                          >
                             <Store className="mr-2 h-4 w-4" /> Sell on Marketplace
                           </Button>
                         ) : (
-                          <p className="text-center text-red-400 font-semibold p-2 bg-red-900/20 rounded-md">This ticket has been used.</p>
+                          <p
+                            className="text-center text-red-400 font-semibold p-2 bg-red-900/20 rounded-md"
+                            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                          >
+                            This ticket has been used.
+                          </p>
                         )
                       )}
-                      <Button className="w-full" variant="outline" disabled={!selectedTicket.valid}>Transfer Ownership</Button>
+                      <Button
+                        className="w-full"
+                        variant="outline"
+                        disabled={!selectedTicket.valid}
+                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                      >
+                        Transfer Ownership
+                      </Button>
                       <Link to={`/events/${selectedTicket.eventID}`}>
-                        <Button className="w-full" variant="ghost">View Event Details</Button>
+                        <Button
+                          className="w-full"
+                          variant="ghost"
+                          style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                        >
+                          View Event Details
+                        </Button>
                       </Link>
                     </div>
                   </div>
@@ -243,7 +355,12 @@ export default function DigiTicketPage() {
               </Card>
             ) : (
               <div className="flex items-center justify-center h-full bg-white/5 border-2 border-dashed border-purple-400/20 rounded-lg">
-                <p className="text-purple-300/70">Select a ticket to view its details</p>
+                <p
+                  className="text-purple-300/70"
+                  style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                >
+                  Select a ticket to view its details
+                </p>
               </div>
             )}
           </div>

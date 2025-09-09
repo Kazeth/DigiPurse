@@ -209,66 +209,118 @@ export default function CreateEventPage() {
   return (
     <div className="min-h-[calc(100vh-10rem)] bg-[#11071F] text-white p-4 sm:p-6 lg:p-8">
       <div className="container mx-auto max-w-4xl">
-        <Link to="/events" className="flex items-center gap-2 text-purple-300 hover:text-white transition-colors mb-6">
+        <Link
+          to="/events"
+          className="flex items-center gap-2 text-purple-300 hover:text-white transition-colors mb-6"
+          style={{ fontFamily: 'AeonikLight, sans-serif' }}
+        >
           <ArrowLeft className="h-4 w-4" />
           Back to Events
         </Link>
         <header className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold">Create a New Event</h1>
-          <p className="text-lg text-purple-300/80 mt-1">Fill out the details below to list your event on DigiPurse.</p>
+          <h1
+            className="text-3xl sm:text-4xl font-bold"
+            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+          >
+            Create a New Event
+          </h1>
+          <p
+            className="text-lg text-purple-300/80 mt-1"
+            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+          >
+            Fill out the details below to list your event on DigiPurse.
+          </p>
         </header>
 
         <div className="space-y-8">
           {/* Step 1: Event Details */}
           <Card className="bg-white/5 border-purple-400/20">
             <CardHeader>
-              <CardTitle className="text-purple-300">1. Event Details</CardTitle>
-              <CardDescription>Provide the core information about your event.</CardDescription>
+              <CardTitle
+                className="text-purple-300"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
+              >
+                1. Event Details
+              </CardTitle>
+              <CardDescription
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+              >
+                Provide the core information about your event.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="eventName">Event Name</Label>
+                <Label
+                  htmlFor="eventName"
+                  style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                >
+                  Event Name
+                </Label>
                 <Input
                   id="eventName"
                   value={eventName}
                   onChange={(e) => setEventName(e.target.value)}
                   placeholder="e.g., ICP Innovate Summit"
                   className="bg-black/20 border-purple-400/30"
+                  style={{ fontFamily: 'AeonikLight, sans-serif' }}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="eventDescription">Event Description</Label>
+                <Label
+                  htmlFor="eventDescription"
+                  style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                >
+                  Event Description
+                </Label>
                 <textarea
                   id="eventDescription"
                   value={eventDescription}
                   onChange={(e) => setEventDescription(e.target.value)}
                   placeholder="Tell us more about your event..."
                   className="w-full min-h-[120px] bg-black/20 border-purple-400/30 rounded-md p-2 text-sm"
+                  style={{ fontFamily: 'AeonikLight, sans-serif' }}
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="eventDate">Date</Label>
+                  <Label
+                    htmlFor="eventDate"
+                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                  >
+                    Date
+                  </Label>
                   <Input
                     id="eventDate"
                     type="date"
                     value={eventDate}
                     onChange={(e) => setEventDate(e.target.value)}
                     className="bg-black/20 border-purple-400/30"
+                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="eventTime">Start Time</Label>
+                  <Label
+                    htmlFor="eventTime"
+                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                  >
+                    Start Time
+                  </Label>
                   <Input
                     id="eventTime"
                     type="time"
                     value={eventTime}
                     onChange={(e) => setEventTime(e.target.value)}
                     className="bg-black/20 border-purple-400/30"
+                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="durationMinutes">Duration (Minutes)</Label>
+                  <Label
+                    htmlFor="durationMinutes"
+                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                  >
+                    Duration (Minutes)
+                  </Label>
                   <Input
                     id="durationMinutes"
                     type="number"
@@ -277,6 +329,7 @@ export default function CreateEventPage() {
                     onChange={(e) => setDurationMinutes(e.target.value)}
                     placeholder="e.g., 180"
                     className="bg-black/20 border-purple-400/30"
+                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
                   />
                 </div>
               </div>
@@ -286,33 +339,63 @@ export default function CreateEventPage() {
           {/* Step 2: Ticket Tiers */}
           <Card className="bg-white/5 border-purple-400/20">
             <CardHeader>
-              <CardTitle className="text-purple-300">2. Ticket Tiers</CardTitle>
-              <CardDescription>Define the different types of tickets for your event.</CardDescription>
+              <CardTitle
+                className="text-purple-300"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
+              >
+                2. Ticket Tiers
+              </CardTitle>
+              <CardDescription
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+              >
+                Define the different types of tickets for your event.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {ticketTiers.map((tier, index) => (
                 <div key={index} className="p-4 bg-black/20 rounded-lg border border-purple-400/20">
                   <div className="flex justify-between items-center mb-4">
-                    <h4 className="font-semibold">Ticket Tier #{index + 1}</h4>
+                    <h4
+                      className="font-semibold"
+                      style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
+                      Ticket Tier #{index + 1}
+                    </h4>
                     {ticketTiers.length > 1 && (
-                      <Button variant="destructive" size="icon" onClick={() => removeTier(index)}>
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => removeTier(index)}
+                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     )}
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor={`tier-desc-${index}`}>Tier Name</Label>
+                      <Label
+                        htmlFor={`tier-desc-${index}`}
+                        style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                      >
+                        Tier Name
+                      </Label>
                       <Input
                         id={`tier-desc-${index}`}
                         value={tier.desc}
                         onChange={(e) => handleTierChange(index, 'desc', e.target.value)}
                         placeholder="e.g., VIP Access"
                         className="bg-black/30"
+                        style={{ fontFamily: 'AeonikLight, sans-serif' }}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor={`tier-price-${index}`}>Price (ICP)</Label>
+                      <Label
+                        htmlFor={`tier-price-${index}`}
+                        style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                      >
+                        Price (ICP)
+                      </Label>
                       <Input
                         id={`tier-price-${index}`}
                         type="number"
@@ -321,10 +404,16 @@ export default function CreateEventPage() {
                         onChange={(e) => handleTierChange(index, 'price', e.target.value)}
                         placeholder="e.g., 150"
                         className="bg-black/30"
+                        style={{ fontFamily: 'AeonikLight, sans-serif' }}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor={`tier-supply-${index}`}>Quantity</Label>
+                      <Label
+                        htmlFor={`tier-supply-${index}`}
+                        style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                      >
+                        Quantity
+                      </Label>
                       <Input
                         id={`tier-supply-${index}`}
                         type="number"
@@ -333,16 +422,22 @@ export default function CreateEventPage() {
                         onChange={(e) => handleTierChange(index, 'supply', e.target.value)}
                         placeholder="e.g., 100"
                         className="bg-black/30"
+                        style={{ fontFamily: 'AeonikLight, sans-serif' }}
                       />
                     </div>
                   </div>
                   <div className="mt-4 space-y-2">
-                    <Label>Ticket Kind</Label>
+                    <Label
+                      style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                    >
+                      Ticket Kind
+                    </Label>
                     <div className="flex gap-2">
                       <Button
                         variant={'Seatless' in tier.kind ? 'secondary' : 'outline'}
                         onClick={() => handleTierChange(index, 'kind', { Seatless: null })}
                         className="flex-1 text-sm"
+                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
                       >
                         <Users className="mr-2 h-4 w-4" /> Seatless
                       </Button>
@@ -350,6 +445,7 @@ export default function CreateEventPage() {
                         variant={'Seated' in tier.kind ? 'secondary' : 'outline'}
                         onClick={() => handleTierChange(index, 'kind', { Seated: 'General Seating' })}
                         className="flex-1 text-sm"
+                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
                       >
                         <Armchair className="mr-2 h-4 w-4" /> Seated
                       </Button>
@@ -357,7 +453,12 @@ export default function CreateEventPage() {
                   </div>
                 </div>
               ))}
-              <Button variant="outline" onClick={addTier} className="w-full mt-4">
+              <Button
+                variant="outline"
+                onClick={addTier}
+                className="w-full mt-4"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
+              >
                 <PlusCircle className="mr-2 h-4 w-4" /> Add Another Tier
               </Button>
             </CardContent>
@@ -366,8 +467,16 @@ export default function CreateEventPage() {
           {/* Step 3: Review & Create */}
           <Card className="bg-purple-900/20 border-purple-400/20">
             <CardHeader>
-              <CardTitle className="text-purple-300 text-2xl font-bold">3. Review & Create</CardTitle>
-              <CardDescription className="text-purple-300/70">
+              <CardTitle
+                className="text-purple-300 text-2xl font-bold"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
+              >
+                3. Review & Create
+              </CardTitle>
+              <CardDescription
+                className="text-purple-300/70"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+              >
                 Confirm your event details and create the event with its ticket tiers.
               </CardDescription>
             </CardHeader>
@@ -375,60 +484,161 @@ export default function CreateEventPage() {
               {/* Event Summary */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <h4 className="text-lg font-semibold text-purple-300">Event Details</h4>
+                  <h4
+                    className="text-lg font-semibold text-purple-300"
+                    style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                  >
+                    Event Details
+                  </h4>
                   <div className="flex justify-between text-sm">
-                    <span className="text-purple-300/80">Event Name:</span>
-                    <span className="font-medium">{eventName || 'Not set'}</span>
+                    <span
+                      className="text-purple-300/80"
+                      style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                    >
+                      Event Name:
+                    </span>
+                    <span
+                      className="font-medium"
+                      style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
+                      {eventName || 'Not set'}
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-purple-300/80">Date & Time:</span>
-                    <span className="font-medium">
+                    <span
+                      className="text-purple-300/80"
+                      style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                    >
+                      Date & Time:
+                    </span>
+                    <span
+                      className="font-medium"
+                      style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
                       {eventDate && eventTime
                         ? new Date(`${eventDate}T${eventTime}`).toLocaleString('en-US', {
-                          dateStyle: 'medium',
-                          timeStyle: 'short',
-                        })
+                            dateStyle: 'medium',
+                            timeStyle: 'short',
+                          })
                         : 'Not set'}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-purple-300/80">Duration:</span>
-                    <span className="font-medium">{durationMinutes ? `${durationMinutes} minutes` : 'Not set'}</span>
+                    <span
+                      className="text-purple-300/80"
+                      style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                    >
+                      Duration:
+                    </span>
+                    <span
+                      className="font-medium"
+                      style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
+                      {durationMinutes ? `${durationMinutes} minutes` : 'Not set'}
+                    </span>
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <h4 className="text-lg font-semibold text-purple-300">Ticket Summary</h4>
+                  <h4
+                    className="text-lg font-semibold text-purple-300"
+                    style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                  >
+                    Ticket Summary
+                  </h4>
                   <div className="flex justify-between text-sm">
-                    <span className="text-purple-300/80">Ticket Tiers:</span>
-                    <span className="font-medium">{ticketTiers.length}</span>
+                    <span
+                      className="text-purple-300/80"
+                      style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                    >
+                      Ticket Tiers:
+                    </span>
+                    <span
+                      className="font-medium"
+                      style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
+                      {ticketTiers.length}
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-purple-300/80">Total Ticket Supply:</span>
-                    <span className="font-medium">{totalTicketSupply || '0'}</span>
+                    <span
+                      className="text-purple-300/80"
+                      style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                    >
+                      Total Ticket Supply:
+                    </span>
+                    <span
+                      className="font-medium"
+                      style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
+                      {totalTicketSupply || '0'}
+                    </span>
                   </div>
                 </div>
               </div>
               {/* Ticket Tiers Table */}
               {ticketTiers.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="text-lg font-semibold text-purple-300">Ticket Tiers</h4>
+                  <h4
+                    className="text-lg font-semibold text-purple-300"
+                    style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                  >
+                    Ticket Tiers
+                  </h4>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left text-purple-300/80">
                       <thead className="text-xs uppercase bg-black/20">
                         <tr>
-                          <th className="px-4 py-2">Tier Name</th>
-                          <th className="px-4 py-2">Price (ICP)</th>
-                          <th className="px-4 py-2">Quantity</th>
-                          <th className="px-4 py-2">Kind</th>
+                          <th
+                            className="px-4 py-2"
+                            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                          >
+                            Tier Name
+                          </th>
+                          <th
+                            className="px-4 py-2"
+                            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                          >
+                            Price (ICP)
+                          </th>
+                          <th
+                            className="px-4 py-2"
+                            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                          >
+                            Quantity
+                          </th>
+                          <th
+                            className="px-4 py-2"
+                            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                          >
+                            Kind
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
                         {ticketTiers.map((tier, index) => (
                           <tr key={index} className="border-b border-purple-400/20">
-                            <td className="px-4 py-2">{tier.desc || 'Not set'}</td>
-                            <td className="px-4 py-2">{tier.price || '0'}</td>
-                            <td className="px-4 py-2">{tier.supply || '0'}</td>
-                            <td className="px-4 py-2">
+                            <td
+                              className="px-4 py-2"
+                              style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                            >
+                              {tier.desc || 'Not set'}
+                            </td>
+                            <td
+                              className="px-4 py-2"
+                              style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                            >
+                              {tier.price || '0'}
+                            </td>
+                            <td
+                              className="px-4 py-2"
+                              style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                            >
+                              {tier.supply || '0'}
+                            </td>
+                            <td
+                              className="px-4 py-2"
+                              style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                            >
                               {'Seatless' in tier.kind ? 'Seatless' : `Seated (${tier.kind.Seated || 'General Seating'})`}
                             </td>
                           </tr>
@@ -439,7 +649,14 @@ export default function CreateEventPage() {
                 </div>
               )}
               {/* Feedback Messages */}
-              {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+              {error && (
+                <p
+                  className="text-red-500 text-sm text-center"
+                  style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                >
+                  {error}
+                </p>
+              )}
               {/* Create Button */}
               <div className="flex justify-end">
                 <Button
@@ -447,6 +664,7 @@ export default function CreateEventPage() {
                   onClick={handleCreateEvent}
                   disabled={isLoading}
                   className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700"
+                  style={{ fontFamily: 'AeonikBold, sans-serif' }}
                 >
                   {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Ticket className="mr-2 h-5 w-5" />}
                   {isLoading ? 'Creating...' : 'Create Event & Tickets'}
@@ -460,8 +678,16 @@ export default function CreateEventPage() {
         <Dialog open={successModalOpen} onOpenChange={setSuccessModalOpen}>
           <DialogContent className="bg-[#11071F] text-white border-purple-400/20">
             <DialogHeader>
-              <DialogTitle className="text-purple-300 text-2xl">Event Created Successfully!</DialogTitle>
-              <DialogDescription className="text-purple-300/70">
+              <DialogTitle
+                className="text-purple-300 text-2xl"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
+              >
+                Event Created Successfully!
+              </DialogTitle>
+              <DialogDescription
+                className="text-purple-300/70"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+              >
                 Your event "{eventName}" (ID: {createdEventId}) has been created with {ticketTiers.length} ticket tier
                 {ticketTiers.length === 1 ? '' : 's'}.
               </DialogDescription>
@@ -471,12 +697,14 @@ export default function CreateEventPage() {
                 variant="outline"
                 onClick={resetForm}
                 className="w-full sm:w-auto border-purple-400/30 text-purple-300 hover:bg-purple-600 hover:text-white"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
               >
                 Create Another Event
               </Button>
               <Button
                 onClick={() => navigate('/events')}
                 className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700"
+                style={{ fontFamily: 'AeonikBold, sans-serif' }}
               >
                 Go to Events
               </Button>

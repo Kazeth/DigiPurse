@@ -248,11 +248,17 @@ export default function DigiIdentity() {
         <div className="bg-[#11071F] text-white min-h-[calc(100vh-10rem)] p-4 sm:p-6 lg:p-8">
             <div className="container mx-auto">
                 <div className="text-center mb-12">
-                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+                    <h1
+                        className="text-3xl md:text-4xl font-bold tracking-tight"
+                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
                         {formData.isVerified ? "Your Verified Identity" : "Verify Your Identity"}
                     </h1>
                     {!formData.isVerified && (
-                        <p className="mt-4 max-w-2xl mx-auto text-lg text-purple-200/70">
+                        <p
+                            className="mt-4 max-w-2xl mx-auto text-lg text-purple-200/70"
+                            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                        >
                             To ensure platform security, you must complete your DigiIdentity profile before you can host an event.
                         </p>
                     )}
@@ -262,14 +268,32 @@ export default function DigiIdentity() {
                     <div className="max-w-4xl mx-auto bg-white/5 p-8 rounded-lg border border-purple-300/30 space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                             <div>
-                                <p className="mt-2"><strong className="text-purple-400/80 block text-sm">Full Name:</strong> {formData.name}</p>
-                                <p className="mt-2"><strong className="text-purple-400/80 block text-sm">Passport Number:</strong> {formData.passportNumber}</p>
-                                <p className="mt-2"><strong className="text-purple-400/80 block text-sm">Nationality:</strong> {formData.nationality}</p>
+                                <p className="mt-2"><strong
+                                    className="text-purple-400/80 block text-sm"
+                                    style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                                >Full Name:</strong> {formData.name}</p>
+                                <p className="mt-2"><strong
+                                    className="text-purple-400/80 block text-sm"
+                                    style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                                >Passport Number:</strong> {formData.passportNumber}</p>
+                                <p className="mt-2"><strong
+                                    className="text-purple-400/80 block text-sm"
+                                    style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                                >Nationality:</strong> {formData.nationality}</p>
                             </div>
                             <div>
-                                <p className="mt-2"><strong className="text-purple-400/80 block text-sm">Date of Birth:</strong> {formData.dob}</p>
-                                <p className="mt-2"><strong className="text-purple-400/80 block text-sm">Gender:</strong> {formData.gender}</p>
-                                <p className="mt-2"><strong className="text-purple-400/80 block text-sm">Expiry Date:</strong> {formData.dateOfExpiry}</p>
+                                <p className="mt-2"><strong
+                                    className="text-purple-400/80 block text-sm"
+                                    style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                                >Date of Birth:</strong> {formData.dob}</p>
+                                <p className="mt-2"><strong
+                                    className="text-purple-400/80 block text-sm"
+                                    style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                                >Gender:</strong> {formData.gender}</p>
+                                <p className="mt-2"><strong
+                                    className="text-purple-400/80 block text-sm"
+                                    style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                                >Expiry Date:</strong> {formData.dateOfExpiry}</p>
                             </div>
                         </div>
                         <div className="flex justify-center items-center pt-4 border-t border-white/10">
@@ -286,7 +310,13 @@ export default function DigiIdentity() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
                                 {formFields.map(field => (
                                     <div key={field.id} className="space-y-2">
-                                        <Label htmlFor={field.id} className="font-medium text-purple-300">{field.label}</Label>
+                                        <Label
+                                            htmlFor={field.id}
+                                            className="font-medium text-purple-300"
+                                            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                        >
+                                            {field.label}
+                                        </Label>
                                         <Input
                                             id={field.id}
                                             type={field.type}
@@ -294,12 +324,18 @@ export default function DigiIdentity() {
                                             onChange={handleInputChange}
                                             className="bg-white/5 border-purple-400/40 focus:border-purple-400 focus:ring-purple-400 placeholder:text-gray-500"
                                             required
+                                            style={{ fontFamily: 'AeonikLight, sans-serif' }}
                                         />
                                     </div>
                                 ))}
                             </div>
                             <div className="space-y-4">
-                                <Label className="font-medium text-purple-300">Passport Image</Label>
+                                <Label
+                                    className="font-medium text-purple-300"
+                                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                >
+                                    Passport Image
+                                </Label>
                                 <div
                                     onClick={handleUploadBoxClick}
                                     className="w-full aspect-[4/3] rounded-lg border-2 border-dashed border-purple-400/60 flex flex-col items-center justify-center cursor-pointer hover:border-purple-400 hover:bg-white/10 transition-all duration-300 bg-white/5"
@@ -309,7 +345,12 @@ export default function DigiIdentity() {
                                     ) : (
                                         <div className="text-center text-purple-200/80 p-4">
                                             <PlusCircle className="mx-auto h-16 w-16 text-purple-300/80 mb-4" />
-                                            <p className="font-semibold">Please Put Your Passport Image</p>
+                                            <p
+                                                className="font-semibold"
+                                                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                            >
+                                                Please Put Your Passport Image
+                                            </p>
                                         </div>
                                     )}
                                 </div>
@@ -327,6 +368,7 @@ export default function DigiIdentity() {
                                             onClick={startScan}
                                             disabled={isScanning}
                                             className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500"
+                                            style={{ fontFamily: 'AeonikBold, sans-serif' }}
                                         >
                                             {isScanning ? <Loader2 className="animate-spin" /> : 'Scan Passport'}
                                         </Button>
@@ -335,7 +377,13 @@ export default function DigiIdentity() {
                             </div>
                         </div>
                         <div className="mt-12 text-center">
-                            <Button type="submit" size="lg" className="bg-purple-600 hover:bg-purple-700 w-full sm:w-auto px-16 py-6 text-lg font-semibold" disabled={isSaving}>
+                            <Button
+                                type="submit"
+                                size="lg"
+                                className="bg-purple-600 hover:bg-purple-700 w-full sm:w-auto px-16 py-6 text-lg font-semibold"
+                                disabled={isSaving}
+                                style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                            >
                                 {isSaving ? <Loader2 className="animate-spin" /> : 'Save & Verify Identity'}
                             </Button>
                         </div>
@@ -345,11 +393,22 @@ export default function DigiIdentity() {
                 {showModal && (
                     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
                         <div className="bg-[#1e1033] p-8 rounded-lg shadow-2xl shadow-purple-900/50 border border-purple-400/30 text-center max-w-sm w-full">
-                            <h2 className="text-2xl font-bold text-white mb-4">Identity Verified Successfully!</h2>
-                            <p className="text-purple-200/80 mb-6">Your DigiIdentity profile has been created and verified.</p>
+                            <h2
+                                className="text-2xl font-bold text-white mb-4"
+                                style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                            >
+                                Identity Verified Successfully!
+                            </h2>
+                            <p
+                                className="text-purple-200/80 mb-6"
+                                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                            >
+                                Your DigiIdentity profile has been created and verified.
+                            </p>
                             <Button
                                 className="w-full bg-purple-600 hover:bg-purple-700"
                                 onClick={() => setShowModal(false)}
+                                style={{ fontFamily: 'AeonikBold, sans-serif' }}
                             >
                                 Close
                             </Button>

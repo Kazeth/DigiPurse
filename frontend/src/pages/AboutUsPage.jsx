@@ -112,8 +112,18 @@ function TimelineItem({ step, index }) {
 
   const content = (
     <div className="md:w-5/12">
-      <h4 className="text-xl font-bold text-white">{step.title}</h4>
-      <p className="mt-2 text-purple-200/80">{step.description}</p>
+      <h4
+        className="text-xl font-bold text-white"
+        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+      >
+        {step.title}
+      </h4>
+      <p
+        className="mt-2 text-purple-200/80"
+        style={{ fontFamily: 'AeonikLight, sans-serif' }}
+      >
+        {step.description}
+      </p>
     </div>
   );
 
@@ -161,24 +171,40 @@ export default function AboutPage() {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="container mx-auto px-6 relative z-10"
         >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter">
+          <h1
+            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter"
+            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+          >
             About DigiPurse
           </h1>
-          <p className="mt-6 max-w-3xl mx-auto text-lg text-purple-200/80">
+          <p
+            className="mt-6 max-w-3xl mx-auto text-lg text-purple-200/80"
+            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+          >
             We are on a mission to simplify and secure your digital life by harnessing the power of decentralized technology.
           </p>
           {/* Feature Cards */}
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {heroFeatures.map((feature) => (
-                <Card key={feature.title} className="bg-white/5 border-purple-400/20 text-center p-8 backdrop-blur-sm flex flex-col items-center min-h-88">
-                  <div className="flex items-center justify-center h-20 w-20 rounded-full bg-white/10 mb-6">
-                    <feature.icon className="h-10 w-10 text-purple-300" />
-                  </div>
-                  <h3 className="text-2xl font-bold">{feature.title}</h3>
-                  <p className="mt-4 text-lg text-purple-200/80 flex-grow">{feature.description}</p>
-                </Card>
-              ))}
-            </div>
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {heroFeatures.map((feature) => (
+              <Card key={feature.title} className="bg-white/5 border-purple-400/20 text-center p-8 backdrop-blur-sm flex flex-col items-center min-h-88">
+                <div className="flex items-center justify-center h-20 w-20 rounded-full bg-white/10 mb-6">
+                  <feature.icon className="h-10 w-10 text-purple-300" />
+                </div>
+                <h3
+                  className="text-2xl font-bold"
+                  style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                >
+                  {feature.title}
+                </h3>
+                <p
+                  className="mt-4 text-lg text-purple-200/80 flex-grow"
+                  style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                >
+                  {feature.description}
+                </p>
+              </Card>
+            ))}
+          </div>
         </motion.div>
       </section>
 
@@ -186,8 +212,18 @@ export default function AboutPage() {
       <AnimatedSection>
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">Our Journey</h2>
-            <p className="mt-4 max-w-2xl mx-auto text-lg text-purple-200/70">From a simple idea to a full-fledged platform, here's how we got here.</p>
+            <h2
+              className="text-3xl sm:text-4xl font-bold tracking-tight text-white"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
+              Our Journey
+            </h2>
+            <p
+              className="mt-4 max-w-2xl mx-auto text-lg text-purple-200/70"
+              style={{ fontFamily: 'AeonikLight, sans-serif' }}
+            >
+              From a simple idea to a full-fledged platform, here's how we got here.
+            </p>
           </div>
           <div className="relative">
             <div className="absolute left-1/2 top-0 h-full w-0.5 bg-purple-400/30 hidden md:block"></div>
@@ -199,8 +235,18 @@ export default function AboutPage() {
                     <div className="w-1/2 pr-14 text-right">
                       {index % 2 === 0 && (
                         <div>
-                          <h4 className="text-xl font-bold">{step.title}</h4>
-                          <p className="mt-2 text-purple-200/80">{step.description}</p>
+                          <h4
+                            className="text-xl font-bold"
+                            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                          >
+                            {step.title}
+                          </h4>
+                          <p
+                            className="mt-2 text-purple-200/80"
+                            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                          >
+                            {step.description}
+                          </p>
                         </div>
                       )}
                     </div>
@@ -210,8 +256,18 @@ export default function AboutPage() {
                     <div className="w-1/2 pl-14 text-left">
                       {index % 2 !== 0 && (
                         <div>
-                          <h4 className="text-xl font-bold">{step.title}</h4>
-                          <p className="mt-2 text-purple-200/80">{step.description}</p>
+                          <h4
+                            className="text-xl font-bold"
+                            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                          >
+                            {step.title}
+                          </h4>
+                          <p
+                            className="mt-2 text-purple-200/80"
+                            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                          >
+                            {step.description}
+                          </p>
                         </div>
                       )}
                     </div>
@@ -221,8 +277,18 @@ export default function AboutPage() {
                     <div className="w-24 h-24 rounded-full bg-white/10 flex items-center justify-center z-10 border-4 border-purple-400/30 mx-auto mb-4">
                       <step.icon className="h-10 w-10 text-purple-300" />
                     </div>
-                    <h4 className="text-xl font-bold">{step.title}</h4>
-                    <p className="mt-2 text-purple-200/80 max-w-sm mx-auto">{step.description}</p>
+                    <h4
+                      className="text-xl font-bold"
+                      style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
+                      {step.title}
+                    </h4>
+                    <p
+                      className="mt-2 text-purple-200/80 max-w-sm mx-auto"
+                      style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                    >
+                      {step.description}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -235,8 +301,18 @@ export default function AboutPage() {
       <section ref={valuesRef} className="py-20 sm:py-24 bg-black/20">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">Our Core Values</h2>
-            <p className="mt-4 max-w-2xl mx-auto text-lg text-purple-200/70">The principles that guide every decision we make.</p>
+            <h2
+              className="text-3xl sm:text-4xl font-bold tracking-tight text-white"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
+              Our Core Values
+            </h2>
+            <p
+              className="mt-4 max-w-2xl mx-auto text-lg text-purple-200/70"
+              style={{ fontFamily: 'AeonikLight, sans-serif' }}
+            >
+              The principles that guide every decision we make.
+            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {values.map((value, index) => (
@@ -252,8 +328,18 @@ export default function AboutPage() {
                       <value.icon className="h-9 w-9 text-purple-300" />
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold">{value.title}</h3>
-                  <p className="mt-2 text-purple-200/80">{value.description}</p>
+                  <h3
+                    className="text-xl font-bold"
+                    style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                  >
+                    {value.title}
+                  </h3>
+                  <p
+                    className="mt-2 text-purple-200/80"
+                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                  >
+                    {value.description}
+                  </p>
                 </Card>
               </motion.div>
             ))}
@@ -265,13 +351,35 @@ export default function AboutPage() {
       <AnimatedSection>
         <div className="container mx-auto px-6">
           <div className="bg-gradient-to-br from-purple-600/20 to-indigo-600/20 p-10 rounded-2xl text-center border border-purple-400/30">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">Join Our Community</h2>
-            <p className="mt-4 max-w-3xl mx-auto text-lg text-purple-200/80">
+            <h2
+              className="text-3xl sm:text-4xl font-bold tracking-tight text-white"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
+              Join Our Community
+            </h2>
+            <p
+              className="mt-4 max-w-3xl mx-auto text-lg text-purple-200/80"
+              style={{ fontFamily: 'AeonikLight, sans-serif' }}
+            >
               DigiPurse is built on the principles of open source and community collaboration. We welcome you to review our code, contribute, and help us build a better digital future.
             </p>
             <div className="mt-8 flex justify-center gap-4 flex-wrap">
-              <Button asChild size="lg" className="bg-white text-black hover:bg-gray-200"><a href="https://github.com/Kazeth/DigiPurse" target="_blank" rel="noopener noreferrer">View on GitHub</a></Button>
-              <Button asChild size="lg" variant="secondary"><a href="#" target="_blank" rel="noopener noreferrer">Join our Discord</a></Button>
+              <Button
+                asChild
+                size="lg"
+                className="bg-white text-black hover:bg-gray-200"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+              >
+                <a href="https://github.com/Kazeth/DigiPurse" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="secondary"
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+              >
+                <a href="#" target="_blank" rel="noopener noreferrer">Join our Discord</a>
+              </Button>
             </div>
           </div>
         </div>
@@ -281,8 +389,18 @@ export default function AboutPage() {
       <section ref={teamRef} className="py-20 sm:py-24">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Meet The Team</h2>
-            <p className="mt-4 max-w-2xl mx-auto text-lg text-purple-200/70">The innovators building the future of digital interaction.</p>
+            <h2
+              className="text-3xl sm:text-4xl font-bold tracking-tight"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
+              Meet The Team
+            </h2>
+            <p
+              className="mt-4 max-w-2xl mx-auto text-lg text-purple-200/70"
+              style={{ fontFamily: 'AeonikLight, sans-serif' }}
+            >
+              The innovators building the future of digital interaction.
+            </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamMembers.map((member, index) => (
@@ -298,14 +416,30 @@ export default function AboutPage() {
                       <AvatarImage src={member.avatar} alt={member.name} />
                       <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                     </Avatar>
-                    <h3 className="text-xl font-bold text-white">{member.name}</h3>
-                    <p className="text-purple-400 font-medium">{member.role}</p>
-                    <p className="mt-3 text-sm text-purple-200/80">{member.bio}</p>
+                    <h3
+                      className="text-xl font-bold text-white"
+                      style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
+                      {member.name}
+                    </h3>
+                    <p
+                      className="text-purple-400 font-medium"
+                      style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                    >
+                      {member.role}
+                    </p>
+                    <p
+                      className="mt-3 text-sm text-purple-200/80"
+                      style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                    >
+                      {member.bio}
+                    </p>
                     <a
                       href={member.github}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="mt-4 text-purple-400 hover:text-purple-300 underline text-sm"
+                      style={{ fontFamily: 'AeonikLight, sans-serif' }}
                     >
                       GitHub Profile
                     </a>

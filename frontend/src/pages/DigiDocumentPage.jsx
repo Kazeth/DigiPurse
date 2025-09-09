@@ -64,7 +64,6 @@ const FilePreview = ({ file, actor, getIcon }) => {
     return getIcon(file.name);
 };
 
-
 export default function DigiDocumentPage() {
     const { isAuthenticated, authClient } = useAuth();
     const [actor, setActor] = useState(null);
@@ -262,9 +261,18 @@ export default function DigiDocumentPage() {
             <div className="container mx-auto">
                 <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
                     {/* MODIFIED: Larger title */}
-                    <h1 className="text-4xl sm:text-5xl font-bold">My Documents</h1>
+                    <h1
+                        className="text-4xl sm:text-5xl font-bold"
+                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
+                        My Documents
+                    </h1>
                     <input type="file" multiple ref={fileInputRef} onChange={handleFileUpload} className="hidden" />
-                    <Button onClick={() => fileInputRef.current.click()} className="bg-purple-600 hover:bg-purple-700 text-white font-semibold flex items-center gap-2">
+                    <Button
+                        onClick={() => fileInputRef.current.click()}
+                        className="bg-purple-600 hover:bg-purple-700 text-white font-semibold flex items-center gap-2"
+                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
                         <UploadCloud className="h-5 w-5" />
                         Upload Files
                     </Button>
@@ -272,34 +280,107 @@ export default function DigiDocumentPage() {
                 <div className="bg-white/5 border border-purple-400/20 rounded-lg p-4 mb-8 flex flex-col md:flex-row gap-4">
                     <div className="relative flex-grow">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                        <Input type="text" placeholder="Search documents..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent pl-10 border-purple-400/30 focus:border-purple-400" />
+                        <Input
+                            type="text"
+                            placeholder="Search documents..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="bg-transparent pl-10 border-purple-400/30 focus:border-purple-400"
+                            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                        />
                     </div>
                     <div className="flex gap-4">
                         <Select value={filterType} onValueChange={setFilterType}>
-                            <SelectTrigger className="w-full md:w-[180px] bg-transparent border-purple-400/30"><SelectValue placeholder="Filter by type" /></SelectTrigger>
+                            <SelectTrigger
+                                className="w-full md:w-[180px] bg-transparent border-purple-400/30"
+                                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                            >
+                                <SelectValue placeholder="Filter by type" />
+                            </SelectTrigger>
                             <SelectContent className="bg-[#1F112D] text-white border-purple-400/50">
-                                <SelectItem value="all">All Files</SelectItem>
-                                <SelectItem value="images">Images</SelectItem>
-                                <SelectItem value="videos">Videos</SelectItem>
-                                <SelectItem value="documents">Documents</SelectItem>
+                                <SelectItem
+                                    value="all"
+                                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                >
+                                    All Files
+                                </SelectItem>
+                                <SelectItem
+                                    value="images"
+                                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                >
+                                    Images
+                                </SelectItem>
+                                <SelectItem
+                                    value="videos"
+                                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                >
+                                    Videos
+                                </SelectItem>
+                                <SelectItem
+                                    value="documents"
+                                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                >
+                                    Documents
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                         <Select value={sortBy} onValueChange={setSortBy}>
-                            <SelectTrigger className="w-full md:w-[180px] bg-transparent border-purple-400/30"><SelectValue placeholder="Sort by" /></SelectTrigger>
+                            <SelectTrigger
+                                className="w-full md:w-[180px] bg-transparent border-purple-400/30"
+                                style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                            >
+                                <SelectValue placeholder="Sort by" />
+                            </SelectTrigger>
                             <SelectContent className="bg-[#1F112D] text-white border-purple-400/50">
-                                <SelectItem value="recent">Recently Added</SelectItem>
-                                <SelectItem value="name_asc">Name (A-Z)</SelectItem>
-                                <SelectItem value="name_desc">Name (Z-A)</SelectItem>
-                                <SelectItem value="size_desc">Size (Largest)</SelectItem>
-                                <SelectItem value="size_asc">Size (Smallest)</SelectItem>
+                                <SelectItem
+                                    value="recent"
+                                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                >
+                                    Recently Added
+                                </SelectItem>
+                                <SelectItem
+                                    value="name_asc"
+                                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                >
+                                    Name (A-Z)
+                                </SelectItem>
+                                <SelectItem
+                                    value="name_desc"
+                                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                >
+                                    Name (Z-A)
+                                </SelectItem>
+                                <SelectItem
+                                    value="size_desc"
+                                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                >
+                                    Size (Largest)
+                                </SelectItem>
+                                <SelectItem
+                                    value="size_asc"
+                                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                >
+                                    Size (Smallest)
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                 </div>
                 {errorMessage && (
                     <div className="flex items-center justify-between mt-4 rounded-md border border-red-400 bg-red-900/50 p-3 text-red-300">
-                        <p>{errorMessage}</p>
-                        <Button onClick={() => setErrorMessage('')} variant="ghost" size="icon"><X className="h-5 w-5" /></Button>
+                        <p
+                            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                        >
+                            {errorMessage}
+                        </p>
+                        <Button
+                            onClick={() => setErrorMessage('')}
+                            variant="ghost"
+                            size="icon"
+                            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                        >
+                            <X className="h-5 w-5" />
+                        </Button>
                     </div>
                 )}
                 {filteredAndSortedFiles.length > 0 ? (
@@ -311,17 +392,51 @@ export default function DigiDocumentPage() {
                                     <FilePreview file={file} actor={actor} getIcon={getFileIcon} />
                                 </div>
                                 <div className="p-4 flex flex-col flex-grow">
-                                    <p className="font-semibold truncate flex-grow" title={file.name}>{file.name}</p>
-                                    <p className="text-sm text-purple-300/80 mt-1">{formatBytes(Number(file.size))}</p>
+                                    <p
+                                        className="font-semibold truncate flex-grow"
+                                        title={file.name}
+                                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                                    >
+                                        {file.name}
+                                    </p>
+                                    <p
+                                        className="text-sm text-purple-300/80 mt-1"
+                                        style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                    >
+                                        {formatBytes(Number(file.size))}
+                                    </p>
                                 </div>
                                 <div className="p-2 border-t border-purple-400/20 flex justify-end gap-1">
                                     {isPreviewable(file.name) ? (
-                                        <Button variant="ghost" size="icon" onClick={() => handleFilePreview(file.name)} disabled={previewLoading === file.name} title="Preview">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => handleFilePreview(file.name)}
+                                            disabled={previewLoading === file.name}
+                                            title="Preview"
+                                            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                                        >
                                             {previewLoading === file.name ? <Loader2 className="h-5 w-5 animate-spin" /> : <Eye className="h-5 w-5" />}
                                         </Button>
                                     ) : <div className='w-10 h-10'></div>}
-                                    <Button variant="ghost" size="icon" onClick={() => handleFileDownload(file.name)} title="Download"><Download className="h-5 w-5" /></Button>
-                                    <Button variant="ghost" size="icon" onClick={() => handleDeleteClick(file)} title="Delete"><Trash2 className="h-5 w-5 text-red-400 hover:text-red-500" /></Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => handleFileDownload(file.name)}
+                                        title="Download"
+                                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                                    >
+                                        <Download className="h-5 w-5" />
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => handleDeleteClick(file)}
+                                        title="Delete"
+                                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                                    >
+                                        <Trash2 className="h-5 w-5 text-red-400 hover:text-red-500" />
+                                    </Button>
                                 </div>
                             </div>
                         ))}
@@ -329,8 +444,17 @@ export default function DigiDocumentPage() {
                 ) : (
                     <div className="py-20 text-center text-purple-300/70 flex flex-col items-center">
                         <ServerCrash className="h-16 w-16 mb-4" />
-                        <p className="text-xl font-medium">No documents found.</p>
-                        <p>Try adjusting your filters or upload a new file.</p>
+                        <p
+                            className="text-xl font-medium"
+                            style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                        >
+                            No documents found.
+                        </p>
+                        <p
+                            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                        >
+                            Try adjusting your filters or upload a new file.
+                        </p>
                     </div>
                 )}
             </div>

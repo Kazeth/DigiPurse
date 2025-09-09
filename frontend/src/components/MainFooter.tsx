@@ -20,9 +20,17 @@ export default function MainFooter() {
         <div className="flex flex-col items-center text-center">
           <Link to="/" className="flex items-center space-x-2">
             <img src={logo} alt="DigiPurse Logo" className="h-8 w-8" />
-            <span className="text-xl font-bold text-white">DigiPurse</span>
+            <span
+              className="text-xl font-bold text-white"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
+              DigiPurse
+            </span>
           </Link>
-          <p className="max-w-md mx-auto mt-4 text-purple-300/70">
+          <p
+            className="max-w-md mx-auto mt-4 text-purple-300/70"
+            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+          >
             A decentralized Web3 application to streamline your digital life.
           </p>
           <div className="flex justify-center mt-6 space-x-6">
@@ -32,6 +40,7 @@ export default function MainFooter() {
                 href={social.href}
                 className="text-purple-300/70 hover:text-white transition-colors duration-300"
                 aria-label={`Visit our ${social.name} page`}
+                style={{ fontFamily: 'AeonikLight, sans-serif' }}
               >
                 <social.icon className="h-6 w-6" />
               </a>
@@ -42,7 +51,9 @@ export default function MainFooter() {
         <hr className="my-6 border-purple-200/20" />
 
         <div className="text-center text-purple-300/70">
-          <p>&copy; {currentYear} DigiPurse. All Rights Reserved.</p>
+          <p style={{ fontFamily: 'AeonikLight, sans-serif' }}>
+            &copy; {currentYear} DigiPurse. All Rights Reserved.
+          </p>
         </div>
       </div>
     </footer>

@@ -4,7 +4,6 @@ import { useAuth } from '@/lib/AuthContext';
 import { createActor, canisterId } from '@/declarations/Registry_backend';
 import { Card, CardContent } from '@/components/ui/card';
 
-// Objek untuk memetakan tipe aktivitas ke ikon dan judul
 const activityDetails = {
     'AccountCreated': {
         icon: UserPlus,
@@ -48,7 +47,6 @@ export default function HistoryPage() {
             const actor = createActor(canisterId, { agentOptions: { identity } });
             try {
                 const logs = await actor.getUserActivity(principal);
-                // Waktu dari Motoko dalam nanosekon, konversi ke milisekon untuk JS
                 const sortedLogs = logs.sort((a, b) => Number(b.timestamp) - Number(a.timestamp));
                 setActivityLogs(sortedLogs);
             } catch (err) {
@@ -61,7 +59,6 @@ export default function HistoryPage() {
     }, [isLoggedIn, authClient]);
 
     const formatTimestamp = (ns) => {
-        // Konversi nanosekon ke milisekon
         const date = new Date(Number(ns) / 1000000);
         return date.toLocaleString('id-ID', {
             dateStyle: 'medium',
@@ -81,10 +78,16 @@ export default function HistoryPage() {
         <div className="min-h-[calc(100vh-10rem)] bg-[#11071F] p-4 sm:p-6 lg:p-8">
             <div className="container mx-auto">
                 <div className="mb-12">
-                    <h1 className="text-3xl sm:text-4xl font-bold text-white text-center">
+                    <h1
+                        className="text-3xl sm:text-4xl font-bold text-white text-center"
+                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                    >
                         Riwayat Aktivitas Anda
                     </h1>
-                    <p className="text-lg text-purple-300/80 mt-2 text-center">
+                    <p
+                        className="text-lg text-purple-300/80 mt-2 text-center"
+                        style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                    >
                         Semua jejak digital Anda tercatat aman di sini.
                     </p>
                 </div>
@@ -105,10 +108,23 @@ export default function HistoryPage() {
                                         <CardContent className="pt-6">
                                             <div className="flex justify-between items-start">
                                                 <div>
-                                                    <p className="font-bold text-lg text-white">{details.title}</p>
-                                                    <p className="text-purple-200/90 mt-1">{log.description}</p>
+                                                    <p
+                                                        className="font-bold text-lg text-white"
+                                                        style={{ fontFamily: 'AeonikBold, sans-serif' }}
+                                                    >
+                                                        {details.title}
+                                                    </p>
+                                                    <p
+                                                        className="text-purple-200/90 mt-1"
+                                                        style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                                    >
+                                                        {log.description}
+                                                    </p>
                                                 </div>
-                                                <p className="text-xs text-purple-300/70 whitespace-nowrap pl-4">
+                                                <p
+                                                    className="text-xs text-purple-300/70 whitespace-nowrap pl-4"
+                                                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                                                >
                                                     {formatTimestamp(log.timestamp)}
                                                 </p>
                                             </div>
@@ -120,8 +136,18 @@ export default function HistoryPage() {
                     </div>
                 ) : (
                     <div className="text-center py-16">
-                        <p className="text-xl text-purple-300/80">Belum ada aktivitas yang tercatat.</p>
-                        <p className="mt-2 text-gray-400">Mulai gunakan aplikasi untuk melihat riwayat Anda di sini.</p>
+                        <p
+                            className="text-xl text-purple-300/80"
+                            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                        >
+                            Belum ada aktivitas yang tercatat.
+                        </p>
+                        <p
+                            className="mt-2 text-gray-400"
+                            style={{ fontFamily: 'AeonikLight, sans-serif' }}
+                        >
+                            Mulai gunakan aplikasi untuk melihat riwayat Anda di sini.
+                        </p>
                     </div>
                 )}
             </div>

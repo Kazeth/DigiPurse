@@ -12,15 +12,25 @@ export default function SupportCTA() {
         <div className="flex items-center justify-center h-16 w-16 rounded-full bg-white/10 mb-4">
           <LifeBuoy className="h-8 w-8 text-white" />
         </div>
-        <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+        <h2
+          className="text-3xl font-bold tracking-tight text-white sm:text-4xl"
+          style={{ fontFamily: 'AeonikBold, sans-serif' }}
+        >
           Have Questions?
         </h2>
-        <p className="mt-4 max-w-2xl text-lg leading-8 text-purple-200/80">
+        <p
+          className="mt-4 max-w-2xl text-lg leading-8 text-purple-200/80"
+          style={{ fontFamily: 'AeonikLight, sans-serif' }}
+        >
           Our support team is here to help. Visit our support page for FAQs, guides, and to get in touch with us directly.
         </p>
         <div className="mt-8">
           <Link to="/support">
-            <Button size="lg" aria-label="Go to Support Page">
+            <Button
+              size="lg"
+              aria-label="Go to Support Page"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
               Get Support
             </Button>
           </Link>
