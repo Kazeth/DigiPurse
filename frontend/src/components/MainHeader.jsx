@@ -15,21 +15,36 @@ import { createActor, canisterId } from '@/declarations/Registry_backend';
 export default function MainHeader() {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
+
+  const [scrolled, setScrolled] = useState(false);
+  const [headerVisible, setHeaderVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   // Authentication State
   const { isAuthenticated, authClient, login, logout, isLoggedIn } = useAuth();
   const identity = authClient ? authClient.getIdentity() : null;
   const principal = identity ? identity.getPrincipal() : null;
 
-  // Handle scroll
+  // Handle scroll direction
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setScrolled(currentScrollY > 20);
+
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setHeaderVisible(false);
+      } else {
+        setHeaderVisible(true);
+      }
+      setLastScrollY(currentScrollY);
+    };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
+  // Fetch user profile
   useEffect(() => {
     async function fetchProfile() {
       if (!authClient || !identity || !principal || !isLoggedIn) return;
@@ -90,7 +105,7 @@ export default function MainHeader() {
         </div>
       ) : (
         <Button onClick={handleLogin} aria-label="Start Now with DigiPurse" style={{ fontFamily: 'AeonikLight, sans-serif' }}>
-          Start Now
+          Sign In
         </Button>
       )}
     </>
@@ -99,12 +114,13 @@ export default function MainHeader() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${scrolled
-          ? 'bg-[#2B0B3F]/95 backdrop-blur-lg shadow-purple-900/20 shadow-lg'
-          : 'bg-[#2B0B3F]/80 backdrop-blur-sm'
-          }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out
+          ${headerVisible ? 'translate-y-0' : '-translate-y-full'}
+          ${scrolled ? 'border-b border-white/10 bg-black/20 backdrop-blur-lg' : 'bg-transparent'}
+        `}
       >
-        <nav className="container mx-auto flex items-center justify-between p-4 text-white">
+        <nav className="container mx-auto flex items-center justify-between p-4 text-white relative">
+          {/* Left Side: Logo */}
           <Link to="/" className="flex items-center space-x-3 group">
             <img src={logo} alt="DigiPurse Logo" className="h-10 w-10 md:h-12 md:w-12 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
             <span
@@ -115,7 +131,8 @@ export default function MainHeader() {
             </span>
           </Link>
 
-          <div className="hidden lg:flex items-center space-x-8">
+          {/* Center: Main Navigation */}
+          <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <ul className="flex items-center space-x-6">
               {navigationItems.map((item) => (
                 <li key={item.name}>
@@ -135,19 +152,23 @@ export default function MainHeader() {
                 </li>
               ))}
             </ul>
-            <div className="flex justify-center items-center w-full lg:w-auto">
-              <AuthButtons />
-            </div>
           </div>
 
-          <div className="lg:hidden">
-            <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(true)} aria-label="Open menu" className="text-white hover:bg-purple-800/50 hover:text-white">
-              <Menu className="h-7 w-7" />
-            </Button>
+          {/* Right Side: Auth and Mobile Menu */}
+          <div className="flex items-center gap-2">
+            <div className="hidden lg:block">
+              <AuthButtons />
+            </div>
+            <div className="lg:hidden">
+              <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(true)} aria-label="Open menu" className="text-white hover:bg-purple-800/50 hover:text-white">
+                <Menu className="h-7 w-7" />
+              </Button>
+            </div>
           </div>
         </nav>
       </header>
 
+      {/* MOBILE MENU */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
@@ -190,8 +211,8 @@ export default function MainHeader() {
           </div>
         </div>
       )}
-
-      <div className="h-20" />
+      
+      {/* The spacer div that was here has been correctly removed. */}
     </>
   );
 }

@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useAuth } from '@/lib/AuthContext';
 import { createActor, canisterId } from '@/declarations/Registry_backend';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { ShieldCheck, Ticket, FileText } from 'lucide-react';
-import { motion, useInView } from 'framer-motion';
-import logo from '@/assets/logo.png';
-import icpLogo from '../assets/icp-logo.png';
-import motokoLogo from '../assets/motoko-logo.png';
 import digiIdentityImage from '../assets/digi-identity.png';
 import digiTicketImage from '../assets/digi-ticket.png';
 import digiDocumentImage from '../assets/digi-document.png';
@@ -18,28 +14,22 @@ const features = [
   {
     icon: ShieldCheck,
     title: 'DigiIdentity',
-    description: 'Utilizes Decentralized Identifiers (DIDs) and Verifiable Credentials (VCs) to enable users to securely manage digital versions of passports, ID cards, and other credentials.',
+    description: 'Utilizes Decentralized Identifiers (DIDs) and Verifiable Credentials (VCs)...',
     image: digiIdentityImage,
   },
   {
     icon: Ticket,
     title: 'DigiTicket',
-    description: 'Employs NFT-based tickets to prevent fraud and scalping. Each ticket is unique and traceable on the blockchain, providing transparency and authenticity.',
+    description: 'Employs NFT-based tickets to prevent fraud and scalping...',
     image: digiTicketImage,
   },
   {
     icon: FileText,
     title: 'DigiDocument',
-    description: 'A decentralized document storage system that allows users to securely upload, view, and manage their files on the blockchain. Ensures data privacy, ownership, and immutability in a trustless environment.',
+    description: 'A decentralized document storage system for secure file management...',
     image: digiDocumentImage,
   },
 ];
-
-// Animation variants for fade-in effect
-const featureVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
-};
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -51,7 +41,7 @@ export default function LandingPage() {
     if (status) {
       console.log("User is authenticated and available");
       const identity = authClient.getIdentity();
-      const actor = await createActor(canisterId, { agentOptions: { identity } });
+      const actor = createActor(canisterId, { agentOptions: { identity } });
       const exist = await actor.checkUserExist(identity.getPrincipal());
       if (exist) {
         navigate('/home');
@@ -63,200 +53,78 @@ export default function LandingPage() {
     }
   };
 
-  const goToHome = async () => {
+  const goToHome = () => {
     navigate('/home');
   };
 
-  // Ref for technology section
-  const techRef = React.useRef(null);
-  const techInView = useInView(techRef, { once: true, threshold: 0.2 });
-
   return (
-    <div className="overflow-x-hidden">
-      {/* Hero Section */}
-      <section className="relative pt-24 pb-16 sm:pt-32 sm:pb-24">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#2B0B3F] to-[#11071F] opacity-80"></div>
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Text Content */}
-            <div className="text-center lg:text-left">
-              <h1
-                className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-white"
-                style={{ fontFamily: 'AeonikBold, sans-serif' }}
-              >
-                Your Digital Life,
-                <span className="block text-purple-400">Decentralized.</span>
-              </h1>
-              <p
-                className="mt-6 max-w-xl mx-auto lg:mx-0 text-lg text-purple-200/80"
-                style={{ fontFamily: 'AeonikLight, sans-serif' }}
-              >
-                DigiPurse is a Web3 application designed to streamline digital life by integrating ticketing, identity, and documents into one secure platform, giving you full control.
-              </p>
-              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                {isAuthenticated ? (
-                  <Button
-                    size="lg"
-                    onClick={goToHome}
-                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
-                  >
-                    Go to Dashboard
-                  </Button>
-                ) : (
-                  <Button
-                    size="lg"
-                    onClick={handleLogin}
-                    style={{ fontFamily: 'AeonikLight, sans-serif' }}
-                  >
-                    Start Now
-                  </Button>
-                )}
-                <Button
-                  size="lg"
-                  variant="secondary"
-                  style={{ fontFamily: 'AeonikLight, sans-serif' }}
-                >
-                  Learn More
-                </Button>
-              </div>
+    <div className="bg-black overflow-x-hidden">
+      <section className="relative flex flex-col items-center justify-center min-h-screen text-center px-6 py-32 md:py-40 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900 via-fuchsia-900/40 to-black"></div>
+        
+        <div className="relative z-10 w-full max-w-5xl">
+          <div>
+            <div className="mb-6 inline-flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/10 px-3 py-1.5">
+              <span className="rounded-full bg-purple-400 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-black">
+                New
+              </span>
+              <span className="ml-3 text-sm text-purple-200">
+                Introducing DigiCoin
+              </span>
             </div>
-            {/* Image Content */}
-            <div className="flex items-center justify-center">
-              <img
-                src={logo}
-                alt="DigiPurse Digital Purse"
-                className="w-64 h-64 md:w-80 md:h-80 animate-pulse-slow"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Divider */}
-      <hr className="border-t border-purple-900/20 mx-auto w-3/4" />
-
-      {/* Features Section */}
-      <section id="features" className="py-20 sm:py-28 bg-[#11071F]">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2
-              className="text-3xl sm:text-4xl font-bold tracking-tight text-white"
+            <h1
+              className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white"
               style={{ fontFamily: 'AeonikBold, sans-serif' }}
             >
-              Everything You Need in One Purse
-            </h2>
+              Your Digital Life,
+              <span className="block text-purple-400">Decentralized.</span>
+            </h1>
             <p
-              className="mt-4 max-w-2xl mx-auto text-lg text-purple-200/70"
+              className="mt-6 max-w-xl mx-auto text-lg text-purple-200/80"
               style={{ fontFamily: 'AeonikLight, sans-serif' }}
             >
-              From verifying your identity to accessing events, DigiPurse simplifies your digital interactions.
+              DigiPurse integrates your tickets, identity, and documents into one secure Web3 platform.
             </p>
+            <div className="mt-10">
+              {isAuthenticated ? (
+                <Button size="lg" onClick={goToHome} style={{ fontFamily: 'AeonikLight, sans-serif' }}>
+                  Go to Dashboard
+                </Button>
+              ) : (
+                <Button size="lg" onClick={handleLogin} aria-label="Start Now with DigiPurse" style={{ fontFamily: 'AeonikLight, sans-serif' }}>
+                  Start Now
+                </Button>
+              )}
+            </div>
           </div>
-          <div className="space-y-20">
-            {features.map((feature, index) => {
-              // Create a ref for each feature to track visibility
-              const ref = React.useRef(null);
-              const isInView = useInView(ref, { once: true, threshold: 0.2 });
 
-              return (
-                <motion.div
-                  key={feature.title}
-                  ref={ref}
-                  initial="hidden"
-                  animate={isInView ? 'visible' : 'hidden'}
-                  variants={featureVariants}
-                  className={`grid grid-cols-1 ${
-                    index % 2 === 1 ? 'lg:grid-cols-[55%_45%] lg:grid-flow-col-dense' : 'lg:grid-cols-[45%_55%]'
-                  } gap-6 items-center`}
-                >
-                  {/* Image */}
-                  <div
-                    className={`flex ${index % 2 === 1 ? 'lg:col-start-2 justify-end' : 'justify-start'}`}
-                  >
+          <div 
+            className="mt-20 w-full max-w-[calc(100%-2rem)] mx-auto lg:max-w-[calc(100%-4rem)] // Reduced gap for larger width
+                       h-[40rem] md:h-[50rem] // Significantly larger height
+                       bg-black/30 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl shadow-black/50
+                       overflow-hidden 
+                       transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:-translate-y-2"
+          >
+            <Carousel
+              opts={{
+                loop: true,
+              }}
+              className="w-full h-full"
+            >
+              <CarouselContent className="h-full">
+                {features.map((feature, index) => (
+                  <CarouselItem key={index} className="h-full flex items-center justify-center">
                     <img
                       src={feature.image}
                       alt={feature.title}
-                      className="rounded-2xl shadow-2xl shadow-purple-900/20 w-full max-w-xl glow-effect"
-                      onError={() => console.error(`Failed to load ${feature.title} image at ${feature.image}`)}
+                      className="w-full h-full object-cover rounded-2xl"
                     />
-                  </div>
-
-                  {/* Text */}
-                  <div
-                    className={`flex flex-col ${
-                      index === 1 ? 'text-right items-end' : 'text-left items-start'
-                    }`}
-                  >
-                    <div className="flex items-center justify-center h-12 w-12 rounded-full bg-white/10 mb-4">
-                      <feature.icon className="h-6 w-6 text-purple-300" />
-                    </div>
-                    <h3
-                      className="text-2xl font-bold text-white"
-                      style={{ fontFamily: 'AeonikBold, sans-serif' }}
-                    >
-                      {feature.title}
-                    </h3>
-                    <p
-                      className="mt-2 text-purple-200/80"
-                      style={{ fontFamily: 'AeonikLight, sans-serif' }}
-                    >
-                      {feature.description}
-                    </p>
-                  </div>
-                </motion.div>
-              );
-            })}
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
           </div>
-        </div>
-      </section>
-
-      {/* Divider */}
-      <hr className="border-t border-purple-900/20 mx-auto w-3/4" />
-
-      {/* Powered by Technology Section */}
-      <section id="technology" className="py-20 sm:py-28 bg-[#11071F]">
-        <div className="container mx-auto px-6">
-          <motion.div
-            ref={techRef}
-            initial="hidden"
-            animate={techInView ? 'visible' : 'hidden'}
-            variants={featureVariants}
-            className="text-center"
-          >
-            <h2
-              className="text-3xl sm:text-4xl font-bold tracking-tight text-white"
-              style={{ fontFamily: 'AeonikBold, sans-serif' }}
-            >
-              Powered by Cutting-Edge Technology
-            </h2>
-            <p
-              className="mt-4 max-w-2xl mx-auto text-lg text-purple-200/70"
-              style={{ fontFamily: 'AeonikLight, sans-serif' }}
-            >
-              Built on the Internet Computer for true decentralization, speed, and on-chain data storage.
-            </p>
-            <div className="mt-10 flex justify-center gap-8">
-              <img
-                src={icpLogo}
-                alt="Internet Computer Logo"
-                className="h-16 w-auto"
-                onError={() => console.error("Failed to load ICP logo at ../assets/icp-logo.png")}
-              />
-              <img
-                src={motokoLogo}
-                alt="Motoko Logo"
-                className="h-16 w-auto"
-                onError={() => console.error("Failed to load Motoko logo at ../assets/motoko-logo.png")}
-              />
-            </div>
-            {/* Fallback content for debugging */}
-            <p
-              className="mt-4 text-sm text-purple-200/50"
-              style={{ fontFamily: 'AeonikLight, sans-serif' }}
-            >
-              Motoko
-            </p>
-          </motion.div>
         </div>
       </section>
     </div>
