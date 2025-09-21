@@ -6,6 +6,9 @@ import { PlusCircle, ScanLine, Loader2 } from 'lucide-react';
 import { createWorker } from 'tesseract.js';
 import { File_manager } from "declarations/File_manager";
 import { Identity_backend } from 'declarations/Identity_backend';
+import { createActor as createRegistryActor } from "declarations/Registry_backend"; 
+import { canisterId as registryCanisterId } from "declarations/Registry_backend";
+
 import { useAuth } from '../lib/AuthContext';
 
 export default function DigiIdentity() {
@@ -179,53 +182,118 @@ export default function DigiIdentity() {
         }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleUploadSubmit = async (e) => {
+        e.preventDefault();
+        if (!passportImage) {
+            alert("Please select a file before uploading.");
+            return;
+        }
+        try {
+            const fileName = `passport_${principal.toText()}_${Date.now()}`;
+            await uploadFile(passportImage, fileName);
+            setFormData(prev => ({ ...prev, passportImageName: fileName }));
+            alert("File uploaded successfully!");
+        } catch (err) {
+            console.error("Upload error:", err);
+            alert("Failed to upload file.");
+        }
+    };
+
+    const handleScanSubmit = async (e) => {
+        e.preventDefault();
+        if (!passportImage) {
+            alert("Please upload an image to scan.");
+            return;
+        }
+        await startScan(); 
+    };
+
+    const handleIdentitySubmit = async (e) => {
         e.preventDefault();
         const identity = authClient?.getIdentity();
+
         if (!principal) {
             alert("User principal not found. Cannot save.");
             return;
         }
+
         if (!passportImage && !imagePreview) {
-            alert('Please upload a passport image.');
+            alert("Please upload a passport image.");
             return;
         }
+
         setIsSaving(true);
+
         try {
             let finalImageName = formData.passportImageName;
             if (passportImage) {
-                finalImageName = `passport_${principal.toText()}_${Date.now()}`;
-                await uploadFile(passportImage, finalImageName);
+            finalImageName = `passport_${principal.toText()}_${Date.now()}`;
+            await uploadFile(passportImage, finalImageName);
             }
+
             const dataToSave = {
-                name: formData.name,
-                passportNumber: formData.passportNumber,
-                nationality: formData.nationality,
-                dob: formData.dob,
-                gender: formData.gender,
-                passportImageName: finalImageName,
-                isVerified: true,
-                dateOfExpiry: formData.dateOfExpiry,
+            name: formData.name,
+            passportNumber: formData.passportNumber,
+            nationality: formData.nationality,
+            dob: formData.dob,
+            gender: formData.gender,
+            passportImageName: finalImageName,
+            isVerified: true,
+            dateOfExpiry: formData.dateOfExpiry,
             };
+
             await Identity_backend.saveIdentity(principal, dataToSave);
-            const registryActor = createRegistryActor(registryCanisterId, {
-                agentOptions: { identity },
-            });
-            await registryActor.recordActivity(
-                principal,
-                { 'IdentityVerified': null },
-                "Profil identitas telah berhasil diverifikasi."
-            );
 
             setFormData(dataToSave);
             setShowModal(true);
+
+            const registryActor = createRegistryActor(registryCanisterId, {
+            agentOptions: { identity },
+            });
+
+            const retryWithBackoff = async (fn, retries = 3, delay = 1000) => {
+            try {
+                return await fn();
+            } catch (err) {
+                if (retries <= 0) throw err;
+                await new Promise(res => setTimeout(res, delay));
+                return retryWithBackoff(fn, retries - 1, delay * 2);
+            }
+            };
+
+            retryWithBackoff(() =>
+            registryActor.recordActivity(
+                principal,
+                { IdentityVerified: null },
+                "Profil identitas berhasil diverifikasi."
+            )
+            ).catch(err => console.error("Registry log failed:", err));
+
         } catch (error) {
-            console.error("Failed to save identity:", error);
-            alert('An error occurred while saving.');
+            console.error("Save identity failed:", error);
+            alert("Failed to save identity. Please try again.");
         } finally {
             setIsSaving(false);
         }
     };
+
+    const handleResetSubmit = (e) => {
+        e.preventDefault();
+        setFormData({
+            name: '',
+            passportNumber: '',
+            nationality: '',
+            dob: '',
+            gender: '',
+            dateOfExpiry: '',
+            passportImageName: '',
+            isVerified: false,
+        });
+        setPassportImage(null);
+        setImagePreview('');
+    };
+
+
 
     const formFields = [
         { id: 'name', label: 'Full Name', type: 'text' },
@@ -305,7 +373,7 @@ export default function DigiIdentity() {
                         </div>
                     </div>
                 ) : (
-                    <form onSubmit={handleSubmit} className="max-w-6xl mx-auto">
+                    <form onSubmit={handleIdentitySubmit} className="max-w-6xl mx-auto">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
                                 {formFields.map(field => (
