@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'; // NEW: For better filter UI
-import { Slider } from '@/components/ui/slider'; // NEW: For price filter
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Slider from '@/components/ui/slider.jsx'; // Make sure this path is correct
 import { Calendar, Tag, Search, FilterX, ArrowLeft, ArrowRight, Armchair, Users, Ticket, PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/lib/AuthContext';
@@ -20,54 +20,56 @@ export default function EventsPage() {
     const navigate = useNavigate();
     const [allEvents, setAllEvents] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [isOrganizer, setIsOrganizer] = useState(true); // This should be based on user role
+    const [isOrganizer, setIsOrganizer] = useState(true);
     const { authClient } = useAuth();
     const identity = authClient ? authClient.getIdentity() : null;
 
     // Filter states
     const [searchTerm, setSearchTerm] = useState('');
-    const [priceRange, setPriceRange] = useState([0, 1000]); // MODIFIED: Use array for slider
+    // --- MODIFIED: Changed priceRange state to an array for the slider ---
+    const [priceRange, setPriceRange] = useState([0, 1000]);
     const [seatType, setSeatType] = useState('all');
 
-    // --- All your existing functions and useEffect hooks for data fetching remain unchanged ---
-        useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const actor = createActor(canisterId, { agentOptions: { identity } });
-        const response = await actor.getAllEvents();
-        const parsed = response.map(([id, event]) => {
-          const isSeated = event.kind.hasOwnProperty('Seated');
-          const isSeatless = event.kind.hasOwnProperty('Seatless');
-          const prices = event.prices.map(p => Number(p));
-          return {
-            eventID: event.id,
-            organizer: event.organizer,
-            eventName: event.name,
-            eventDesc: event.description,
-            eventDate: new Date(Number(event.date) / 1_000_000),
-            eventDuration: Number(event.durationMinutes),
-            ticketCount: Number(event.ticketSupply),
-            minPrice: Math.min(...prices),
-            maxPrice: Math.max(...prices),
-            seatInfo: isSeated ? event.kind.Seated.seatInfo : '',
-            hasSeated: isSeated,
-            hasSeatless: isSeatless,
-            // MODIFIED: Updated placeholder for better contrast
-            image: `https://placehold.co/600x400/11071F/7C3AED/png?text=${encodeURIComponent(event.name)}`
-          };
-        });
-        setAllEvents(parsed);
-      } catch (err) {
-        console.error("Failed to fetch events:", err);
-      }
-    };
-    fetchEvents();
-  }, [identity]);
+    // Backend data fetching logic
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const actor = createActor(canisterId, { agentOptions: { identity } });
+                const response = await actor.getAllEvents();
+                const parsed = response.map(([id, event]) => {
+                    const isSeated = event.kind.hasOwnProperty('Seated');
+                    const isSeatless = event.kind.hasOwnProperty('Seatless');
+                    const prices = event.prices.map(p => Number(p));
+                    return {
+                        eventID: event.id,
+                        organizer: event.organizer,
+                        eventName: event.name,
+                        eventDesc: event.description,
+                        eventDate: new Date(Number(event.date) / 1_000_000),
+                        eventDuration: Number(event.durationMinutes),
+                        ticketCount: Number(event.ticketSupply),
+                        minPrice: Number(Math.min(...prices)),
+                        maxPrice: Number(Math.max(...prices)),
+                        seatInfo: isSeated ? event.kind.Seated.seatInfo : '',
+                        hasSeated: isSeated,
+                        hasSeatless: isSeatless,
+                        image: `https://placehold.co/600x400/11071F/7C3AED/png?text=${encodeURIComponent(event.name)}`
+                    };
+                });
+                setAllEvents(parsed);
+            } catch (err) {
+                console.error("Failed to fetch events:", err);
+            }
+        };
+        fetchEvents();
+    }, [identity]);
 
+    // Frontend filtering logic
     const filteredEvents = useMemo(() => {
         return allEvents
             .filter(event => event.eventName.toLowerCase().includes(searchTerm.toLowerCase()))
-            .filter(event => event.minPrice >= priceRange[0] && event.maxPrice <= priceRange[1])
+            // --- MODIFIED: Filtering logic now uses the priceRange array ---
+            .filter(event => event.minPrice >= priceRange[0] && (priceRange[1] >= 1000 ? true : event.maxPrice <= priceRange[1]))
             .filter(event => {
                 if (seatType === 'seated') return event.hasSeated;
                 if (seatType === 'seatless') return event.hasSeatless;
@@ -89,7 +91,6 @@ export default function EventsPage() {
     };
 
     return (
-        // --- MODIFIED: Main page container with consistent styling ---
         <div className="min-h-screen w-full bg-black text-white px-4 sm:px-6 lg:px-8 pt-28 pb-12
                         bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] 
                         from-purple-900/40 via-fuchsia-900/10 to-black">
@@ -115,7 +116,7 @@ export default function EventsPage() {
                     )}
                 </motion.header>
 
-                {/* --- MODIFIED: Filter bar with "glass" effect and improved controls --- */}
+                {/* --- MODIFIED: The filter bar is restored with the Slider and Tabs --- */}
                 <Card className="bg-black/30 backdrop-blur-sm border border-white/10 p-6 mb-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
                         <div className="lg:col-span-2 space-y-2">
@@ -126,7 +127,7 @@ export default function EventsPage() {
                             <Label className="text-purple-300/80" style={{ fontFamily: 'AeonikLight, sans-serif' }}>Price Range (ICP)</Label>
                             <div className="flex justify-between text-sm text-purple-300">
                                 <span>{priceRange[0]}</span>
-                                <span>{priceRange[1]}+</span>
+                                <span>{priceRange[1] >= 1000 ? `${priceRange[1]}+` : priceRange[1]}</span>
                             </div>
                              <Slider defaultValue={[0, 1000]} max={1000} step={10} value={priceRange} onValueChange={setPriceRange} />
                         </div>
@@ -146,7 +147,6 @@ export default function EventsPage() {
                     </div>
                 </Card>
 
-                {/* --- MODIFIED: Events List with "glass" cards and empty state --- */}
                 <main className="space-y-6">
                     {currentEvents.length > 0 ? (
                         currentEvents.map(event => (
@@ -182,7 +182,6 @@ export default function EventsPage() {
                     )}
                 </main>
 
-                {/* --- MODIFIED: Pagination styling --- */}
                 {totalPages > 1 && (
                     <div className="flex items-center justify-center mt-12 space-x-4">
                         <Button variant="outline" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}><ArrowLeft className="mr-2 h-4 w-4" /> Previous</Button>
@@ -194,3 +193,4 @@ export default function EventsPage() {
         </div>
     );
 }
+
