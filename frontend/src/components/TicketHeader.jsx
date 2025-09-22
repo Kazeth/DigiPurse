@@ -1,33 +1,45 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, LogOut } from 'lucide-react';
 import logo from '../assets/logo.png';
 
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
 
-// import { AuthClient } from '@dfinity/auth-client';
 import { useAuth } from '@/lib/AuthContext';
 
 export default function TicketAppHeader() {
   const navigate = useNavigate();
-  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // --- NEW: Added state for hide-on-scroll behavior ---
   const [scrolled, setScrolled] = useState(false);
+  const [headerVisible, setHeaderVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   // Authentication State 
   const { isAuthenticated, principal, logout } = useAuth();
 
-  // Handle scroll 
+  // --- MODIFIED: Upgraded scroll handler to manage visibility ---
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setScrolled(currentScrollY > 20);
+
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setHeaderVisible(false); // Hide on scroll down
+      } else {
+        setHeaderVisible(true); // Show on scroll up
+      }
+      setLastScrollY(currentScrollY);
+    };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   const handleLogout = async () => {
     await logout();
@@ -40,6 +52,8 @@ export default function TicketAppHeader() {
     { name: 'Events', path: '/events' },
     { name: 'Marketplace', path: '/marketplace' },
   ];
+  
+  const navLinkClasses = "font-medium text-purple-200 hover:text-white transition-colors duration-300 pb-1 border-b-2 border-transparent hover:border-purple-400";
 
   const AuthButtons = () => (
     <>
@@ -62,31 +76,34 @@ export default function TicketAppHeader() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${scrolled
-          ? 'bg-[#2B0B3F]/95 backdrop-blur-lg shadow-purple-900/20 shadow-lg'
-          : 'bg-[#2B0B3F]/80 backdrop-blur-sm'
-          }`}
+        // --- MODIFIED: Classes now match MainHeader for consistent styling and behavior ---
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out
+          ${headerVisible ? 'translate-y-0' : '-translate-y-full'}
+          ${scrolled ? 'border-b border-white/10 bg-black/20 backdrop-blur-lg' : 'bg-transparent'}
+        `}
       >
-        <nav className="container mx-auto flex items-center justify-between p-4 text-white">
-          <div className="flex items-center flex-shrink-0">
-            <Link to="/home" className="flex items-center space-x-3 group">
-              <img src={logo} alt="DigiPurse Logo" className="h-10 w-10 md:h-12 md:w-12 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
-              <span
-                className="text-2xl md:text-3xl font-bold tracking-tight group-hover:text-purple-300 transition-colors duration-300"
-                style={{ fontFamily: 'AeonikBold, sans-serif' }}
-              >
-                DigiTicket
-              </span>
-            </Link>
-          </div>
+        {/* --- MODIFIED: Nav layout now matches MainHeader --- */}
+        <nav className="container mx-auto flex items-center justify-between p-4 text-white relative">
+          {/* Left Side: Logo */}
+          <Link to="/home" className="flex items-center space-x-3 group">
+            <img src={logo} alt="DigiPurse Logo" className="h-10 w-10 md:h-12 md:w-12 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
+            <span
+              // --- MODIFIED: Brand name consistent with MainHeader ---
+              className="text-2xl md:text-3xl font-bold tracking-tight group-hover:text-purple-300 transition-colors duration-300"
+              style={{ fontFamily: 'AeonikBold, sans-serif' }}
+            >
+              DigiPurse
+            </span>
+          </Link>
 
-          <div className="hidden lg:flex items-center space-x-8 flex-shrink-0">
+          {/* Center: Main Navigation */}
+          <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <ul className="flex items-center space-x-6">
               {navigationItems.map((item) => (
                 <li key={item.name}>
                   <Link
                     to={item.path}
-                    className="font-medium text-purple-200 hover:text-white transition-colors duration-300 pb-1 border-b-2 border-transparent hover:border-purple-400"
+                    className={navLinkClasses}
                     style={{ fontFamily: 'AeonikLight, sans-serif' }}
                   >
                     {item.name}
@@ -94,32 +111,29 @@ export default function TicketAppHeader() {
                 </li>
               ))}
             </ul>
-            <AuthButtons />
           </div>
 
-          <div className="lg:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setMobileMenuOpen(true)}
-              aria-label="Open menu"
-              className="text-white hover:bg-purple-800/50 hover:text-white"
-            >
-              <Menu className="h-7 w-7" />
-            </Button>
+          {/* Right Side: Auth and Mobile Menu */}
+          <div className="flex items-center gap-2">
+            <div className="hidden lg:block">
+              <AuthButtons />
+            </div>
+            <div className="lg:hidden">
+              <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(true)} aria-label="Open menu" className="text-white hover:bg-purple-800/50 hover:text-white">
+                <Menu className="h-7 w-7" />
+              </Button>
+            </div>
           </div>
         </nav>
       </header>
 
+      {/* MOBILE MENU (No structural change needed) */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
           <div className="fixed top-0 right-0 h-full w-full max-w-xs bg-[#1E0A2E] p-6 text-white shadow-2xl border-l border-purple-400/20">
             <div className="flex items-center justify-between">
-              <span
-                className="text-xl font-bold"
-                style={{ fontFamily: 'AeonikLight, sans-serif' }}
-              >
+              <span className="text-xl font-bold" style={{ fontFamily: 'AeonikLight, sans-serif' }}>
                 Menu
               </span>
               <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)} aria-label="Close menu" className="text-white hover:bg-purple-800/50 hover:text-white">
@@ -148,7 +162,8 @@ export default function TicketAppHeader() {
           </div>
         </div>
       )}
-      <div className="h-20" />
+      
+      {/* --- MODIFIED: Removed the spacer div --- */}
     </>
   );
 }
