@@ -99,4 +99,12 @@ module {
     activityType : ActivityType;
     description : Text;
   };
+
+  public type History = {
+    user : Principal;
+    title : Text;
+    detail : Text;
+    timestamp : Time.Time;
+  };
+
 };
