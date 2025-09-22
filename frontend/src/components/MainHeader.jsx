@@ -211,8 +211,6 @@ export default function MainHeader() {
           </div>
         </div>
       )}
-      
-      {/* The spacer div that was here has been correctly removed. */}
     </>
   );
 }

@@ -1,36 +1,25 @@
-from uagents import Agent, Context, Model, Protocol
-from uagents.setup import fund_agent_if_low
+from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 import os
+from openai import AzureOpenAI
 
+# --- 1. Load Configuration ---
 load_dotenv()
 
-# Load your ASI:One API key
-API_KEY = os.getenv("ASI_ONE_API_KEY")
-if not API_KEY:
-    raise ValueError("ASI_ONE_API_KEY is missing!")
-
-# Define what users will ask
-class UserQuery(Model):
-    question: str
-    context: str = None
-
-# Define your agent response
-class AgentReply(Model):
-    answer: str
-    helpful: bool = True
-
-# Initialize DigiAI
-DigiAI = Agent(
-    name="digiai",
-    seed="digiai-support-agent-ultra-secure-2025",  # Change this to something unique & safe
-    port=8001,
-    endpoint=["http://127.0.0.1:8001/submit"]
+# Setup Azure OpenAI Client
+client = AzureOpenAI(
+    api_key=os.getenv("AZURE_OPENAI_KEY"),
+    api_version="2024-02-01", # Use a recent, valid API version
+    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
 )
+AZURE_DEPLOYMENT_NAME = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
 
-fund_agent_if_low(DigiAI.wallet.address())
+# Check if configuration is loaded
+if not all([client.api_key, client.azure_endpoint, AZURE_DEPLOYMENT_NAME]):
+    raise ValueError("Azure OpenAI configuration is missing in your .env file!")
 
-# Core Prompt Embedded
+# --- 2. Keep Your Core Prompt ---
+# This valuable instruction set is reused directly!
 SYSTEM_PROMPT = """
 You are DigiAI, an AI support assistant for DigiPurse — a decentralized Web3 app on ICP.
 Help users with:
@@ -44,23 +33,50 @@ Be friendly, clear, and educational. Never give financial advice. Guide, don't c
 Always remind users: 'You own your data. No one can take it — including us.'
 """
 
-@DigiAI.on_event("startup")
-async def say_hello(ctx: Context):
-    ctx.logger.info("DigiAI is live and ready to help! 🚀")
-    ctx.logger.info("Supporting decentralized identity on ICP — safely & simply.")
+# --- 3. Create a Flask Web Application ---
+app = Flask(__name__)
 
-digiai_protocol = Protocol("Support Protocol")
+# --- 4. Define the AI Query Function ---
+def ask_azure_ai(question: str):
+    """Sends the prompt and question to Azure OpenAI and gets a response."""
+    try:
+        response = client.chat.completions.create(
+            model=AZURE_DEPLOYMENT_NAME,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": question}
+            ],
+            temperature=0.7,
+            max_tokens=400
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return "Sorry, I'm having trouble connecting to my brain right now. Please try again later."
 
-@digiai_protocol.on_message(model=UserQuery, reply=AgentReply)
-async def handle_query(ctx: Context, sender: str, msg: UserQuery):
-    ctx.logger.info(f"User asked: {msg.question}")
+# --- 5. Create an API Endpoint ---
+@app.route("/query", methods=["POST"])
+def handle_query():
+    """This endpoint receives user questions and returns the AI's answer."""
+    data = request.get_json()
+    if not data or "question" not in data:
+        return jsonify({"error": "No question provided"}), 400
 
-    # Simulate ASI:One processing (your API key enables enhanced reasoning)
-    answer = f"Thanks for asking! '{msg.question}' is a great question about Web3 safety. {SYSTEM_PROMPT.split('.')[0]} Remember: with DigiPurse, you're in control. Always keep your recovery phrase private, and verify DIDs on-chain. Would you like step-by-step help?"
-    
-    await ctx.send(sender, AgentReply(answer=answer))
+    user_question = data["question"]
+    print(f"User asked: {user_question}")
 
-DigiAI.include(digiai_protocol)
+    # Get the answer from Azure AI
+    ai_answer = ask_azure_ai(user_question)
 
+    # Return the answer as JSON
+    return jsonify({
+        "answer": ai_answer,
+        "helpful": True
+    })
+
+# --- 6. Run the Application ---
 if __name__ == "__main__":
-    DigiAI.run()
+    print("DigiAI is live and ready to help! 🚀")
+    print("Supporting decentralized identity on ICP — safely & simply.")
+    # Runs the web server on http://127.0.0.1:8001
+    app.run(port=8001, debug=True)
