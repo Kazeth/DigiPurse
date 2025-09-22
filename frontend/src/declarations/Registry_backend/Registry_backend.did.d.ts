@@ -9,7 +9,9 @@ export interface ActivityLog {
   'timestamp' : Time,
 }
 export type ActivityType = { 'AccountCreated' : null } |
+  { 'DocumentDeleted' : null } |
   { 'IdentityVerified' : null } |
+  { 'DocumentUploaded' : string } |
   { 'TicketPurchased' : null } |
   { 'TicketSold' : null };
 export interface Customer {

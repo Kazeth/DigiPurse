@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Loader2, UserPlus, Fingerprint, Ticket, Repeat } from 'lucide-react';
+import { Loader2, UserPlus, Fingerprint, Ticket, Repeat, UploadCloud, Trash2 } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { createActor, canisterId } from '@/declarations/Registry_backend';
 import { Card, CardContent } from '@/components/ui/card';
@@ -29,7 +29,20 @@ const activityDetails = {
         color: "text-purple-400",
         bgColor: "bg-purple-500/10",
     },
+    'DocumentUploaded': {
+        icon: UploadCloud,
+        title: "Dokumen Diunggah",
+        color: "text-purple-300",
+        bgColor: "bg-purple-500/10",
+    },
+    'DocumentDeleted': {
+        icon: Trash2,
+        title: "Dokumen Dihapus",
+        color: "text-red-400",
+        bgColor: "bg-red-500/10",
+    },
 };
+
 
 export default function HistoryPage() {
     const [isLoading, setIsLoading] = useState(true);

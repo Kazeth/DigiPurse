@@ -36,6 +36,8 @@ type Customer =
 type ActivityType = 
  variant {
    AccountCreated;
+   DocumentDeleted;
+   DocumentUploaded: text;
    IdentityVerified;
    TicketPurchased;
    TicketSold;

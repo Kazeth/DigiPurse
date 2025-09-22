@@ -32,7 +32,9 @@ export const idlFactory = ({ IDL }) => {
   });
   const ActivityType = IDL.Variant({
     'AccountCreated' : IDL.Null,
+    'DocumentDeleted' : IDL.Null,
     'IdentityVerified' : IDL.Null,
+    'DocumentUploaded' : IDL.Text,
     'TicketPurchased' : IDL.Null,
     'TicketSold' : IDL.Null,
   });

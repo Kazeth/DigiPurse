@@ -28,7 +28,7 @@ export default function MainLayout() {
     <div className="flex min-h-screen flex-col bg-[#11071F] text-white">
       {!isNoHeaderPage && (isTicketAppPage ? <TicketAppHeader /> : <MainHeader />)}
 
-      <main className="flex-grow">
+      <main className={`flex-grow ${!isNoHeaderPage ? 'pt-20 md:pt-24' : ''}`}>
         <Outlet />
         <TransferProgress />
       </main>

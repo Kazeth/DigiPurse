@@ -6,8 +6,7 @@ import { PlusCircle, ScanLine, Loader2 } from 'lucide-react';
 import { createWorker } from 'tesseract.js';
 import { File_manager } from "declarations/File_manager";
 import { Identity_backend } from 'declarations/Identity_backend';
-import { createActor as createRegistryActor } from "declarations/Registry_backend"; 
-import { canisterId as registryCanisterId } from "declarations/Registry_backend";
+import { logActivity } from '../utils/RegistryLogger';
 
 import { useAuth } from '../lib/AuthContext';
 
@@ -247,27 +246,13 @@ export default function DigiIdentity() {
             setFormData(dataToSave);
             setShowModal(true);
 
-            const registryActor = createRegistryActor(registryCanisterId, {
-            agentOptions: { identity },
-            });
-
-            const retryWithBackoff = async (fn, retries = 3, delay = 1000) => {
-            try {
-                return await fn();
-            } catch (err) {
-                if (retries <= 0) throw err;
-                await new Promise(res => setTimeout(res, delay));
-                return retryWithBackoff(fn, retries - 1, delay * 2);
-            }
-            };
-
-            retryWithBackoff(() =>
-            registryActor.recordActivity(
-                principal,
-                { IdentityVerified: null },
-                "Profil identitas berhasil diverifikasi."
-            )
-            ).catch(err => console.error("Registry log failed:", err));
+            // 🔹 Panggil log registry dari helper
+            await logActivity(
+            identity,
+            principal,
+            { IdentityVerified: null },
+            "Profil identitas berhasil diverifikasi."
+            );
 
         } catch (error) {
             console.error("Save identity failed:", error);
@@ -292,8 +277,6 @@ export default function DigiIdentity() {
         setPassportImage(null);
         setImagePreview('');
     };
-
-
 
     const formFields = [
         { id: 'name', label: 'Full Name', type: 'text' },

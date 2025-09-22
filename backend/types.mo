@@ -37,7 +37,7 @@ module {
     ticketID : Text;
     eventID : Text;
     owner : Principal;
-    ticketDesc: Text;
+    ticketDesc : Text;
     price : Nat;
     kind : TicketKind;
     valid : Bool;
@@ -75,26 +75,28 @@ module {
     fileType : Text;
   };
   public type Identity = {
-    name: Text;
-    gender: Text;
-    dob: Text;
-    nationality: Text;
-    passportNumber: Text;
-    dateOfExpiry: Text;
-    passportImageName: Text;
-    isVerified: Bool;
+    name : Text;
+    gender : Text;
+    dob : Text;
+    nationality : Text;
+    passportNumber : Text;
+    dateOfExpiry : Text;
+    passportImageName : Text;
+    isVerified : Bool;
   };
   public type ActivityType = {
     #AccountCreated;
     #IdentityVerified;
     #TicketPurchased;
     #TicketSold;
+    #DocumentUploaded : Text;
+    #DocumentDeleted;
   };
 
   public type ActivityLog = {
-    principal: Principal;
-    timestamp: Time.Time;
-    activityType: ActivityType;
-    description: Text;
+    principal : Principal;
+    timestamp : Time.Time;
+    activityType : ActivityType;
+    description : Text;
   };
 };
